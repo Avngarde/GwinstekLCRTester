@@ -14,7 +14,6 @@ namespace GwinstekLCRTester
 
         private static SerialPort _serialPort;
         
-
         public static readonly string[] measurementTypes = { ///0 is 0xE9
 
             "Cs-Rs", "Cs-D", "Cp-Rp",
@@ -25,6 +24,13 @@ namespace GwinstekLCRTester
             "Z-D", "Z-Q"
 
         };
+
+        public string PortName { get; }
+        public uint BaudRate { get; }
+        public Parity ParityNumber { get; }
+        public uint DataBits { get; }
+        public StopBits StopBits { get; }
+        public Handshake HandshakeType { get; }
 
         public RSCommunication(string portName, uint baudRate, Parity parityNumber, uint dataBits, StopBits stopBits, Handshake handshakeType, int readTimeout = 500, int writeTimeout = 500)
         {
@@ -50,29 +56,16 @@ namespace GwinstekLCRTester
             _serialPort.WriteLine("SYST:CODE OFF");
         }
 
-        public string PortName { get; }
-        public uint BaudRate { get; }
-        public Parity ParityNumber { get; }
-        public uint DataBits { get; }
-        public StopBits StopBits { get; }
-        public Handshake HandshakeType { get; }
+        
 
         public void writeToCSV(decimal[] paramArray, string multiplierUnit)
-        {
-            
-            string path = Directory.GetCurrentDirectory() + "\\data.csv";
-            TextWriter writer;
-            if (!File.Exists(path))
-            {
-                File.Create(path).Close();
-                writer = File.AppendText(path);
-                writer.WriteLine(String.Format("\"{0}\",\"Om (Ω)\",\"czas pomiaru\"", multiplierUnit));
-            }
+        { 
+            string path = Directory.GetCurrentDirectory() + "\\pomiary_" + DateTime.Now + ".csv";
 
-            writer = File.AppendText(path);
+            TextWriter writer = File.CreateText(path);
+            writer.WriteLine(String.Format("\"{0}\",\"Om (Ω)\",\"czas pomiaru\"", multiplierUnit));
             writer.WriteLine("\"{0}\",\"{1}\",\"{2}\"", paramArray[0], paramArray[1], DateTime.Now);
             writer.Close();
-            
         }
 
 
@@ -121,6 +114,7 @@ namespace GwinstekLCRTester
         /* dla liczb, które po przemnożeniu przez 1000 nadal mają liczby po przecinku funkcja je zaokrągla*/
         public void changeHzInDevice(string HzString)
         {
+
             int Hz = -1;
             try
             {
