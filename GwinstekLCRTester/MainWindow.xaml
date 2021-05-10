@@ -27,21 +27,23 @@
         <ComboBox HorizontalAlignment="Left" VerticalAlignment="Top" Name="StopBitsList" Width="200" FontSize="12" Margin="235,417,0,0" Height="20" RenderTransformOrigin="0.675,-0.366" Grid.Column="1"/>
         <ComboBox HorizontalAlignment="Left" VerticalAlignment="Top" Name="Handshakes" Width="200" FontSize="12" Margin="235,471,0,0" Height="20" RenderTransformOrigin="0.675,-0.366" Grid.Column="1"/>
         <Border BorderThickness="1" CornerRadius="10" BorderBrush="Black" HorizontalAlignment="Left" Height="400" Margin="10,0,0,0" VerticalAlignment="Center" Width="449" Grid.Column="1"/>
-        <TextBlock HorizontalAlignment="Left" Text="Hz" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="900,208,0,0" Width="50" Grid.Column="1"/>
-        <TextBox HorizontalAlignment="Left" Name="Freq1" Height="34" Margin="695,208,0,0" Text="0" TextWrapping="Wrap" FontSize="20" VerticalAlignment="Top" Width="200" Grid.Column="1"/>
+        <TextBlock HorizontalAlignment="Left" Text="Hz" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="890,206,0,0" Width="50" Grid.Column="1"/>
+        <TextBox HorizontalAlignment="Left" Name="Freq1" Height="34" Margin="685,202,0,0" Text="0" TextWrapping="Wrap" FontSize="20" VerticalAlignment="Top" Width="200" Grid.Column="1"/>
         <Border BorderThickness="1" CornerRadius="10" BorderBrush="Black" HorizontalAlignment="Left" Height="400" VerticalAlignment="Center" Width="40" Margin="1465,0,0,0" Grid.Column="1"/>
-        <TextBlock HorizontalAlignment="Left" Text="Częstotliwość 1:" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="526,208,0,0" Grid.Column="1"/>
-        <TextBlock HorizontalAlignment="Left" Text="Hz" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="900,208,0,0" Width="50" Grid.Column="1"/>
-        <TextBlock HorizontalAlignment="Left" Text="Hz" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="900,270,0,0" Width="50" Grid.Column="1"/>
-        <TextBox HorizontalAlignment="Left" Name="Freq2" Height="34" Margin="695,267,0,0" Text="0" TextWrapping="Wrap" FontSize="20" VerticalAlignment="Top" Width="200" Grid.Column="1"/>
-        <TextBlock HorizontalAlignment="Left" Text="Częstotliwość 2:" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="526,270,0,0" Grid.Column="1"/>
-        <TextBlock HorizontalAlignment="Left" Text="Hz" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Center" Margin="900,0,0,0" Width="50" Grid.Column="1"/>
-        <TextBox HorizontalAlignment="Left" Name="Freq3" Height="34" Margin="695,337,0,0" Text="0" TextWrapping="Wrap" FontSize="20" VerticalAlignment="Top" Width="200" Grid.Column="1"/>
-        <TextBlock HorizontalAlignment="Left" Text="Częstotliwość 3:" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Center" Margin="526,0,0,0" Grid.Column="1"/>
-        <TextBlock HorizontalAlignment="Left" Text="Hz" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Center" Margin="900,0,0,0" Width="50" Grid.Column="1"/>
-        <TextBlock HorizontalAlignment="Left" Text="Hz" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="900,393,0,0" Width="50" Grid.Column="1"/>
-        <TextBox HorizontalAlignment="Left" Name="Freq4" Height="34" Margin="695,389,0,0" Text="0" TextWrapping="Wrap" FontSize="20" VerticalAlignment="Top" Width="200" Grid.Column="1"/>
-        <TextBlock HorizontalAlignment="Left" Text="Częstotliwość 4:" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="526,393,0,0" Grid.Column="1"/>
-        <Border BorderThickness="1" CornerRadius="10" BorderBrush="Black" HorizontalAlignment="Left" Height="400" Margin="485,0,0,0" VerticalAlignment="Center" Width="615" Grid.Column="1"/>
+        <TextBlock HorizontalAlignment="Left" Text="Częstotliwość 1:" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="516,202,0,0" Grid.Column="1"/>
+        <TextBlock HorizontalAlignment="Left" Text="Hz" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="890,251,0,0" Width="50" Grid.Column="1"/>
+        <TextBox HorizontalAlignment="Left" Name="Freq2" Height="34" Margin="685,248,0,0" Text="0" TextWrapping="Wrap" FontSize="20" VerticalAlignment="Top" Width="200" Grid.Column="1"/>
+        <TextBlock HorizontalAlignment="Left" Text="Częstotliwość 2:" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="516,251,0,0" Grid.Column="1"/>
+        <TextBox HorizontalAlignment="Left" Name="Freq3" Height="34" Margin="685,302,0,0" Text="0" TextWrapping="Wrap" FontSize="20" VerticalAlignment="Top" Width="200" Grid.Column="1"/>
+        <TextBlock HorizontalAlignment="Left" Text="Częstotliwość 3:" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="516,306,0,0" Grid.Column="1"/>
+        <TextBlock HorizontalAlignment="Left" Text="Hz" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="890,306,0,0" Width="50" Grid.Column="1"/>
+        <TextBlock HorizontalAlignment="Left" Text="Hz" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="890,360,0,0" Width="50" Grid.Column="1"/>
+        <TextBox HorizontalAlignment="Left" Name="Freq4" Height="34" Margin="685,356,0,0" Text="0" TextWrapping="Wrap" FontSize="20" VerticalAlignment="Top" Width="200" Grid.Column="1"/>
+        <TextBlock HorizontalAlignment="Left" Text="Częstotliwość 4:" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="516,360,0,0" Grid.Column="1"/>
+        <Border BorderThickness="1" CornerRadius="10" BorderBrush="Black" HorizontalAlignment="Left" Height="400" Margin="478,0,0,0" VerticalAlignment="Center" Width="874" Grid.Column="1"/>
+        <ComboBox Grid.Column="1" HorizontalAlignment="Left" Margin="685,414,0,0" Name="unitList" VerticalAlignment="Top" Width="200"></ComboBox>
+        <TextBlock HorizontalAlignment="Left" Text="Jednostka:" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="540,412,0,0" Grid.Column="1"/>
+        <ComboBox Grid.Column="1" HorizontalAlignment="Left" Margin="685,463,0,0" Name="ModeList" VerticalAlignment="Top" Width="200"/>
+        <TextBlock HorizontalAlignment="Left" Text="Tryb pomiaru:" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="525,458,0,0" Grid.Column="1"/>
     </Grid>
 </Window>

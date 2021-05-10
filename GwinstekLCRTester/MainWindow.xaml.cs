@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.IO;
 
 namespace GwinstekLCRTester
 {
@@ -36,6 +37,14 @@ namespace GwinstekLCRTester
                 Parity.Mark
             };
 
+            string[] units = new string[]
+            { 
+                "F",
+                "nF",
+                "mF",
+                "μF"
+            };
+
             StopBits[] stopBits = new StopBits[]
             {
                 StopBits.One, 
@@ -57,12 +66,17 @@ namespace GwinstekLCRTester
             {
                 ParityList.ItemsSource = parities;
                 ParityList.SelectedItem = parities[0];
-
                 StopBitsList.ItemsSource = stopBits;
                 StopBitsList.SelectedItem = stopBits[0];
 
                 Handshakes.ItemsSource = handshakes;
                 Handshakes.SelectedItem = handshakes[0];
+
+                unitList.ItemsSource = units;
+                unitList.SelectedItem = units[0];
+
+                ModeList.ItemsSource = RSCommunication.measurementTypes;
+                ModeList.SelectedItem = RSCommunication.measurementTypes[0];
 
                 ComPorts.ItemsSource = ports;
                 ComPorts.SelectedItem = ports[0];
@@ -101,14 +115,21 @@ namespace GwinstekLCRTester
                 handshakeType: handshake
              );
 
-            foreach(string freq in frequencies)
+            string path = Directory.GetCurrentDirectory() + "\\pomiary_" + DateTime.Now.ToString("dd-M-yyyy--HH-mm-ss") + ".csv";
+            TextWriter writer = File.CreateText(path);
+            writer.WriteLine(String.Format("\"{0}\",\"Om (Ω)\",\"czas pomiaru\"", unitList.Text));
+
+            foreach (string freq in frequencies)
             {
                 System.Threading.Thread.Sleep(3000);
                 rsConnector.changeHzInDevice(freq);
-                decimal[] result = rsConnector.getBasicParametricData();
+                decimal[] result = rsConnector.getBasicParametricData(unitList.Text);
                 ResultBox.Text = result[0].ToString() + " " + result[1].ToString();
+                rsConnector.writeToCSV(result, path, writer);
             }
 
+
+            writer.Close();
             rsConnector.unlockKeypadInDevice();
         }
     }
