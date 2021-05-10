@@ -13,6 +13,7 @@ namespace GwinstekLCRTester
 
 
         private static SerialPort _serialPort;
+        private static TextWriter writer;
         
         public static readonly string[] measurementTypes = { ///0 is 0xE9
 
@@ -59,13 +60,23 @@ namespace GwinstekLCRTester
         
 
         public void writeToCSV(decimal[] paramArray, string multiplierUnit)
-        { 
-            string path = Directory.GetCurrentDirectory() + "\\pomiary_" + DateTime.Now.ToString("dd-M-yyyy--HH-mm-ss") + ".csv";
+        {
 
-            TextWriter writer = File.CreateText(path);
-            writer.WriteLine(String.Format("\"{0}\",\"Om (Ω)\",\"czas pomiaru\"", multiplierUnit));
-            writer.WriteLine("\"{0}\",\"{1}\",\"{2}\"", paramArray[0], paramArray[1], DateTime.Now);
-            writer.Close();
+            string path = Directory.GetCurrentDirectory() + "\\pomiary_" + DateTime.Now.ToString("dd-M-yyyy--HH-mm-ss") + ".csv";
+            if (RSCommunication.writer == null) {
+                RSCommunication.writer = File.AppendText(path);
+                RSCommunication.writer.WriteLine(String.Format("\"{0}\",\"Om (Ω)\",\"czas pomiaru\"", multiplierUnit));
+            }
+            else
+            {
+                writer.WriteLine("\"{0}\",\"{1}\",\"{2}\"", paramArray[0], paramArray[1], DateTime.Now);
+            }
+            
+        }
+
+        public void closeCSV()
+        {
+            RSCommunication.writer.Close();
         }
 
 
