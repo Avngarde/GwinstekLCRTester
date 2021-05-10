@@ -14,7 +14,7 @@ namespace GwinstekLCRTester
 
         private static SerialPort _serialPort;
         private static TextWriter writer;
-        
+
         public static readonly string[] measurementTypes = { ///0 is 0xE9
 
             "Cs-Rs", "Cs-D", "Cp-Rp",
@@ -51,28 +51,27 @@ namespace GwinstekLCRTester
             }
             catch (System.ArgumentOutOfRangeException e) { Console.WriteLine(e.Message); }
 
-
             _serialPort.RtsEnable = true;
             if (_serialPort.IsOpen) _serialPort.Close();
             _serialPort.Open();
-
             if (!_serialPort.IsOpen) throw new Exception("Nie udało otworzyć się portu o takich parametrach");
             _serialPort.WriteLine("SYST:CODE OFF");
         }
 
-        
+
 
         public void writeToCSV(decimal[] paramArray, string multiplierUnit)
         {
 
             string path = Directory.GetCurrentDirectory() + "\\pomiary_" + DateTime.Now.ToString("dd-M-yyyy--HH-mm-ss") + ".csv";
-            if (writer == null) {
+            if (writer == null)
+            {
                 writer = File.AppendText(path);
                 writer.WriteLine(String.Format("\"{0}\",\"Om (Ω)\",\"czas pomiaru\"", multiplierUnit));
             }
             writer.WriteLine("\"{0}\",\"{1}\",\"{2}\"", paramArray[0], paramArray[1], DateTime.Now.ToString("dd-M-yyyy--HH-mm-ss"));
-            
-            
+
+
         }
 
         public void closeCSV()
@@ -106,7 +105,8 @@ namespace GwinstekLCRTester
             stringParams[1] = stringParams[1].Replace(".", ",");
 
 
-            switch (muliplierUnit) {
+            switch (muliplierUnit)
+            {
                 case "pF":
                     returnParametricData[0] *= decimal.Parse("10e-12", NumberStyles.Float);
                     break;
@@ -144,8 +144,7 @@ namespace GwinstekLCRTester
 
 
             if (Hz < 0) throw new Exception("Podano liczbę ujemną dla Hz!");
-            if (Hz == 0) throw new Exception("Liczba Hz nie może być równa 0 !");
-            if (Hz < 10) throw new Exception("Podano za małą wartość dla Hz! (min 10Hz)");
+            if (Hz < 10 && Hz != 0) throw new Exception("Podano za małą wartość dla Hz! (min 10Hz)");
             if (Hz > 300000) throw new Exception("Podano za dużą wartość dla Hz! (maks 30kHz)");
 
             string command = "FREQ " + Hz;
