@@ -67,7 +67,7 @@ namespace GwinstekLCRTester
                 ComPorts.SelectedItem = ports[0];
             } catch (IndexOutOfRangeException e) { 
                 MessageBox.Show("Nie znaleziono portów COM");
-                // Close(); // Exits program if no COM ports found
+                Close(); // Exits program if no COM ports found
             };
         }
 
