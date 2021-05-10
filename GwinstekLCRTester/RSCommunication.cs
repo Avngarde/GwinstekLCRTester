@@ -63,9 +63,9 @@ namespace GwinstekLCRTester
         {
 
             string path = Directory.GetCurrentDirectory() + "\\pomiary_" + DateTime.Now.ToString("dd-M-yyyy--HH-mm-ss") + ".csv";
-            if (RSCommunication.writer == null) {
-                RSCommunication.writer = File.AppendText(path);
-                RSCommunication.writer.WriteLine(String.Format("\"{0}\",\"Om (Ω)\",\"czas pomiaru\"", multiplierUnit));
+            if (writer == null) {
+                writer = File.AppendText(path);
+                writer.WriteLine(String.Format("\"{0}\",\"Om (Ω)\",\"czas pomiaru\"", multiplierUnit));
             }
             else
             {
@@ -76,7 +76,12 @@ namespace GwinstekLCRTester
 
         public void closeCSV()
         {
-            RSCommunication.writer.Close();
+            writer.Close();
+        }
+
+        public void closePort()
+        {
+            _serialPort.Close();
         }
 
 
