@@ -24,7 +24,7 @@ namespace GwinstekLCRTester
         {
             InitializeComponent();
 
-            // Set data for connection input
+            // Set data for WPF form
             string[] ports = SerialPort.GetPortNames();
 
             Parity[] parities = new Parity[]
@@ -52,6 +52,7 @@ namespace GwinstekLCRTester
                 Handshake.XOnXOff
             };
 
+
             try
             {
                 ParityList.ItemsSource = parities;
@@ -65,20 +66,20 @@ namespace GwinstekLCRTester
 
                 ComPorts.ItemsSource = ports;
                 ComPorts.SelectedItem = ports[0];
-            } catch (IndexOutOfRangeException e) { 
+            } catch (IndexOutOfRangeException) { 
                 MessageBox.Show("Nie znaleziono portów COM");
-                Close(); // Exits program if no COM ports found
+                Close();
             };
         }
 
         private void Test_Data(object sender, RoutedEventArgs e)
         {
-            var portName = "COM1";
-            var transmissionSpeed = int.Parse(TransSpeed.Text);
-            var dataBits = int.Parse(DataBit.Text);
-            var parity = ParityList.Text;
-            var stopBits = StopBitsList.Text;
-            var handshake = Handshakes.Text;
+            var portName = ComPorts.Text;
+            var baudRate = uint.Parse(TransSpeed.Text);
+            var dataBits = uint.Parse(DataBit.Text);
+            var parity = (Parity)Enum.Parse(typeof(Parity),ParityList.Text);
+            var stopBits = (StopBits)Enum.Parse(typeof(StopBits), StopBitsList.Text);
+            var handshake = (Handshake)Enum.Parse(typeof(Handshake), Handshakes.Text);
 
             string[] frequencies = new string[]
             {
@@ -88,10 +89,27 @@ namespace GwinstekLCRTester
                 Freq4.Text,
             };
 
+            // Start the testing
+
+
+            var rsConnector = new RSCommunication(
+                portName: portName,
+                baudRate: baudRate,
+                parityNumber: parity,
+                dataBits: dataBits,
+                stopBits: stopBits,
+                handshakeType: handshake
+             );
+
             foreach(string freq in frequencies)
             {
-                RSCommunication.changeHzInDevice(freq);
+                System.Threading.Thread.Sleep(3000);
+                rsConnector.changeHzInDevice(freq);
+                decimal[] result = rsConnector.getBasicParametricData();
+                ResultBox.Text = result[0].ToString() + " " + result[1].ToString();
             }
+
+            rsConnector.unlockKeypadInDevice();
         }
     }
 }

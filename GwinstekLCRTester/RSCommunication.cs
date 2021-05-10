@@ -1,7 +1,9 @@
-using System.Text;
+﻿using System.Text;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.IO.Ports;
+using System;
 
 namespace GwinstekLCRTester
 {
@@ -9,7 +11,7 @@ namespace GwinstekLCRTester
     {
 
 
-        private SerialPort _serialPort;
+        private static SerialPort _serialPort;
         private TextWriter writter;
 
         public readonly string[] measurementTypes = { ///0 is 0xE9
@@ -22,9 +24,8 @@ namespace GwinstekLCRTester
             "Z-D", "Z-Q"
 
         };
-       
 
-        public static void connectToDevice(string portName, uint baudRate, Parity parityNumber, uint dataBits, StopBits stopBits, uint readTimeout = 500, uint writeTimeout = 500, Handshake handshakeType = Handshake.None)
+        public RSCommunication(string portName, uint baudRate, Parity parityNumber, uint dataBits, StopBits stopBits, Handshake handshakeType, int readTimeout = 500, int writeTimeout = 500)
         {
             _serialPort = new SerialPort();
 
@@ -45,8 +46,15 @@ namespace GwinstekLCRTester
 
             _serialPort.Open();
             if (!_serialPort.IsOpen) throw new Exception("Nie udało otworzyć się portu o takich parametrach");
+            _serialPort.WriteLine("SYST:CODE OFF");
         }
 
+        public string PortName { get; }
+        public uint BaudRate { get; }
+        public Parity ParityNumber { get; }
+        public uint DataBits { get; }
+        public StopBits StopBits { get; }
+        public Handshake HandshakeType { get; }
 
         void writeToCSV(decimal[] paramArray)
         {
@@ -65,9 +73,8 @@ namespace GwinstekLCRTester
 
 
 
-        decimal[] getBasicParametricData(string Querycommand)
+        public decimal[] getBasicParametricData(string Querycommand = "fetch?")
         {
-
             _serialPort.WriteLine(Querycommand.ToLower());
             byte[] rawBuffer = new byte[1024];
             StringBuilder outputMessage = new StringBuilder();
@@ -81,13 +88,13 @@ namespace GwinstekLCRTester
             }
 
             string[] stringParams = outputMessage.ToString().Split(",");
-            stringParams[0] = stringParams[0].Replace(".",",");
+            stringParams[0] = stringParams[0].Replace(".", ",");
             stringParams[1] = stringParams[1].Replace(".", ",");
             returnParametricData[0] = Decimal.Parse(stringParams[0], NumberStyles.Float);
             returnParametricData[1] = Decimal.Parse(stringParams[1], NumberStyles.Float);
 
             return returnParametricData;
-        } 
+        }
 
 
         /* dla liczb, które po przemnożeniu przez 1000 nadal mają liczby po przecinku funkcja je zaokrągla*/
@@ -97,18 +104,18 @@ namespace GwinstekLCRTester
             try
             {
                 Hz = (HzString.EndsWith("k") || HzString.EndsWith("K")) ? Convert.ToInt32(Convert.ToDecimal(HzString.Replace(".", ",").Remove(HzString.Length - 1)) * 1000) : Convert.ToInt32(HzString);
-            } 
-            catch(FormatException)
+            }
+            catch (FormatException)
             {
                 throw new Exception("Podano wartość dla Hz w złej formie!");
             }
-            
+
 
             if (Hz < 0) throw new Exception("Podano liczbę ujemną dla Hz!");
             if (Hz == 0) throw new Exception("Liczba Hz nie może być równa 0 !");
             if (Hz < 10) throw new Exception("Podano za małą wartość dla Hz! (min 10Hz)");
             if (Hz > 30000) throw new Exception("Podano za dużą wartość dla Hz! (maks 30kHz)");
-            
+
             string command = "FREQ " + Hz;
             _serialPort.WriteLine(command);
         }
@@ -118,9 +125,9 @@ namespace GwinstekLCRTester
         {
             if (!measurementTypes.Contains(command)) throw new Exception(String.Format("Podano błędną wartość dla funkcji mierzenia! ({0})", command));
 
-            command = command.Insert(0, "func ").ToLower().Replace("z-0r", "z-thr").Replace("z-0d","z-thd");
+            command = command.Insert(0, "func ").ToLower().Replace("z-0r", "z-thr").Replace("z-0d", "z-thd");
             _serialPort.WriteLine(command);
-           
+
         }
 
 
@@ -130,6 +137,6 @@ namespace GwinstekLCRTester
             _serialPort.WriteLine("SYST:KEYLOCK OFF");
         }
 
-        
+
     }
 }

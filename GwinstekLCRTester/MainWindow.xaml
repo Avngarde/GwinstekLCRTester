@@ -17,9 +17,9 @@
         <TextBox HorizontalAlignment="Left" Name="TransSpeed" Height="34" Margin="235,238,0,0" Text="0" TextWrapping="Wrap" FontSize="20" VerticalAlignment="Top" Width="200" Grid.Column="1"/>
         <TextBlock HorizontalAlignment="Left" Text="Bity danych" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="72,298,0,0" Grid.Column="1"/>
         <TextBox HorizontalAlignment="Left" Name="DataBit" Height="34" Margin="235,298,0,0" Text="0" TextWrapping="Wrap" FontSize="20" VerticalAlignment="Top" Width="200" Grid.Column="1"/>
-        <Button Content="Zczytaj dane" FontSize="40" HorizontalAlignment="Center" Margin="0,569,0,0" VerticalAlignment="Top" Click="Test_Data" Height="105" Width="526" Grid.Column="1" />
+        <Button Content="Zczytaj dane" FontSize="40" HorizontalAlignment="Center" Margin="0,569,0,0" VerticalAlignment="Top" Click="Test_Data" Height="105" Width="526" Grid.Column="1" FontFamily="Meiryo" />
         <TextBlock HorizontalAlignment="Left" Height="55" FontSize="25" Margin="980,480,0,0" Text="Status: brak" TextWrapping="Wrap" VerticalAlignment="Top" Width="355" TextAlignment="Center" Grid.Column="1" />
-        <TextBox HorizontalAlignment="Left" Margin="980,162,0,0" Text="Tu będą wypisywane dane odczytu" IsReadOnly="True" TextWrapping="Wrap" VerticalAlignment="Top" Width="355" Height="318" Grid.Column="1"/>
+        <TextBox HorizontalAlignment="Left" Name="ResultBox" Margin="980,162,0,0" Text="Tu będą wypisywane dane odczytu" IsReadOnly="True" TextWrapping="Wrap" VerticalAlignment="Top" Width="355" Height="318" Grid.Column="1"/>
         <ComboBox HorizontalAlignment="Left" VerticalAlignment="Top" Name="ParityList" Width="200" FontSize="12" Margin="235,360,0,0" Height="20" RenderTransformOrigin="0.675,-0.366" Grid.Column="1"/>
         <TextBlock HorizontalAlignment="Left" Text="Parzystość" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="72,354,0,0" Grid.Column="1"/>
         <TextBlock HorizontalAlignment="Left" Text="Bity stopu" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="78,408,0,0" Grid.Column="1"/>
@@ -42,6 +42,6 @@
         <TextBlock HorizontalAlignment="Left" Text="Hz" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="900,393,0,0" Width="50" Grid.Column="1"/>
         <TextBox HorizontalAlignment="Left" Name="Freq4" Height="34" Margin="695,389,0,0" Text="0" TextWrapping="Wrap" FontSize="20" VerticalAlignment="Top" Width="200" Grid.Column="1"/>
         <TextBlock HorizontalAlignment="Left" Text="Częstotliwość 4:" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="526,393,0,0" Grid.Column="1"/>
-        <Border BorderThickness="1" CornerRadius="10" BorderBrush="Black" HorizontalAlignment="Left" Height="400" Margin="485,0,0,0" VerticalAlignment="Center" Width="880" Grid.Column="1"/>
+        <Border BorderThickness="1" CornerRadius="10" BorderBrush="Black" HorizontalAlignment="Left" Height="400" Margin="485,0,0,0" VerticalAlignment="Center" Width="615" Grid.Column="1"/>
     </Grid>
 </Window>
