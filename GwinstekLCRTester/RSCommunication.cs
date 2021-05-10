@@ -52,7 +52,10 @@ namespace GwinstekLCRTester
             catch (System.ArgumentOutOfRangeException e) { Console.WriteLine(e.Message); }
 
 
+            _serialPort.RtsEnable = true;
+            if (_serialPort.IsOpen) _serialPort.Close();
             _serialPort.Open();
+
             if (!_serialPort.IsOpen) throw new Exception("Nie udało otworzyć się portu o takich parametrach");
             _serialPort.WriteLine("SYST:CODE OFF");
         }
