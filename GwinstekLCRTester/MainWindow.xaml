@@ -14,10 +14,8 @@
         <ComboBox HorizontalAlignment="Left" Name="ComPorts" VerticalAlignment="Top" Width="200" FontSize="12" Margin="235,190,0,0" Height="20" RenderTransformOrigin="0.675,-0.366" Grid.Column="1"/>
         <TextBlock HorizontalAlignment="Left" Text="Wybierz port COM" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="40,186,0,0" Grid.Column="1"/>
         <TextBlock HorizontalAlignment="Left" Text="Szybkość transmisji" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="40,242,0,0" Grid.Column="1"/>
-        <TextBox HorizontalAlignment="Left" Name="TransSpeed" Height="34" Margin="235,238,0,0" Text="0" TextWrapping="Wrap" FontSize="20" VerticalAlignment="Top" Width="200" Grid.Column="1"/>
         <TextBlock HorizontalAlignment="Left" Text="Bity danych" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="72,298,0,0" Grid.Column="1"/>
-        <TextBox HorizontalAlignment="Left" Name="DataBit" Height="34" Margin="235,298,0,0" Text="0" TextWrapping="Wrap" FontSize="20" VerticalAlignment="Top" Width="200" Grid.Column="1"/>
-        <Button Content="Zczytaj dane" FontSize="40" HorizontalAlignment="Center" Margin="0,569,0,0" VerticalAlignment="Top" Click="Test_Data" Height="105" Width="526" Grid.Column="1" FontFamily="Meiryo" />
+        <Button Content="Zczytaj dane" FontSize="40" HorizontalAlignment="Center" Name="SendButton" Margin="0,569,0,0" VerticalAlignment="Top" Click="Test_Data" Height="105" Width="526" Grid.Column="1" FontFamily="Meiryo" />
         <TextBlock HorizontalAlignment="Left" Height="55" FontSize="25" Margin="980,480,0,0" Text="Status: brak" TextWrapping="Wrap" VerticalAlignment="Top" Width="355" TextAlignment="Center" Grid.Column="1" />
         <TextBox HorizontalAlignment="Left" Name="ResultBox" Margin="980,162,0,0" Text="Tu będą wypisywane dane odczytu" IsReadOnly="True" TextWrapping="Wrap" VerticalAlignment="Top" Width="355" Height="318" Grid.Column="1"/>
         <ComboBox HorizontalAlignment="Left" VerticalAlignment="Top" Name="ParityList" Width="200" FontSize="12" Margin="235,360,0,0" Height="20" RenderTransformOrigin="0.675,-0.366" Grid.Column="1"/>
@@ -45,5 +43,7 @@
         <TextBlock HorizontalAlignment="Left" Text="Jednostka:" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="540,412,0,0" Grid.Column="1"/>
         <ComboBox Grid.Column="1" HorizontalAlignment="Left" Margin="685,463,0,0" Name="ModeList" VerticalAlignment="Top" Width="200"/>
         <TextBlock HorizontalAlignment="Left" Text="Tryb pomiaru:" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="525,458,0,0" Grid.Column="1"/>
+        <ComboBox Grid.Column="1" Name="TransSpeed" HorizontalAlignment="Left" Margin="235,243,0,0" VerticalAlignment="Top" Width="200"/>
+        <ComboBox Name="DataBit" Grid.Column="1" HorizontalAlignment="Left" Margin="235,305,0,0" VerticalAlignment="Top" Width="200"/>
     </Grid>
 </Window>

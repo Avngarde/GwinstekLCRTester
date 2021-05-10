@@ -19,8 +19,6 @@ namespace GwinstekLCRTester
 {
     public partial class MainWindow : Window
     {
-        static SerialPort serialPort;
-
         public MainWindow()
         {
             InitializeComponent();
@@ -43,6 +41,24 @@ namespace GwinstekLCRTester
                 "nF",
                 "mF",
                 "μF"
+            };
+
+            uint[] bits = new uint[] 
+            { 
+                7,
+                8
+            };
+
+            uint[] baudRates = new uint[] 
+            { 
+                4800,
+                9600,
+                14400,
+                19200,
+                38400,
+                56000,
+                57600,
+                115200
             };
 
             StopBits[] stopBits = new StopBits[]
@@ -78,8 +94,15 @@ namespace GwinstekLCRTester
                 ModeList.ItemsSource = RSCommunication.measurementTypes;
                 ModeList.SelectedItem = RSCommunication.measurementTypes[0];
 
+                TransSpeed.ItemsSource = baudRates;
+                TransSpeed.SelectedItem = baudRates[0];
+
+                DataBit.ItemsSource = bits;
+                DataBit.SelectedItem = bits[1];
+
                 ComPorts.ItemsSource = ports;
                 ComPorts.SelectedItem = ports[0];
+
             } catch (IndexOutOfRangeException) { 
                 MessageBox.Show("Nie znaleziono portów COM");
                 Close();
@@ -89,8 +112,8 @@ namespace GwinstekLCRTester
         private void Test_Data(object sender, RoutedEventArgs e)
         {
             var portName = ComPorts.Text;
-            var baudRate = uint.Parse(TransSpeed.Text);
-            var dataBits = uint.Parse(DataBit.Text);
+            var baudRate = TransSpeed.Text == "" ? 11550 : uint.Parse(DataBit.Text);
+            var dataBits = DataBit.Text == "" ? 8 : uint.Parse(DataBit.Text);
             var parity = (Parity)Enum.Parse(typeof(Parity),ParityList.Text);
             var stopBits = (StopBits)Enum.Parse(typeof(StopBits), StopBitsList.Text);
             var handshake = (Handshake)Enum.Parse(typeof(Handshake), Handshakes.Text);
@@ -103,9 +126,8 @@ namespace GwinstekLCRTester
                 Freq4.Text,
             };
 
+
             // Start the testing
-
-
             var rsConnector = new RSCommunication(
                 portName: portName,
                 baudRate: baudRate,
@@ -115,22 +137,25 @@ namespace GwinstekLCRTester
                 handshakeType: handshake
              );
 
-        
-
+            SendButton.Content = "Testuję...";
             foreach (string freq in frequencies)
             {
-                System.Threading.Thread.Sleep(3000);
-                rsConnector.changeHzInDevice(freq);
-                decimal[] result = rsConnector.getBasicParametricData(unitList.Text);
-                ResultBox.Text = result[0].ToString() + " " + result[1].ToString();
-                rsConnector.writeToCSV(result, unitList.Text);
+                if (freq != "")
+                {
+                    System.Threading.Thread.Sleep(3000);
+                    rsConnector.changeHzInDevice(freq);
+                    decimal[] result = rsConnector.getBasicParametricData(unitList.Text);
+                    ResultBox.Text = result[0].ToString() + " " + result[1].ToString();
+                    rsConnector.writeToCSV(result, unitList.Text);
+                }
             }
 
+
+            SendButton.Content = "Zbierz dane";
             rsConnector.closeCSV();
             System.Threading.Thread.Sleep(200);
             rsConnector.unlockKeypadInDevice();
             rsConnector.closePort();
-            
         }
     }
 }
