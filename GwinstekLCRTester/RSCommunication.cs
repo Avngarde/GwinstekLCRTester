@@ -67,10 +67,8 @@ namespace GwinstekLCRTester
                 writer = File.AppendText(path);
                 writer.WriteLine(String.Format("\"{0}\",\"Om (Ω)\",\"czas pomiaru\"", multiplierUnit));
             }
-            else
-            {
-                writer.WriteLine("\"{0}\",\"{1}\",\"{2}\"", paramArray[0], paramArray[1], DateTime.Now);
-            }
+            writer.WriteLine("\"{0}\",\"{1}\",\"{2}\"", paramArray[0], paramArray[1], DateTime.Now.ToString("dd-M-yyyy--HH-mm-ss"));
+            
             
         }
 
@@ -104,24 +102,25 @@ namespace GwinstekLCRTester
             stringParams[0] = stringParams[0].Replace(".", ",");
             stringParams[1] = stringParams[1].Replace(".", ",");
 
+
             switch (muliplierUnit) {
                 case "pF":
-                    returnParametricData[0] *= 0.000000000001m;
+                    returnParametricData[0] *= decimal.Parse("10e-12", NumberStyles.Float);
                     break;
                 case "nF":
-                    returnParametricData[0] *= 0.000000001m;
+                    returnParametricData[0] *= decimal.Parse("10e-09", NumberStyles.Float);
                     break;
 
-                case "µF":
-                    returnParametricData[0] *= 0.000001m;
+                case "μF":
+                    returnParametricData[0] *= decimal.Parse("10e-06", NumberStyles.Float);
                     break;
                 case "mF":
-                    returnParametricData[0] *= 0.001m;
+                    returnParametricData[0] *= decimal.Parse("10e-03", NumberStyles.Float);
                     break;
             }
 
-            returnParametricData[0] = Decimal.Parse(stringParams[0], NumberStyles.Float);
-            returnParametricData[1] = Decimal.Parse(stringParams[1], NumberStyles.Float);
+            returnParametricData[0] = decimal.Parse(stringParams[0], NumberStyles.Float);
+            returnParametricData[1] = decimal.Parse(stringParams[1], NumberStyles.Float);
             return returnParametricData;
         }
 
@@ -144,7 +143,7 @@ namespace GwinstekLCRTester
             if (Hz < 0) throw new Exception("Podano liczbę ujemną dla Hz!");
             if (Hz == 0) throw new Exception("Liczba Hz nie może być równa 0 !");
             if (Hz < 10) throw new Exception("Podano za małą wartość dla Hz! (min 10Hz)");
-            if (Hz > 30000) throw new Exception("Podano za dużą wartość dla Hz! (maks 30kHz)");
+            if (Hz > 300000) throw new Exception("Podano za dużą wartość dla Hz! (maks 30kHz)");
 
             string command = "FREQ " + Hz;
             _serialPort.WriteLine(command);
@@ -153,7 +152,7 @@ namespace GwinstekLCRTester
 
         public void setMeasurementInDevice(string command)
         {
-            if (!measurementTypes.Contains(command)) throw new Exception(String.Format("Podano błędną wartość dla funkcji mierzenia! ({0})", command));
+            if (!measurementTypes.Contains(command)) throw new Exception(string.Format("Podano błędną wartość dla funkcji mierzenia! ({0})", command));
 
             command = command.Insert(0, "func ").ToLower().Replace("z-0r", "z-thr").Replace("z-0d", "z-thd");
             _serialPort.WriteLine(command);

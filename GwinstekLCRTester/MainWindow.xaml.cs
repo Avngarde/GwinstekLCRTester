@@ -115,9 +115,7 @@ namespace GwinstekLCRTester
                 handshakeType: handshake
              );
 
-            string path = Directory.GetCurrentDirectory() + "\\pomiary_" + DateTime.Now.ToString("dd-M-yyyy--HH-mm-ss") + ".csv";
-            TextWriter writer = File.CreateText(path);
-            writer.WriteLine(String.Format("\"{0}\",\"Om (Ω)\",\"czas pomiaru\"", unitList.Text));
+        
 
             foreach (string freq in frequencies)
             {
@@ -125,12 +123,14 @@ namespace GwinstekLCRTester
                 rsConnector.changeHzInDevice(freq);
                 decimal[] result = rsConnector.getBasicParametricData(unitList.Text);
                 ResultBox.Text = result[0].ToString() + " " + result[1].ToString();
-                rsConnector.writeToCSV(result, path, writer);
+                rsConnector.writeToCSV(result, unitList.Text);
             }
 
-
-            writer.Close();
+            rsConnector.closeCSV();
+            System.Threading.Thread.Sleep(200);
             rsConnector.unlockKeypadInDevice();
+            rsConnector.closePort();
+            
         }
     }
 }
