@@ -60,7 +60,7 @@ namespace GwinstekLCRTester
 
         public void writeToCSV(decimal[] paramArray, string multiplierUnit)
         { 
-            string path = Directory.GetCurrentDirectory() + "\\pomiary_" + DateTime.Now + ".csv";
+            string path = Directory.GetCurrentDirectory() + "\\pomiary_" + DateTime.Now.ToString("dd-M-yyyy--HH-mm-ss") + ".csv";
 
             TextWriter writer = File.CreateText(path);
             writer.WriteLine(String.Format("\"{0}\",\"Om (Ω)\",\"czas pomiaru\"", multiplierUnit));
