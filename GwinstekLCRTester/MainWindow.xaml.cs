@@ -112,7 +112,7 @@ namespace GwinstekLCRTester
         private void Test_Data(object sender, RoutedEventArgs e)
         {
             var portName = ComPorts.Text;
-            var baudRate = TransSpeed.Text == "" ? 11550 : uint.Parse(DataBit.Text);
+            var baudRate = TransSpeed.Text == "" ? 115200 : uint.Parse(TransSpeed.Text);
             var dataBits = DataBit.Text == "" ? 8 : uint.Parse(DataBit.Text);
             var parity = (Parity)Enum.Parse(typeof(Parity),ParityList.Text);
             var stopBits = (StopBits)Enum.Parse(typeof(StopBits), StopBitsList.Text);
@@ -140,7 +140,7 @@ namespace GwinstekLCRTester
             SendButton.Content = "Testuję...";
             foreach (string freq in frequencies)
             {
-                if (freq != "")
+                if (freq != "" || freq != "0")
                 {
                     System.Threading.Thread.Sleep(3000);
                     rsConnector.changeHzInDevice(freq);
