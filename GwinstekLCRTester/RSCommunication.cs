@@ -24,9 +24,7 @@ namespace GwinstekLCRTester
         };
        
 
-
-
-        public RSCommunication(string portName, uint baudRate, uint parityNumber, uint dataBits, uint stopBits, uint readTimeout = 500, uint writeTimeout = 500, uint handshakeType = 0)
+        public static void connectToDevice(string portName, uint baudRate, Parity parityNumber, uint dataBits, StopBits stopBits, uint readTimeout = 500, uint writeTimeout = 500, Handshake handshakeType = Handshake.None)
         {
             _serialPort = new SerialPort();
 
@@ -38,21 +36,16 @@ namespace GwinstekLCRTester
 
             try
             {
-                _serialPort.Handshake = (Handshake)handshakeType;
-                _serialPort.Parity = (Parity)parityNumber;
-                _serialPort.StopBits = (StopBits)stopBits;
+                _serialPort.Handshake = handshakeType;
+                _serialPort.Parity = parityNumber;
+                _serialPort.StopBits = stopBits;
             }
             catch (System.ArgumentOutOfRangeException e) { Console.WriteLine(e.Message); }
 
 
             _serialPort.Open();
             if (!_serialPort.IsOpen) throw new Exception("Nie udało otworzyć się portu o takich parametrach");
-
-
         }
-
-
-        
 
 
         void writeToCSV(decimal[] paramArray)
