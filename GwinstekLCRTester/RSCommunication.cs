@@ -13,7 +13,7 @@ namespace GwinstekLCRTester
 
 
         private static SerialPort _serialPort;
-        private TextWriter writter;
+        
 
         public static readonly string[] measurementTypes = { ///0 is 0xE9
 
@@ -57,19 +57,22 @@ namespace GwinstekLCRTester
         public StopBits StopBits { get; }
         public Handshake HandshakeType { get; }
 
-        void writeToCSV(decimal[] paramArray, string multiplierUnit)
+        public void writeToCSV(decimal[] paramArray, string multiplierUnit)
         {
+            
             string path = Directory.GetCurrentDirectory() + "\\data.csv";
+            TextWriter writer;
             if (!File.Exists(path))
             {
                 File.Create(path).Close();
-                if (writter == null) writter = File.AppendText(path);
-                writter.WriteLine(String.Format("\"{0}\",\"Om (Ω)\",\"czas pomiaru\"", multiplierUnit));
+                writer = File.AppendText(path);
+                writer.WriteLine(String.Format("\"{0}\",\"Om (Ω)\",\"czas pomiaru\"", multiplierUnit));
             }
 
-            if (writter == null) writter = File.AppendText(path);
-            writter.WriteLine("\"{0}\",\"{1}\",\"{2}\"", paramArray[0], paramArray[1], DateTime.Now);
-            writter.Close();
+            writer = File.AppendText(path);
+            writer.WriteLine("\"{0}\",\"{1}\",\"{2}\"", paramArray[0], paramArray[1], DateTime.Now);
+            writer.Close();
+            
         }
 
 
