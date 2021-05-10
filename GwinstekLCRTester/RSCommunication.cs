@@ -3,6 +3,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.IO.Ports;
+using System.Runtime;
 using System;
 
 namespace GwinstekLCRTester
@@ -58,7 +59,7 @@ namespace GwinstekLCRTester
 
         void writeToCSV(decimal[] paramArray)
         {
-            string path = "C:\\test\\data.csv";
+            string path = Directory.GetCurrentDirectory() + "\\data.csv";
             if (!File.Exists(path))
             {
                 File.Create(path).Close();
