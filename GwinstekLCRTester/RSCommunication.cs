@@ -87,8 +87,6 @@ namespace GwinstekLCRTester
             string[] stringParams = outputMessage.ToString().Split(",");
             stringParams[0] = stringParams[0].Replace(".", ",");
             stringParams[1] = stringParams[1].Replace(".", ",");
-            returnParametricData[0] = Decimal.Parse(stringParams[0], NumberStyles.Float);
-            returnParametricData[1] = Decimal.Parse(stringParams[1], NumberStyles.Float);
 
             switch (muliplierUnit) {
                 case "pF":
@@ -106,7 +104,8 @@ namespace GwinstekLCRTester
                     break;
             }
 
-
+            returnParametricData[0] = Decimal.Parse(stringParams[0], NumberStyles.Float);
+            returnParametricData[1] = Decimal.Parse(stringParams[1], NumberStyles.Float);
             return returnParametricData;
         }
 
