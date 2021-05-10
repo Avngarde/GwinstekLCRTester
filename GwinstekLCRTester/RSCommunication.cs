@@ -73,9 +73,9 @@ namespace GwinstekLCRTester
 
 
 
-        public decimal[] getBasicParametricData(string Querycommand = "fetch?")
+        public decimal[] getBasicParametricData(string muliplierUnit)
         {
-            _serialPort.WriteLine(Querycommand.ToLower());
+            _serialPort.WriteLine("fetch?");
             byte[] rawBuffer = new byte[1024];
             StringBuilder outputMessage = new StringBuilder();
             decimal[] returnParametricData = new decimal[2];
@@ -92,6 +92,23 @@ namespace GwinstekLCRTester
             stringParams[1] = stringParams[1].Replace(".", ",");
             returnParametricData[0] = Decimal.Parse(stringParams[0], NumberStyles.Float);
             returnParametricData[1] = Decimal.Parse(stringParams[1], NumberStyles.Float);
+
+            switch (muliplierUnit) {
+                case "pF":
+                    returnParametricData[0] *= 0.000000000001m;
+                    break;
+                case "nF":
+                    returnParametricData[0] *= 0.000000001m;
+                    break;
+
+                case "µF":
+                    returnParametricData[0] *= 0.000001m;
+                    break;
+                case "mF":
+                    returnParametricData[0] *= 0.001m;
+                    break;
+            }
+
 
             return returnParametricData;
         }
