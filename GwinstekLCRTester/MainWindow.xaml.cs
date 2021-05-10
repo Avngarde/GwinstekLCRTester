@@ -128,7 +128,7 @@ namespace GwinstekLCRTester
 
 
             // Start the testing
-            var rsConnector = new RSCommunication(
+            RSCommunication rsConnector = new RSCommunication(
                 portName: portName,
                 baudRate: baudRate,
                 parityNumber: parity,
@@ -137,7 +137,6 @@ namespace GwinstekLCRTester
                 handshakeType: handshake
              );
 
-            SendButton.Content = "Testuję...";
             foreach (string freq in frequencies)
             {
                 if (freq != "" || freq != "0")
@@ -151,11 +150,11 @@ namespace GwinstekLCRTester
             }
 
 
-            SendButton.Content = "Zbierz dane";
             rsConnector.closeCSV();
             System.Threading.Thread.Sleep(200);
             rsConnector.unlockKeypadInDevice();
             rsConnector.closePort();
+            MessageBox.Show("Wykonano test");
         }
     }
 }
