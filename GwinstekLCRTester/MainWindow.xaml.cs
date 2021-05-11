@@ -156,7 +156,7 @@ namespace GwinstekLCRTester
             {
                 if (freq != "" || freq != "0")
                 {
-                    System.Threading.Thread.Sleep(2000);
+                    System.Threading.Thread.Sleep(1000);
                     rsConnector.changeHzInDevice(freq);
                     decimal[] result = rsConnector.getBasicParametricData(unitList.Text);
                     rsConnector.writeToCSV(result, unitList.Text, freq);
@@ -174,11 +174,7 @@ namespace GwinstekLCRTester
         private void Test_Data(object sender, RoutedEventArgs e)
         {
             ChangeSendButtonText(false); // Change button text during executing tests
-            System.Threading.Thread.Sleep(300);
-            if (SendButton.Content == "Wykonywanie...")
-            {
-                // ExecuteTests();
-            }
+            ExecuteTests();
             ChangeSendButtonText(true); // Change button after tests are finished
         }
 
