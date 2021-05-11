@@ -142,6 +142,44 @@ namespace GwinstekLCRTester
         }
 
 
+        public void testFullParams()
+        {
+
+
+            setMeasurementInDevice("Cs-Rs");
+            System.Threading.Thread.Sleep(500);
+            _serialPort.WriteLine("Fetch:main?");
+            string[] responseStringArray = _serialPort.ReadLine().Split(",");
+
+
+
+           
+            System.Threading.Thread.Sleep(500);
+            _serialPort.DiscardInBuffer();
+            _serialPort.Dispose();
+            _serialPort.Close();
+
+
+            SerialPort tempPort = new SerialPort("COM6",115200,Parity.None,8,StopBits.One);
+            tempPort.Open();
+            tempPort.WriteLine("Fetch:MON1?");
+            string[] responseStringArray1 = tempPort.ReadLine().Split(",");
+            tempPort.DiscardInBuffer();
+            tempPort.Dispose();
+            tempPort.Close();
+
+
+        }
+
+
+
+
+
+
+
+
+
+
         /* dla liczb, które po przemnożeniu przez 1000 nadal mają liczby po przecinku funkcja je zaokrągla*/
         public void changeHzInDevice(string HzString)
         {
