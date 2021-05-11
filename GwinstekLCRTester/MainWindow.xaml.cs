@@ -95,7 +95,7 @@ namespace GwinstekLCRTester
                 ModeList.SelectedItem = RSCommunication.measurementTypes[0];
 
                 TransSpeed.ItemsSource = baudRates;
-                TransSpeed.SelectedItem = baudRates[0];
+                TransSpeed.SelectedItem = baudRates[7];
 
                 DataBit.ItemsSource = bits;
                 DataBit.SelectedItem = bits[1];
