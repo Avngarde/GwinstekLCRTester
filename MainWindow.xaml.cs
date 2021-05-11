@@ -180,15 +180,11 @@ namespace GwinstekLCRTester
         private void Test_Data(object sender, RoutedEventArgs e)
         {
             ChangeSendButtonText(false); // Change button text during executing tests
-<<<<<<< HEAD
             System.Threading.Thread.Sleep(300);
-            if (SendButton.Content == "Wykonywanie...")
-            {
                 ExecuteTests();
-            }
-=======
+      
+
             ExecuteTests();
->>>>>>> 55b035d1ffa9d819b1aad6ff9e315f080241fe82
             ChangeSendButtonText(true); // Change button after tests are finished
         }
 
