@@ -7,45 +7,49 @@
         mc:Ignorable="d"
         Title="LCR Tester" Height="725" Width="1470">
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="79*"/>
+            <RowDefinition Height="630*"/>
+        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="4*"/>
             <ColumnDefinition Width="143*"/>
         </Grid.ColumnDefinitions>
-        <ComboBox HorizontalAlignment="Left" Name="ComPorts" VerticalAlignment="Top" Width="200" FontSize="12" Margin="235,190,0,0" Height="20" RenderTransformOrigin="0.675,-0.366" Grid.Column="1"/>
-        <TextBlock HorizontalAlignment="Left" Text="Wybierz port COM" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="40,186,0,0" Grid.Column="1"/>
-        <TextBlock HorizontalAlignment="Left" Text="Szybkość transmisji" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="40,242,0,0" Grid.Column="1"/>
-        <TextBlock HorizontalAlignment="Left" Text="Bity danych" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="72,298,0,0" Grid.Column="1"/>
-        <Button Content="Wykonaj test" FontSize="40" HorizontalAlignment="Center" Name="SendButton" Margin="0,569,0,0" VerticalAlignment="Top" Click="Test_Data" Height="105" Width="526" Grid.Column="1" FontFamily="Meiryo" />
-        <ComboBox HorizontalAlignment="Left" VerticalAlignment="Top" Name="ParityList" Width="200" FontSize="12" Margin="235,360,0,0" Height="20" RenderTransformOrigin="0.675,-0.366" Grid.Column="1"/>
-        <TextBlock HorizontalAlignment="Left" Text="Parzystość" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="72,354,0,0" Grid.Column="1"/>
-        <TextBlock HorizontalAlignment="Left" Text="Bity stopu" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="78,408,0,0" Grid.Column="1"/>
-        <TextBlock HorizontalAlignment="Left" Text="Handshake" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="76,462,0,0" Grid.Column="1"/>
-        <ComboBox HorizontalAlignment="Left" VerticalAlignment="Top" Name="StopBitsList" Width="200" FontSize="12" Margin="235,417,0,0" Height="20" RenderTransformOrigin="0.675,-0.366" Grid.Column="1"/>
-        <ComboBox HorizontalAlignment="Left" VerticalAlignment="Top" Name="Handshakes" Width="200" FontSize="12" Margin="235,471,0,0" Height="20" RenderTransformOrigin="0.675,-0.366" Grid.Column="1"/>
-        <Border BorderThickness="1" CornerRadius="10" BorderBrush="Black" HorizontalAlignment="Left" Height="400" Margin="10,0,0,0" VerticalAlignment="Center" Width="449" Grid.Column="1"/>
-        <TextBlock HorizontalAlignment="Left" Text="Hz" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="890,206,0,0" Width="50" Grid.Column="1"/>
-        <TextBox Text="120" HorizontalAlignment="Left" Name="Freq1" Height="34" Margin="685,202,0,0" TextWrapping="Wrap" FontSize="20" VerticalAlignment="Top" Width="200" Grid.Column="1"/>
-        <Border BorderThickness="1" CornerRadius="10" BorderBrush="Black" HorizontalAlignment="Left" Height="400" VerticalAlignment="Center" Width="40" Margin="1465,0,0,0" Grid.Column="1"/>
-        <TextBlock HorizontalAlignment="Left" Text="Częstotliwość 1:" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="516,202,0,0" Grid.Column="1"/>
-        <TextBlock HorizontalAlignment="Left" Text="Hz" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="890,251,0,0" Width="50" Grid.Column="1"/>
-        <TextBox HorizontalAlignment="Left" Name="Freq2" Height="34" Margin="685,248,0,0" Text="100k" TextWrapping="Wrap" FontSize="20" VerticalAlignment="Top" Width="200" Grid.Column="1"/>
-        <TextBlock HorizontalAlignment="Left" Text="Częstotliwość 2:" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="516,251,0,0" Grid.Column="1"/>
-        <TextBox HorizontalAlignment="Left" Name="Freq3" Height="34" Margin="685,302,0,0" Text="200k" TextWrapping="Wrap" FontSize="20" VerticalAlignment="Top" Width="200" Grid.Column="1"/>
-        <TextBlock HorizontalAlignment="Left" Text="Częstotliwość 3:" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="516,306,0,0" Grid.Column="1"/>
-        <TextBlock HorizontalAlignment="Left" Text="Hz" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="890,306,0,0" Width="50" Grid.Column="1"/>
-        <TextBlock HorizontalAlignment="Left" Text="Hz" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="890,360,0,0" Width="50" Grid.Column="1"/>
-        <TextBox HorizontalAlignment="Left" Name="Freq4" Height="34" Margin="685,356,0,0" Text="300k" TextWrapping="Wrap" FontSize="20" VerticalAlignment="Top" Width="200" Grid.Column="1"/>
-        <TextBlock HorizontalAlignment="Left" Text="Częstotliwość 4:" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="516,360,0,0" Grid.Column="1"/>
-        <Border BorderThickness="1" CornerRadius="10" BorderBrush="Black" HorizontalAlignment="Left" Height="400" Margin="478,0,0,0" VerticalAlignment="Center" Width="874" Grid.Column="1"/>
-        <ComboBox Grid.Column="1" HorizontalAlignment="Left" Margin="685,414,0,0" Name="unitList" VerticalAlignment="Top" Width="200"></ComboBox>
-        <TextBlock HorizontalAlignment="Left" Text="Jednostka:" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="540,412,0,0" Grid.Column="1"/>
-        <ComboBox Grid.Column="1" HorizontalAlignment="Left" Margin="685,463,0,0" Name="ModeList" VerticalAlignment="Top" Width="200"/>
-        <TextBlock HorizontalAlignment="Left" Text="Tryb pomiaru:" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="525,458,0,0" Grid.Column="1"/>
-        <ComboBox Grid.Column="1" Name="TransSpeed" HorizontalAlignment="Left" Margin="235,243,0,0" VerticalAlignment="Top" Width="200"/>
-        <ComboBox Name="DataBit" Grid.Column="1" HorizontalAlignment="Left" Margin="235,305,0,0" VerticalAlignment="Top" Width="200"/>
-        <CheckBox Content="Dodatkowy parametr D" Name="DParameter" FontSize="20" Grid.Column="1" HorizontalAlignment="Center" Margin="0,502,0,0" VerticalAlignment="Top"/>
-        <Button Content="Wybierz folder na plik z pomiarami" Click="Set_File_Path" Grid.Column="1" HorizontalAlignment="Left" Margin="1000,0,0,0" VerticalAlignment="Center" RenderTransformOrigin="0.12,2.051" Width="240"/>
-        <Label Content="Obecna ścieżka:" Grid.Column="1" HorizontalAlignment="Left" Margin="1000,383,0,0" VerticalAlignment="Top" Width="95"/>
-        <TextBox Grid.Column="1" HorizontalAlignment="Left" Name="FilePath" IsReadOnly="True" Margin="1100,387,0,0" Text="Brak" TextWrapping="Wrap" VerticalAlignment="Top" Width="140"/>
+        <ComboBox HorizontalAlignment="Left" Name="ComPorts" VerticalAlignment="Top" Width="200" FontSize="12" Margin="235,111,0,0" Height="20" RenderTransformOrigin="0.675,-0.366" Grid.Column="1" Grid.Row="1"/>
+        <TextBlock HorizontalAlignment="Left" Text="Wybierz port COM" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="40,107,0,0" Grid.Column="1" Grid.Row="1"/>
+        <TextBlock HorizontalAlignment="Left" Text="Szybkość transmisji" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="40,163,0,0" Grid.Column="1" Grid.Row="1"/>
+        <TextBlock HorizontalAlignment="Left" Text="Bity danych" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="72,219,0,0" Grid.Column="1" Grid.Row="1"/>
+        <Button Content="Wykonaj test" FontSize="40" HorizontalAlignment="Center" Name="SendButton" Margin="0,490,0,0" VerticalAlignment="Top" Click="Test_Data" Height="105" Width="526" Grid.Column="1" FontFamily="Meiryo" Grid.Row="1" />
+        <ComboBox HorizontalAlignment="Left" VerticalAlignment="Top" Name="ParityList" Width="200" FontSize="12" Margin="235,281,0,0" Height="20" RenderTransformOrigin="0.675,-0.366" Grid.Column="1" Grid.Row="1"/>
+        <TextBlock HorizontalAlignment="Left" Text="Parzystość" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="72,275,0,0" Grid.Column="1" Grid.Row="1"/>
+        <TextBlock HorizontalAlignment="Left" Text="Bity stopu" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="78,329,0,0" Grid.Column="1" Grid.Row="1"/>
+        <TextBlock HorizontalAlignment="Left" Text="Handshake" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="76,383,0,0" Grid.Column="1" Grid.Row="1"/>
+        <ComboBox HorizontalAlignment="Left" VerticalAlignment="Top" Name="StopBitsList" Width="200" FontSize="12" Margin="235,338,0,0" Height="20" RenderTransformOrigin="0.675,-0.366" Grid.Column="1" Grid.Row="1"/>
+        <ComboBox HorizontalAlignment="Left" VerticalAlignment="Top" Name="Handshakes" Width="200" FontSize="12" Margin="235,392,0,0" Height="20" RenderTransformOrigin="0.675,-0.366" Grid.Column="1" Grid.Row="1"/>
+        <Border BorderThickness="1" CornerRadius="10" BorderBrush="Black" HorizontalAlignment="Left" Height="400" Margin="10,76,0,0" VerticalAlignment="Top" Width="449" Grid.Column="1" Grid.Row="1"/>
+        <TextBlock HorizontalAlignment="Left" Text="Hz" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="890,127,0,0" Width="50" Grid.Column="1" Grid.Row="1"/>
+        <TextBox Text="120" HorizontalAlignment="Left" Name="Freq1" Height="34" Margin="685,123,0,0" TextWrapping="Wrap" FontSize="20" VerticalAlignment="Top" Width="200" Grid.Column="1" Grid.Row="1"/>
+        <Border BorderThickness="1" CornerRadius="10" BorderBrush="Black" HorizontalAlignment="Left" Height="400" VerticalAlignment="Top" Width="40" Margin="1465,76,0,0" Grid.Column="1" Grid.Row="1"/>
+        <TextBlock HorizontalAlignment="Left" Text="Częstotliwość 1:" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="516,123,0,0" Grid.Column="1" Grid.Row="1"/>
+        <TextBlock HorizontalAlignment="Left" Text="Hz" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="890,172,0,0" Width="50" Grid.Column="1" Grid.Row="1"/>
+        <TextBox HorizontalAlignment="Left" Name="Freq2" Height="34" Margin="685,169,0,0" Text="100k" TextWrapping="Wrap" FontSize="20" VerticalAlignment="Top" Width="200" Grid.Column="1" Grid.Row="1"/>
+        <TextBlock HorizontalAlignment="Left" Text="Częstotliwość 2:" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="516,172,0,0" Grid.Column="1" Grid.Row="1"/>
+        <TextBox HorizontalAlignment="Left" Name="Freq3" Height="34" Margin="685,223,0,0" Text="200k" TextWrapping="Wrap" FontSize="20" VerticalAlignment="Top" Width="200" Grid.Column="1" Grid.Row="1"/>
+        <TextBlock HorizontalAlignment="Left" Text="Częstotliwość 3:" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="516,227,0,0" Grid.Column="1" Grid.Row="1"/>
+        <TextBlock HorizontalAlignment="Left" Text="Hz" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="890,227,0,0" Width="50" Grid.Column="1" Grid.Row="1"/>
+        <TextBlock HorizontalAlignment="Left" Text="Hz" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="890,281,0,0" Width="50" Grid.Column="1" Grid.Row="1"/>
+        <TextBox HorizontalAlignment="Left" Name="Freq4" Height="34" Margin="685,277,0,0" Text="300k" TextWrapping="Wrap" FontSize="20" VerticalAlignment="Top" Width="200" Grid.Column="1" Grid.Row="1"/>
+        <TextBlock HorizontalAlignment="Left" Text="Częstotliwość 4:" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="516,281,0,0" Grid.Column="1" Grid.Row="1"/>
+        <Border BorderThickness="1" CornerRadius="10" BorderBrush="Black" HorizontalAlignment="Left" Height="400" Margin="478,76,0,0" VerticalAlignment="Top" Width="874" Grid.Column="1" Grid.Row="1"/>
+        <ComboBox Grid.Column="1" HorizontalAlignment="Left" Margin="685,335,0,0" Name="unitList" VerticalAlignment="Top" Width="200" Grid.Row="1"></ComboBox>
+        <TextBlock HorizontalAlignment="Left" Text="Jednostka:" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="540,333,0,0" Grid.Column="1" Grid.Row="1"/>
+        <ComboBox Grid.Column="1" HorizontalAlignment="Left" Margin="685,384,0,0" Name="ModeList" VerticalAlignment="Top" Width="200" Grid.Row="1"/>
+        <TextBlock HorizontalAlignment="Left" Text="Tryb pomiaru:" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="525,379,0,0" Grid.Column="1" Grid.Row="1"/>
+        <ComboBox Grid.Column="1" Name="TransSpeed" HorizontalAlignment="Left" Margin="235,164,0,0" VerticalAlignment="Top" Width="200" Grid.Row="1"/>
+        <ComboBox Name="DataBit" Grid.Column="1" HorizontalAlignment="Left" Margin="235,226,0,0" VerticalAlignment="Top" Width="200" Grid.Row="1"/>
+        <CheckBox Content="Dodatkowy parametr D" Name="DParameter" FontSize="20" Grid.Column="1" HorizontalAlignment="Center" Margin="0,423,0,0" VerticalAlignment="Top" Grid.Row="1"/>
+        <Button Content="Wybierz folder na plik z pomiarami" Click="Set_File_Path" Grid.Column="1" HorizontalAlignment="Left" Margin="1000,265,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.12,2.051" Width="240" Grid.Row="1"/>
+        <Label Content="Obecna ścieżka:" Grid.Column="1" HorizontalAlignment="Left" Margin="1000,304,0,0" VerticalAlignment="Top" Width="95" Grid.Row="1"/>
+        <TextBox Grid.Column="1" HorizontalAlignment="Left" Name="FilePath" IsReadOnly="True" Margin="1100,308,0,0" Text="Brak" TextWrapping="Wrap" VerticalAlignment="Top" Width="140" Grid.Row="1"/>
     </Grid>
 </Window>

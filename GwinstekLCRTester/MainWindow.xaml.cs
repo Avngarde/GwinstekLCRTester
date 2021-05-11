@@ -25,6 +25,8 @@ namespace GwinstekLCRTester
             InitializeComponent();
 
             // Set data for WPF form
+            FilePath.Text = FileHandler.ReadTestFilesPath();
+
             string[] ports = SerialPort.GetPortNames();
 
             Parity[] parities = new Parity[]
@@ -158,8 +160,13 @@ namespace GwinstekLCRTester
                 {
                     System.Threading.Thread.Sleep(1000);
                     rsConnector.changeHzInDevice(freq);
+                    decimal resultD = -1;
                     decimal[] result = rsConnector.getBasicParametricData(unitList.Text);
-                    rsConnector.writeToCSV(result, unitList.Text, freq);
+                    if (DParameter.IsChecked == true)
+                    {
+                        resultD = rsConnector.testIMP();
+                    }
+                    rsConnector.writeToCSV(result, unitList.Text, freq, resultD);
                 }
             }
 
@@ -180,11 +187,12 @@ namespace GwinstekLCRTester
 
         private void Set_File_Path(object sender, RoutedEventArgs e)
         {
-            FolderBrowserDialog browser = new System.Windows.Forms.FolderBrowserDialog();
+            FolderBrowserDialog browser = new FolderBrowserDialog();
             var result = browser.ShowDialog();
-            if(result.ToString() != String.Empty)
+            if (result.ToString() != string.Empty)
             {
                 FilePath.Text = browser.SelectedPath;
+                FileHandler.WriteNewPathToFile(browser.SelectedPath);
             }
         }
     }
