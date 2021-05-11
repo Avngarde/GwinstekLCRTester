@@ -144,8 +144,8 @@ namespace GwinstekLCRTester
                     System.Threading.Thread.Sleep(3000);
                     rsConnector.changeHzInDevice(freq);
                     decimal[] result = rsConnector.getBasicParametricData(unitList.Text);
-                    ResultBox.Text = result[0].ToString() + " " + result[1].ToString();
-                    rsConnector.writeToCSV(result, unitList.Text);
+                    ResultBox.Text = result[0].ToString() + " " + result[1].ToString() + " " + result[2].ToString();
+                    rsConnector.writeToCSV(result, unitList.Text, freq);
                 }
             }
 
@@ -154,7 +154,7 @@ namespace GwinstekLCRTester
             System.Threading.Thread.Sleep(200);
             rsConnector.unlockKeypadInDevice();
             rsConnector.closePort();
-            MessageBox.Show("Wykonano test");
+            MessageBox.Show("Wykonano wszystkie testy");
         }
     }
 }

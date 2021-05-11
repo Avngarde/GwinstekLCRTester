@@ -26,6 +26,8 @@ namespace GwinstekLCRTester
 
         };
 
+        
+
         public string PortName { get; }
         public uint BaudRate { get; }
         public Parity ParityNumber { get; }
@@ -60,18 +62,16 @@ namespace GwinstekLCRTester
 
 
 
-        public void writeToCSV(decimal[] paramArray, string multiplierUnit)
+        public void writeToCSV(decimal[] paramArray, string multiplierUnit, string freq)
         {
 
             string path = Directory.GetCurrentDirectory() + "\\pomiary_" + DateTime.Now.ToString("dd-M-yyyy--HH-mm-ss") + ".csv";
             if (writer == null)
             {
                 writer = File.AppendText(path);
-                writer.WriteLine(String.Format("\"{0}\",\"Om (Ω)\",\"czas pomiaru\"", multiplierUnit));
+                writer.WriteLine(String.Format("\"stratność dielektryczna (D)\"\"{0}Hz\",\"{1}\",\"Om (Ω)\",\"czas pomiaru\"", freq, multiplierUnit));
             }
-            writer.WriteLine("\"{0}\",\"{1}\",\"{2}\"", paramArray[0], paramArray[1], DateTime.Now.ToString("dd-M-yyyy--HH-mm-ss"));
-
-
+            writer.WriteLine("\"{0}\",\"{1}\",\"{2}\"\"{3}\"", paramArray[0], paramArray[1], paramArray[2], DateTime.Now.ToString("dd-M-yyyy--HH-mm-ss"));
         }
 
         public void closeCSV()
@@ -84,14 +84,20 @@ namespace GwinstekLCRTester
             _serialPort.Close();
         }
 
+        public void changeMon1InDevice(bool monParameter)
+        {
+           string command = (monParameter) ? "FUNC:MON1 D" : "FUNC:MON1 OFF";
+           _serialPort.WriteLine(command);
+        }
+
 
 
         public decimal[] getBasicParametricData(string muliplierUnit)
         {
-            _serialPort.WriteLine("fetch?");
+            _serialPort.WriteLine("FETCh:IMPedance?");
             byte[] rawBuffer = new byte[1024];
             StringBuilder outputMessage = new StringBuilder();
-            decimal[] returnParametricData = new decimal[2];
+            decimal[] returnParametricData = new decimal[3];   
 
             _serialPort.Read(rawBuffer, 0, 1024);
             for (int i = 0; i < rawBuffer.Length; i++)
@@ -103,6 +109,7 @@ namespace GwinstekLCRTester
             string[] stringParams = outputMessage.ToString().Split(",");
             stringParams[0] = stringParams[0].Replace(".", ",");
             stringParams[1] = stringParams[1].Replace(".", ",");
+            stringParams[2] = stringParams[2].Replace(".", ",");
 
 
             switch (muliplierUnit)
@@ -124,6 +131,8 @@ namespace GwinstekLCRTester
 
             returnParametricData[0] = decimal.Parse(stringParams[0], NumberStyles.Float);
             returnParametricData[1] = decimal.Parse(stringParams[1], NumberStyles.Float);
+            returnParametricData[3] = decimal.Parse(stringParams[2], NumberStyles.Float);
+            
             return returnParametricData;
         }
 
