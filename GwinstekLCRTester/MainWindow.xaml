@@ -16,7 +16,6 @@
         <TextBlock HorizontalAlignment="Left" Text="Szybkość transmisji" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="40,242,0,0" Grid.Column="1"/>
         <TextBlock HorizontalAlignment="Left" Text="Bity danych" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="72,298,0,0" Grid.Column="1"/>
         <Button Content="Wykonaj test" FontSize="40" HorizontalAlignment="Center" Name="SendButton" Margin="0,569,0,0" VerticalAlignment="Top" Click="Test_Data" Height="105" Width="526" Grid.Column="1" FontFamily="Meiryo" />
-        <TextBox HorizontalAlignment="Left" Name="ResultBox" Margin="980,162,0,0" Text="Tu będą wypisywane dane odczytu" IsReadOnly="True" TextWrapping="Wrap" VerticalAlignment="Top" Width="355" Height="318" Grid.Column="1"/>
         <ComboBox HorizontalAlignment="Left" VerticalAlignment="Top" Name="ParityList" Width="200" FontSize="12" Margin="235,360,0,0" Height="20" RenderTransformOrigin="0.675,-0.366" Grid.Column="1"/>
         <TextBlock HorizontalAlignment="Left" Text="Parzystość" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="72,354,0,0" Grid.Column="1"/>
         <TextBlock HorizontalAlignment="Left" Text="Bity stopu" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="78,408,0,0" Grid.Column="1"/>
@@ -37,12 +36,16 @@
         <TextBlock HorizontalAlignment="Left" Text="Hz" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="890,360,0,0" Width="50" Grid.Column="1"/>
         <TextBox HorizontalAlignment="Left" Name="Freq4" Height="34" Margin="685,356,0,0" Text="0" TextWrapping="Wrap" FontSize="20" VerticalAlignment="Top" Width="200" Grid.Column="1"/>
         <TextBlock HorizontalAlignment="Left" Text="Częstotliwość 4:" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="516,360,0,0" Grid.Column="1"/>
-        <Border BorderThickness="1" CornerRadius="10" BorderBrush="Black" HorizontalAlignment="Left" Height="400" Margin="478,0,0,0" VerticalAlignment="Center" Width="874" Grid.Column="1"/>
+        <Border BorderThickness="1" CornerRadius="10" BorderBrush="Black" HorizontalAlignment="Left" Height="400" Margin="491,0,0,0" VerticalAlignment="Center" Width="874" Grid.Column="1"/>
         <ComboBox Grid.Column="1" HorizontalAlignment="Left" Margin="685,414,0,0" Name="unitList" VerticalAlignment="Top" Width="200"></ComboBox>
         <TextBlock HorizontalAlignment="Left" Text="Jednostka:" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="540,412,0,0" Grid.Column="1"/>
         <ComboBox Grid.Column="1" HorizontalAlignment="Left" Margin="685,463,0,0" Name="ModeList" VerticalAlignment="Top" Width="200"/>
         <TextBlock HorizontalAlignment="Left" Text="Tryb pomiaru:" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="525,458,0,0" Grid.Column="1"/>
         <ComboBox Grid.Column="1" Name="TransSpeed" HorizontalAlignment="Left" Margin="235,243,0,0" VerticalAlignment="Top" Width="200"/>
         <ComboBox Name="DataBit" Grid.Column="1" HorizontalAlignment="Left" Margin="235,305,0,0" VerticalAlignment="Top" Width="200"/>
+        <CheckBox Content="Dodatkowy parametr D" Name="DParameter" FontSize="20" Grid.Column="1" HorizontalAlignment="Center" Margin="0,502,0,0" VerticalAlignment="Top"/>
+        <Button Content="Wybierz folder na plik z pomiarami" Click="Set_File_Path" Grid.Column="1" HorizontalAlignment="Left" Margin="1000,0,0,0" VerticalAlignment="Center" RenderTransformOrigin="0.12,2.051" Width="240"/>
+        <Label Content="Obecna ścieżka:" Grid.Column="1" HorizontalAlignment="Left" Margin="1000,383,0,0" VerticalAlignment="Top" Width="95"/>
+        <TextBox Grid.Column="1" HorizontalAlignment="Left" Name="FilePath" IsReadOnly="True" Margin="1100,387,0,0" Text="Brak" TextWrapping="Wrap" VerticalAlignment="Top" Width="140"/>
     </Grid>
 </Window>

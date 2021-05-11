@@ -26,7 +26,7 @@ namespace GwinstekLCRTester
 
         };
 
-        
+
 
         public string PortName { get; }
         public uint BaudRate { get; }
@@ -86,18 +86,16 @@ namespace GwinstekLCRTester
 
         public void changeMon1InDevice(bool monParameter)
         {
-           string command = (monParameter) ? "FUNC:MON1 D" : "FUNC:MON1 OFF";
-           _serialPort.WriteLine(command);
+            string command = (monParameter) ? "FUNC:MON1 D" : "FUNC:MON1 OFF";
+            _serialPort.WriteLine(command);
         }
-
-
 
         public decimal[] getBasicParametricData(string muliplierUnit)
         {
             _serialPort.WriteLine("FETCh:IMPedance?");
             byte[] rawBuffer = new byte[1024];
             StringBuilder outputMessage = new StringBuilder();
-            decimal[] returnParametricData = new decimal[3];   
+            decimal[] returnParametricData = new decimal[3];
 
             _serialPort.Read(rawBuffer, 0, 1024);
             for (int i = 0; i < rawBuffer.Length; i++)
@@ -130,8 +128,11 @@ namespace GwinstekLCRTester
 
             returnParametricData[0] = decimal.Parse(stringParams[0], NumberStyles.Float);
             returnParametricData[1] = decimal.Parse(stringParams[1], NumberStyles.Float);
-            returnParametricData[3] = decimal.Parse(stringParams[2], NumberStyles.Float);
-            
+            if (returnParametricData[2] != 0)
+            {
+                returnParametricData[2] = decimal.Parse(stringParams[2], NumberStyles.Float);
+            }
+
             return returnParametricData;
         }
 

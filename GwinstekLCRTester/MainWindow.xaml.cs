@@ -14,6 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.IO;
+using System.Windows.Forms;
 
 namespace GwinstekLCRTester
 {
@@ -104,7 +105,7 @@ namespace GwinstekLCRTester
                 ComPorts.SelectedItem = ports[0];
 
             } catch (IndexOutOfRangeException) { 
-                MessageBox.Show("Nie znaleziono portów COM");
+                System.Windows.MessageBox.Show("Nie znaleziono portów COM");
                 Close();
             };
         }
@@ -137,14 +138,15 @@ namespace GwinstekLCRTester
                 handshakeType: handshake
              );
 
+            rsConnector.changeMon1InDevice(DParameter.IsChecked == true);
+
             foreach (string freq in frequencies)
             {
                 if (freq != "" || freq != "0")
                 {
-                    System.Threading.Thread.Sleep(3000);
+                    System.Threading.Thread.Sleep(2000);
                     rsConnector.changeHzInDevice(freq);
                     decimal[] result = rsConnector.getBasicParametricData(unitList.Text);
-                    ResultBox.Text = result[0].ToString() + " " + result[1].ToString() + " " + result[2].ToString();
                     rsConnector.writeToCSV(result, unitList.Text, freq);
                 }
             }
@@ -154,7 +156,17 @@ namespace GwinstekLCRTester
             System.Threading.Thread.Sleep(200);
             rsConnector.unlockKeypadInDevice();
             rsConnector.closePort();
-            MessageBox.Show("Wykonano wszystkie testy");
+            System.Windows.MessageBox.Show("Wykonano wszystkie testy");
+        }
+
+        private void Set_File_Path(object sender, RoutedEventArgs e)
+        {
+            FolderBrowserDialog browser = new System.Windows.Forms.FolderBrowserDialog();
+            var result = browser.ShowDialog();
+            if(result.ToString() != String.Empty)
+            {
+                FilePath.Text = browser.SelectedPath;
+            }
         }
     }
 }
