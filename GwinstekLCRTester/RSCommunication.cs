@@ -35,7 +35,7 @@ namespace GwinstekLCRTester
         public StopBits StopBits { get; }
         public Handshake HandshakeType { get; }
 
-        public RSCommunication(string portName, uint baudRate, Parity parityNumber, uint dataBits, StopBits stopBits, Handshake handshakeType, int readTimeout = 500, int writeTimeout = 500)
+        public RSCommunication(string portName, uint baudRate, Parity parityNumber, uint dataBits, StopBits stopBits, Handshake handshakeType, int readTimeout = 3000, int writeTimeout = 3000)
         {
             _serialPort = new SerialPort();
 
@@ -62,16 +62,25 @@ namespace GwinstekLCRTester
 
 
 
-        public void writeToCSV(decimal[] paramArray, string multiplierUnit, string freq)
+        public void writeToCSV(decimal[] paramArray, string multiplierUnit, string freq, decimal resultD)
         {
 
             string path = Directory.GetCurrentDirectory() + "\\pomiary_" + DateTime.Now.ToString("dd-M-yyyy--HH-mm-ss") + ".csv";
             if (writer == null)
             {
                 writer = File.AppendText(path);
-                writer.WriteLine(String.Format("\"stratność dielektryczna (D)\"\"{0}Hz\",\"{1}\",\"Om (Ω)\",\"czas pomiaru\"", freq, multiplierUnit));
+                writer.WriteLine(String.Format("\"stratność dielektryczna (D)\"\"Hz\",\"{0}\",\"Om (Ω)\",\"czas pomiaru\"", multiplierUnit));
             }
-            writer.WriteLine("\"{0}\",\"{1}\",\"{2}\"\"{3}\"", paramArray[0], paramArray[1], paramArray[2], DateTime.Now.ToString("dd-M-yyyy--HH-mm-ss"));
+
+            if(resultD == -1)
+            {
+                writer.WriteLine("\"-\",\"{0}\",\"{1}\"\"{2}\"", freq, paramArray[0], paramArray[1], DateTime.Now.ToString("dd-M-yyyy--HH-mm-ss"));
+            }
+            else
+            {
+                writer.WriteLine("\"{0}\",\"{1}\",\"{2}\"\"{3}\"", resultD, freq, paramArray[0], paramArray[1], DateTime.Now.ToString("dd-M-yyyy--HH-mm-ss"));
+            }
+           
         }
 
         public void closeCSV()
@@ -92,12 +101,13 @@ namespace GwinstekLCRTester
 
         public decimal[] getBasicParametricData(string muliplierUnit)
         {
-            _serialPort.WriteLine("FETCh:IMPedance?");
-            byte[] rawBuffer = new byte[1024];
+           
+            byte[] rawBuffer = new byte[50];
             StringBuilder outputMessage = new StringBuilder();
             decimal[] returnParametricData = new decimal[3];
 
-            _serialPort.Read(rawBuffer, 0, 1024);
+            _serialPort.WriteLine("FETCh:IMP?");
+            _serialPort.Read(rawBuffer, 0, 50);
             for (int i = 0; i < rawBuffer.Length; i++)
             {
                 if (rawBuffer[i] == 13) break;
@@ -107,7 +117,6 @@ namespace GwinstekLCRTester
             string[] stringParams = outputMessage.ToString().Split(",");
             stringParams[0] = stringParams[0].Replace(".", ",");
             stringParams[1] = stringParams[1].Replace(".", ",");
-            stringParams[2] = stringParams[2].Replace(".", ",");
 
 
             switch (muliplierUnit)
@@ -128,10 +137,6 @@ namespace GwinstekLCRTester
 
             returnParametricData[0] = decimal.Parse(stringParams[0], NumberStyles.Float);
             returnParametricData[1] = decimal.Parse(stringParams[1], NumberStyles.Float);
-            if (returnParametricData[2] != 0)
-            {
-                returnParametricData[2] = decimal.Parse(stringParams[2], NumberStyles.Float);
-            }
 
             return returnParametricData;
         }
@@ -158,6 +163,27 @@ namespace GwinstekLCRTester
 
             string command = "FREQ " + Hz;
             _serialPort.WriteLine(command);
+        }
+
+
+        public decimal getparameterDInDevice()
+        {
+            byte[] rawBuffer = new byte[50];
+            StringBuilder outputMessage = new StringBuilder();
+            decimal returnParametricData;
+
+            _serialPort.WriteLine("FETCh:MON?");
+            _serialPort.Read(rawBuffer, 0, 50);
+            for (int i = 0; i < rawBuffer.Length; i++)
+            {
+                if (rawBuffer[i] == 13) break;
+                outputMessage.Append(Convert.ToChar(rawBuffer[i]));
+
+            }
+            string[] stringParams = outputMessage.ToString().Split(",");
+            returnParametricData = decimal.Parse(stringParams[0], NumberStyles.Float);
+
+            return returnParametricData;
         }
 
 
