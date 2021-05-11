@@ -110,12 +110,26 @@ namespace GwinstekLCRTester
             };
         }
 
-        private void Test_Data(object sender, RoutedEventArgs e)
+        private void ChangeSendButtonText(bool finished)
+        {
+            switch (finished)
+            {
+                case true:
+                    SendButton.Content = "Wykonaj testy";
+                    break;
+                case false:
+                    SendButton.Content = "Wykonywanie...";
+                    break;
+
+            }
+        }
+
+        private void ExecuteTests()
         {
             var portName = ComPorts.Text;
             var baudRate = TransSpeed.Text == "" ? 115200 : uint.Parse(TransSpeed.Text);
             var dataBits = DataBit.Text == "" ? 8 : uint.Parse(DataBit.Text);
-            var parity = (Parity)Enum.Parse(typeof(Parity),ParityList.Text);
+            var parity = (Parity)Enum.Parse(typeof(Parity), ParityList.Text);
             var stopBits = (StopBits)Enum.Parse(typeof(StopBits), StopBitsList.Text);
             var handshake = (Handshake)Enum.Parse(typeof(Handshake), Handshakes.Text);
 
@@ -127,8 +141,6 @@ namespace GwinstekLCRTester
                 Freq4.Text,
             };
 
-
-            // Start the testing
             RSCommunication rsConnector = new RSCommunication(
                 portName: portName,
                 baudRate: baudRate,
@@ -151,12 +163,23 @@ namespace GwinstekLCRTester
                 }
             }
 
-
             rsConnector.closeCSV();
             System.Threading.Thread.Sleep(200);
             rsConnector.unlockKeypadInDevice();
             rsConnector.closePort();
             System.Windows.MessageBox.Show("Wykonano wszystkie testy");
+            SendButton.Content = "Wykonaj test";
+        }
+
+        private void Test_Data(object sender, RoutedEventArgs e)
+        {
+            ChangeSendButtonText(false); // Change button text during executing tests
+            System.Threading.Thread.Sleep(300);
+            if (SendButton.Content == "Wykonywanie...")
+            {
+                // ExecuteTests();
+            }
+            ChangeSendButtonText(true); // Change button after tests are finished
         }
 
         private void Set_File_Path(object sender, RoutedEventArgs e)
