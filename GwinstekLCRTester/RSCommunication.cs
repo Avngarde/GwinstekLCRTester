@@ -115,17 +115,16 @@ namespace GwinstekLCRTester
             switch (muliplierUnit)
             {
                 case "pF":
-                    returnParametricData[0] *= decimal.Parse("10e-12", NumberStyles.Float);
+                    returnParametricData[0] *= 0.000000000001m;
                     break;
                 case "nF":
-                    returnParametricData[0] *= decimal.Parse("10e-09", NumberStyles.Float);
+                    returnParametricData[0] *= 0.000000001m;
                     break;
-
                 case "μF":
-                    returnParametricData[0] *= decimal.Parse("10e-06", NumberStyles.Float);
+                    returnParametricData[0] *= 0.000001m;
                     break;
                 case "mF":
-                    returnParametricData[0] *= decimal.Parse("10e-03", NumberStyles.Float);
+                    returnParametricData[0] *= 0.001m;
                     break;
             }
 
