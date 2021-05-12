@@ -11,6 +11,12 @@ namespace GwinstekLCRTester
     {
         private static string TestFilesPath = Directory.GetCurrentDirectory() + "/test_files_path.txt";
 
+        public static string CreateDefaultPath()
+        {
+            WriteNewPathToFile(Directory.GetCurrentDirectory());
+            return Directory.GetCurrentDirectory(); // Return the default path
+        }
+
         private static void CreateTestFilesPathFile()
         {
             File.Create(TestFilesPath);

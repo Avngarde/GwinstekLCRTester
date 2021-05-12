@@ -29,6 +29,12 @@ namespace GwinstekLCRTester
 
             string[] ports = SerialPort.GetPortNames();
 
+            if (FileHandler.ReadTestFilesPath() == string.Empty)
+            {
+                string default_path = FileHandler.CreateDefaultPath();
+                FilePath.Text = default_path;
+            }
+
             Parity[] parities = new Parity[]
             {
                 Parity.None,
