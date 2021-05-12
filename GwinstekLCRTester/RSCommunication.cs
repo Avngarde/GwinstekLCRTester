@@ -63,7 +63,7 @@ namespace GwinstekLCRTester
 
 
         // paramArray[0] i [1] są głównymi pomiarami zależnymi od trybu, [2] jest opcjonalnym D
-        public void writeToCSV(decimal[] paramArray, string multiplierFarad, string freq, string msType, string pathOutput)
+        public void writeToCSV(decimal[] paramArray, string multiplier, string freq, string msType, string pathOutput, int cyclesIterator = 0)
         {
             string path = pathOutput.Replace(@"\", @"\\").Replace("\r\n", "") + "\\pomiary_" + DateTime.Now.ToString("dd-M-yyyy--HH-mm-ss") + ".csv";
 
@@ -73,16 +73,17 @@ namespace GwinstekLCRTester
                 writer = File.AppendText(path);
                 // ustawianie odpowiednich kolumn w zależności od trybu pomiar
                 //przetestuj dla trybu DCR
-                string csvColumns = msType switch
+                string csvColumns = "Kondenstator";
+                csvColumns += msType switch
                 {
-                    "Cs-Rs" => string.Format("Cs ({0} F);Rs (Ω)", multiplierFarad),
-                    "Cs-D" => string.Format("Cs ({0}F);D", multiplierFarad),
-                    "Cp-Rp" => string.Format("Cp ({0}F);Rp (Ω)", multiplierFarad),
-                    "Cp-D" => string.Format("Cp ({0})F;D", multiplierFarad),
-                    "Lp-Rp" => "Lp (H);Rp (Ω)",
-                    "Lp-Q" => "Lp (H);Q",
-                    "Ls-Rs" => "Ls (H);Rs (Ω)",
-                    "Ls-Q" => "Ls (H);Q",
+                    "Cs-Rs" => string.Format("Cs ({0} F);Rs (Ω)", (multiplier == "Podstawowa jednostka") ? "" : multiplier),
+                    "Cs-D" => string.Format("Cs ({0}F);D", (multiplier == "Podstawowa jednostka") ? "" : multiplier),
+                    "Cp-Rp" => string.Format("Cp ({0}F);Rp (Ω)", (multiplier == "Podstawowa jednostka") ? "" : multiplier),
+                    "Cp-D" => string.Format("Cp ({0})F;D", (multiplier == "Podstawowa jednostka") ? "" : multiplier),
+                    "Lp-Rp" => string.Format("Lp ({0}H);Rp (Ω)", (multiplier == "Podstawowa jednostka") ? "" : multiplier),
+                    "Lp-Q" => string.Format("Lp ({0}H);Rp (Ω)", (multiplier == "Podstawowa jednostka") ? "" : multiplier),,
+                    "Ls-Rs" => string.Format("Lp ({0}H);Rp (Ω)", (multiplier == "Podstawowa jednostka") ? "" : multiplier),,
+                    "Ls-Q" => string.Format("Lp ({0}H);Rp (Ω)", (multiplier == "Podstawowa jednostka") ? "" : multiplier),,
                     "Rs-Q" => "Rs (Ω);Q",
                     "Rp-Q" => "Rp (Ω);Q",
                     "R-X" => "R (Ω);X (Ω)",
@@ -96,11 +97,11 @@ namespace GwinstekLCRTester
                     _ => throw new NotImplementedException()
                 };
 
-                csvColumns += ";D;częstotliwość (Hz);czas pomiaru";
+                csvColumns += ";dodatkowo wybrany parametr D;częstotliwość (Hz);czas pomiaru";
                 writer.WriteLine(csvColumns);
             }
-             // 0 i 1 paramArray, 2 to D, 3 to freq, 4 to data
-             writer.WriteLine("{0};{1};{2};{3};{4}",  paramArray[0].ToString().Replace(",","."), paramArray[1].ToString().Replace(",", "."), (paramArray[2] == -1) ? "__" : paramArray[2].ToString().Replace(",", "."), freq, DateTime.Now.ToString("dd-M-yyyy HH:mm:ss"));
+             // 0 to numer kondensatora w cyklu 1 i 2 paramArray, 2 to D, 3 to freq, 4 to data
+             writer.WriteLine("{0};{1};{2};{3};{4};{5}", cyclesIterator, paramArray[0].ToString().Replace(",","."), paramArray[1].ToString().Replace(",", "."), (paramArray[2] == -1) ? "__" : paramArray[2].ToString().Replace(",", "."), freq, DateTime.Now.ToString("dd-M-yyyy HH:mm:ss"));
             
 
         }
