@@ -75,35 +75,33 @@ namespace GwinstekLCRTester
                 //przetestuj dla trybu DCR
                 string csvColumns = msType switch
                 {
-                    "Cs-Rs" => string.Format("\"Cs ({0})\", \"Rs (Ω)\"", multiplierFarad),
-                    "Cs-D" => string.Format("\"Cs ({0})\", \"D\"", multiplierFarad),
-                    "Cp-Rp" => string.Format("\"Cp ({0})\", \"Rp (Ω)\"", multiplierFarad),
-                    "Cp-D" => string.Format("\"Cp ({0})\", \"D\"", multiplierFarad),
-                    "Lp-Rp" => "\"Lp (H)\", \"Rp (Ω)\"",
-                    "Lp-Q" => "\"Lp (H)\", \"Q\"",
-                    "Ls-Rs" => "\"Ls (H)\", \"Rs (Ω)\"",
-                    "Ls-Q" => "\"Ls (H)\", \"Q\"",
-                    "Rs-Q" => "\"Rs (Ω)\", \"Q\"",
-                    "Rp-Q" => "\"Rp (Ω)\", \"Q\"",
-                    "R-X" => "\"R (Ω)\", \"X (Ω)\"",
-                    "DCR" => "\"DCR (Ω)\"",
-                    "Z-0r" => "\"Z (Ω)\", \"0 (r)\"",
-                    "Z-thr" => "\"Z (Ω)\", \"0 (r)\"",
-                    "Z-0d" => "\"Z (Ω)\", \"0 (º)\"",
-                    "Z-thd" => "\"Z (Ω)\", \"0 (º)\"",
-                    "Z-D" => "\"Z (Ω)\", \"D\"",
-                    "Z-Q" => "\"Z (Ω)\", \"Q\"",
+                    "Cs-Rs" => string.Format("Cs ({0} F);Rs (Ω)", multiplierFarad),
+                    "Cs-D" => string.Format("Cs ({0}F);D", multiplierFarad),
+                    "Cp-Rp" => string.Format("Cp ({0}F);Rp (Ω)", multiplierFarad),
+                    "Cp-D" => string.Format("Cp ({0})F;D", multiplierFarad),
+                    "Lp-Rp" => "Lp (H);Rp (Ω)",
+                    "Lp-Q" => "Lp (H);Q",
+                    "Ls-Rs" => "Ls (H);Rs (Ω)",
+                    "Ls-Q" => "Ls (H);Q",
+                    "Rs-Q" => "Rs (Ω);Q",
+                    "Rp-Q" => "Rp (Ω);Q",
+                    "R-X" => "R (Ω);X (Ω)",
+                    "DCR" => "DCR (Ω)",
+                    "Z-0r" => "Z (Ω);0 (r)",
+                    "Z-thr" => "Z (Ω);0 (r)",
+                    "Z-0d" => "Z (Ω);0 (º)",
+                    "Z-thd" => "Z (Ω);0 (º)",
+                    "Z-D" => "Z (Ω);D",
+                    "Z-Q" => "Z (Ω);Q",
                     _ => throw new NotImplementedException()
                 };
 
-                csvColumns += ",\"D\", \"częstotliwość (Hz)\", \"czas pomiaru\"";
+                csvColumns += ";D;częstotliwość (Hz);czas pomiaru";
                 writer.WriteLine(csvColumns);
             }
-            else
-            {
-                // 0 i 1 paramArray, 2 to D, 3 to freq, 4 to data
-                writer.WriteLine("\"{0}\", \"{1}\", \"{2}\", \"{3}\", \"{4}\"", paramArray[0], paramArray[1], (paramArray[2] == -1) ? "-" : paramArray[2], freq, DateTime.Now.ToString("dd-M-yyyy--HH-mm-ss"));
-            }
+             // 0 i 1 paramArray, 2 to D, 3 to freq, 4 to data
+             writer.WriteLine("{0};{1};{2};{3};{4}",  paramArray[0].ToString().Replace(",","."), paramArray[1].ToString().Replace(",", "."), (paramArray[2] == -1) ? "__" : paramArray[2].ToString().Replace(",", "."), freq, DateTime.Now.ToString("dd-M-yyyy HH:mm:ss"));
+            
 
         }
 
@@ -213,14 +211,14 @@ namespace GwinstekLCRTester
             _serialPort.Dispose();
             _serialPort.Close();
             _serialPort.Open();
-            System.Threading.Thread.Sleep(500);
+            System.Threading.Thread.Sleep(1000);
             command = command.Insert(0, "FUNC ").Replace("z-0r", "z-thr").Replace("z-0d", "z-thd");
             _serialPort.WriteLine(command);
             _serialPort.DiscardInBuffer();
             _serialPort.Dispose();
             _serialPort.Close();
             _serialPort.Open();
-            System.Threading.Thread.Sleep(500);
+            System.Threading.Thread.Sleep(1300);
 
         }
 
