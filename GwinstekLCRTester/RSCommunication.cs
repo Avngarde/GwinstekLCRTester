@@ -81,9 +81,9 @@ namespace GwinstekLCRTester
                     "Cp-Rp" => string.Format("Cp ({0}F);Rp (Ω)", (multiplier == "Podstawowa jednostka") ? "" : multiplier),
                     "Cp-D" => string.Format("Cp ({0})F;D", (multiplier == "Podstawowa jednostka") ? "" : multiplier),
                     "Lp-Rp" => string.Format("Lp ({0}H);Rp (Ω)", (multiplier == "Podstawowa jednostka") ? "" : multiplier),
-                    "Lp-Q" => string.Format("Lp ({0}H);Rp (Ω)", (multiplier == "Podstawowa jednostka") ? "" : multiplier),,
-                    "Ls-Rs" => string.Format("Lp ({0}H);Rp (Ω)", (multiplier == "Podstawowa jednostka") ? "" : multiplier),,
-                    "Ls-Q" => string.Format("Lp ({0}H);Rp (Ω)", (multiplier == "Podstawowa jednostka") ? "" : multiplier),,
+                    "Lp-Q" => string.Format("Lp ({0}H);Rp (Ω)", (multiplier == "Podstawowa jednostka") ? "" : multiplier),
+                    "Ls-Rs" => string.Format("Lp ({0}H);Rp (Ω)", (multiplier == "Podstawowa jednostka") ? "" : multiplier),
+                    "Ls-Q" => string.Format("Lp ({0}H);Rp (Ω)", (multiplier == "Podstawowa jednostka") ? "" : multiplier),
                     "Rs-Q" => "Rs (Ω);Q",
                     "Rp-Q" => "Rp (Ω);Q",
                     "R-X" => "R (Ω);X (Ω)",
@@ -105,17 +105,6 @@ namespace GwinstekLCRTester
             
 
         }
-
-        public void closeCSV()
-        {
-            writer.Close();
-        }
-
-        public void closePort()
-        {
-            _serialPort.Close();
-        }
-
 
 
         public decimal[] testFullParams(string msType, string multiplier = "μ", bool addD = false)
@@ -183,7 +172,6 @@ namespace GwinstekLCRTester
         /* dla liczb, które po przemnożeniu przez 1000 nadal mają liczby po przecinku funkcja je zaokrągla*/
         public void changeHzInDevice(string HzString)
         {
-
             int Hz = -1;
             try
             {
@@ -220,8 +208,24 @@ namespace GwinstekLCRTester
             _serialPort.Close();
             _serialPort.Open();
             System.Threading.Thread.Sleep(1300);
-
         }
+
+
+
+        public bool checkDeviceConnected()
+        {
+            _serialPort.WriteLine("FETCH?");
+
+            // interesują nas tylko ohmy stąd tylko [1] indeks
+            decimal ohmResistance = decimal.Parse(_serialPort.ReadLine().Split(",")[1].Replace(".", ","), NumberStyles.Float);
+
+            // tutaj jakiś warunek sprawdzający czy ohmy są wystrczająco duże 
+            // jeżeli nie to niech wyświetli się komunikat czy na pewno podłączono urządzenie? (bardzo duża/mała rezystancja)
+            return true;
+        }
+
+
+
 
 
         // powinno być używane tylko i wyłącznie po zakończeniu wszystkich operacji!
@@ -230,6 +234,16 @@ namespace GwinstekLCRTester
             _serialPort.WriteLine("SYST:KEYLOCK OFF");
         }
 
+
+        public void closeCSV()
+        {
+            writer.Close();
+        }
+
+        public void closePort()
+        {
+            _serialPort.Close();
+        }
 
     }
 }
