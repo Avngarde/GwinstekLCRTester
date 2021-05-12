@@ -168,7 +168,8 @@ namespace GwinstekLCRTester
                 {
                     System.Threading.Thread.Sleep(1000);
                     rsConnector.changeHzInDevice(freq);
-                    decimal[] responseParams = rsConnector.testFullParams("Cs-Rs", addD: true);
+                    decimal[] responseParams = rsConnector.testFullParams(ModeList.Text, unitList.Text, addD: (DParameter.Visibility == Visibility.Hidden) ? false : DParameter.IsChecked == true);
+                    rsConnector.writeToCSV(responseParams, unitList.Text, freq, ModeList.Text, FilePath.Text);
                 }
             }
 

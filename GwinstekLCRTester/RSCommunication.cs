@@ -65,11 +65,11 @@ namespace GwinstekLCRTester
         // paramArray[0] i [1] są głównymi pomiarami zależnymi od trybu, [2] jest opcjonalnym D
         public void writeToCSV(decimal[] paramArray, string multiplierFarad, string freq, string msType, string pathOutput)
         {
-
-            string path = pathOutput + "\\pomiary_" + DateTime.Now.ToString("dd-M-yyyy--HH-mm-ss") + ".csv";
+            string path = pathOutput.Replace(@"\", @"\\").Replace("\r\n", "") + "\\pomiary_" + DateTime.Now.ToString("dd-M-yyyy--HH-mm-ss") + ".csv";
 
             if (writer == null)
             {
+                
                 writer = File.AppendText(path);
                 // ustawianie odpowiednich kolumn w zależności od trybu pomiar
                 //przetestuj dla trybu DCR
@@ -102,9 +102,9 @@ namespace GwinstekLCRTester
             else
             {
                 // 0 i 1 paramArray, 2 to D, 3 to freq, 4 to data
-                writer.WriteLine("\"{0}\", \"{1}\", \"{2}\", \"{3}\", \"{4}\"", paramArray[0], paramArray[1], (paramArray[2] == -1) ? "-" : paramArray[2], freq, DateTime.Now.ToString("dd-M-yyyy--HH-mm-ss")); 
+                writer.WriteLine("\"{0}\", \"{1}\", \"{2}\", \"{3}\", \"{4}\"", paramArray[0], paramArray[1], (paramArray[2] == -1) ? "-" : paramArray[2], freq, DateTime.Now.ToString("dd-M-yyyy--HH-mm-ss"));
             }
-           
+
         }
 
         public void closeCSV()
@@ -117,11 +117,10 @@ namespace GwinstekLCRTester
             _serialPort.Close();
         }
 
-       
+
 
         public decimal[] testFullParams(string msType, string multiplier = "μ", bool addD = false)
         {
-
             string[] responseStringArray = new string[3];
             decimal[] responseDecimalArray = new decimal[3];
 
@@ -142,9 +141,9 @@ namespace GwinstekLCRTester
             }
 
 
-             // responseDecimalArray czasami ostatni element ma równy null
-             for (int i=0; i < responseStringArray.Length; i++)
-             {
+            // responseDecimalArray czasami ostatni element ma równy null
+            for (int i = 0; i < responseStringArray.Length; i++)
+            {
                 try
                 {
                     responseDecimalArray[i] = decimal.Parse(responseStringArray[i], NumberStyles.Float);
@@ -153,8 +152,8 @@ namespace GwinstekLCRTester
                 {
                     responseDecimalArray[i] = -1;
                 }
-                
-             }
+
+            }
 
 
 
@@ -181,7 +180,7 @@ namespace GwinstekLCRTester
             return responseDecimalArray;
         }
 
-        
+
         /* dla liczb, które po przemnożeniu przez 1000 nadal mają liczby po przecinku funkcja je zaokrągla*/
         public void changeHzInDevice(string HzString)
         {
