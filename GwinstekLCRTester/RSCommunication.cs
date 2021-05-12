@@ -63,15 +63,15 @@ namespace GwinstekLCRTester
 
 
         // paramArray[0] i [1] są głównymi pomiarami zależnymi od trybu, [2] jest opcjonalnym D
-        public void writeToCSV(decimal[] paramArray, string multiplierFarad, string freq, string msType)
+        public void writeToCSV(decimal[] paramArray, string multiplierFarad, string freq, string msType, string pathOutput)
         {
 
-            string path = Directory.GetCurrentDirectory() + "\\pomiary_" + DateTime.Now.ToString("dd-M-yyyy--HH-mm-ss") + ".csv";
+            string path = pathOutput + "\\pomiary_" + DateTime.Now.ToString("dd-M-yyyy--HH-mm-ss") + ".csv";
+
             if (writer == null)
             {
                 writer = File.AppendText(path);
                 // ustawianie odpowiednich kolumn w zależności od trybu pomiar
-
                 //przetestuj dla trybu DCR
                 string csvColumns = msType switch
                 {
@@ -96,18 +96,13 @@ namespace GwinstekLCRTester
                     _ => throw new NotImplementedException()
                 };
 
-
-                
-                writer.WriteLine(String.Format("\"stratność dielektryczna (D)\"\"Hz\",\"{0}\",\"Om (Ω)\",\"czas pomiaru\"", multiplierUnit));
-            }
-
-            if(resultD == -1)
-            {
-                writer.WriteLine("\"-\",\"{0}\",\"{1}\"\"{2}\"", freq, paramArray[0], paramArray[1], DateTime.Now.ToString("dd-M-yyyy--HH-mm-ss"));
+                csvColumns += ",\"D\", \"częstotliwość (Hz)\", \"czas pomiaru\"";
+                writer.WriteLine(csvColumns);
             }
             else
             {
-                writer.WriteLine("\"{0}\",\"{1}\",\"{2}\"\"{3}\"", resultD, freq, paramArray[0], paramArray[1], DateTime.Now.ToString("dd-M-yyyy--HH-mm-ss"));
+                // 0 i 1 paramArray, 2 to D, 3 to freq, 4 to data
+                writer.WriteLine("\"{0}\", \"{1}\", \"{2}\", \"{3}\", \"{4}\"", paramArray[0], paramArray[1], (paramArray[2] == -1) ? "-" : paramArray[2], freq, DateTime.Now.ToString("dd-M-yyyy--HH-mm-ss")); 
             }
            
         }
@@ -124,12 +119,7 @@ namespace GwinstekLCRTester
 
        
 
-       
-
-
-
-
-        public decimal[] testFullParams(string msType, string muliplierFarad = "μF", bool addD = false)
+        public decimal[] testFullParams(string msType, string multiplier = "μ", bool addD = false)
         {
 
             string[] responseStringArray = new string[3];
@@ -152,8 +142,6 @@ namespace GwinstekLCRTester
             }
 
 
-            
-
              // responseDecimalArray czasami ostatni element ma równy null
              for (int i=0; i < responseStringArray.Length; i++)
              {
@@ -173,18 +161,18 @@ namespace GwinstekLCRTester
             // jeżeli wybierzemy tryb z pojemnością, to Farady są zawsze na pierwszym miejscu
             if (msType.Contains("Cs"))
             {
-                switch (muliplierFarad)
+                switch (multiplier)
                 {
-                    case "pF":
+                    case "p":
                         responseDecimalArray[0] *= 1000000000000m;
                         break;
-                    case "nF":
+                    case "n":
                         responseDecimalArray[0] *= 1000000000m;
                         break;
-                    case "μF":
+                    case "μ":
                         responseDecimalArray[0] *= 1000000m;
                         break;
-                    case "mF":
+                    case "m":
                         responseDecimalArray[0] *= 1000m;
                         break;
                 }
@@ -193,48 +181,7 @@ namespace GwinstekLCRTester
             return responseDecimalArray;
         }
 
-
-<<<<<<< HEAD
-=======
-        public void testFullParams()
-        {
-
-
-            setMeasurementInDevice("Cs-Rs");
-            System.Threading.Thread.Sleep(500);
-            _serialPort.WriteLine("Fetch:main?");
-            string[] responseStringArray = _serialPort.ReadLine().Split(",");
-
-
-
-           
-            System.Threading.Thread.Sleep(500);
-            _serialPort.DiscardInBuffer();
-            _serialPort.Dispose();
-            _serialPort.Close();
-
-
-            SerialPort tempPort = new SerialPort("COM6",115200,Parity.None,8,StopBits.One);
-            tempPort.Open();
-            tempPort.WriteLine("Fetch:MON1?");
-            string[] responseStringArray1 = tempPort.ReadLine().Split(",");
-            tempPort.DiscardInBuffer();
-            tempPort.Dispose();
-            tempPort.Close();
-
-
-        }
-
-
->>>>>>> b07c0a8d406d34d3ea6fbc69a8e52a24e4312ea8
-
-
-
-
-
-
-
-
+        
         /* dla liczb, które po przemnożeniu przez 1000 nadal mają liczby po przecinku funkcja je zaokrągla*/
         public void changeHzInDevice(string HzString)
         {
@@ -258,26 +205,6 @@ namespace GwinstekLCRTester
             _serialPort.WriteLine(command);
         }
 
-
-        public decimal getparameterDInDevice()
-        {
-            byte[] rawBuffer = new byte[50];
-            StringBuilder outputMessage = new StringBuilder();
-            decimal returnParametricData;
-
-            _serialPort.WriteLine("FETCh:MON?");
-            _serialPort.Read(rawBuffer, 0, 50);
-            for (int i = 0; i < rawBuffer.Length; i++)
-            {
-                if (rawBuffer[i] == 13) break;
-                outputMessage.Append(Convert.ToChar(rawBuffer[i]));
-
-            }
-            string[] stringParams = outputMessage.ToString().Split(",");
-            returnParametricData = decimal.Parse(stringParams[0], NumberStyles.Float);
-
-            return returnParametricData;
-        }
 
 
         public void setMeasurementInDevice(string command)
