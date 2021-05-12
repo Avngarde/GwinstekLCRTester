@@ -62,13 +62,42 @@ namespace GwinstekLCRTester
 
 
 
-        public void writeToCSV(decimal[] paramArray, string multiplierUnit, string freq, decimal resultD)
+        // paramArray[0] i [1] są głównymi pomiarami zależnymi od trybu, [2] jest opcjonalnym D
+        public void writeToCSV(decimal[] paramArray, string multiplierFarad, string freq, string msType)
         {
 
             string path = Directory.GetCurrentDirectory() + "\\pomiary_" + DateTime.Now.ToString("dd-M-yyyy--HH-mm-ss") + ".csv";
             if (writer == null)
             {
                 writer = File.AppendText(path);
+                // ustawianie odpowiednich kolumn w zależności od trybu pomiar
+
+                //przetestuj dla trybu DCR
+                string csvColumns = msType switch
+                {
+                    "Cs-Rs" => string.Format("\"Cs ({0})\", \"Rs (Ω)\"", multiplierFarad),
+                    "Cs-D" => string.Format("\"Cs ({0})\", \"D\"", multiplierFarad),
+                    "Cp-Rp" => string.Format("\"Cp ({0})\", \"Rp (Ω)\"", multiplierFarad),
+                    "Cp-D" => string.Format("\"Cp ({0})\", \"D\"", multiplierFarad),
+                    "Lp-Rp" => "\"Lp (H)\", \"Rp (Ω)\"",
+                    "Lp-Q" => "\"Lp (H)\", \"Q\"",
+                    "Ls-Rs" => "\"Ls (H)\", \"Rs (Ω)\"",
+                    "Ls-Q" => "\"Ls (H)\", \"Q\"",
+                    "Rs-Q" => "\"Rs (Ω)\", \"Q\"",
+                    "Rp-Q" => "\"Rp (Ω)\", \"Q\"",
+                    "R-X" => "\"R (Ω)\", \"X (Ω)\"",
+                    "DCR" => "\"DCR (Ω)\"",
+                    "Z-0r" => "\"Z (Ω)\", \"0 (r)\"",
+                    "Z-thr" => "\"Z (Ω)\", \"0 (r)\"",
+                    "Z-0d" => "\"Z (Ω)\", \"0 (º)\"",
+                    "Z-thd" => "\"Z (Ω)\", \"0 (º)\"",
+                    "Z-D" => "\"Z (Ω)\", \"D\"",
+                    "Z-Q" => "\"Z (Ω)\", \"Q\"",
+                    _ => throw new NotImplementedException()
+                };
+
+
+                
                 writer.WriteLine(String.Format("\"stratność dielektryczna (D)\"\"Hz\",\"{0}\",\"Om (Ω)\",\"czas pomiaru\"", multiplierUnit));
             }
 
@@ -93,55 +122,80 @@ namespace GwinstekLCRTester
             _serialPort.Close();
         }
 
-        public void changeMon1InDevice(bool monParameter)
-        {
-            string command = (monParameter) ? "FUNC:MON1 D" : "FUNC:MON1 OFF";
-            _serialPort.WriteLine(command);
-        }
+       
 
-        public decimal[] getBasicParametricData(string muliplierUnit)
-        {
-           
-            byte[] rawBuffer = new byte[50];
-            StringBuilder outputMessage = new StringBuilder();
-            decimal[] returnParametricData = new decimal[3];
+       
 
-            _serialPort.WriteLine("FETCh:IMP?");
-            _serialPort.Read(rawBuffer, 0, 50);
-            for (int i = 0; i < rawBuffer.Length; i++)
+
+
+
+        public decimal[] testFullParams(string msType, string muliplierFarad = "μF", bool addD = false)
+        {
+
+            string[] responseStringArray = new string[3];
+            decimal[] responseDecimalArray = new decimal[3];
+
+
+            setMeasurementInDevice(msType);
+            _serialPort.WriteLine("FETCH?");
+
+            responseStringArray[0] = _serialPort.ReadLine().Split(",")[0].Replace(".", ",");
+            responseStringArray[1] = _serialPort.ReadLine().Split(",")[1].Replace(".", ",");
+
+
+            if (addD)
             {
-                if (rawBuffer[i] == 13) break;
-                outputMessage.Append(Convert.ToChar(rawBuffer[i]));
+
+                setMeasurementInDevice("Cs-D");
+                _serialPort.WriteLine("FETCH?");
+                responseStringArray[2] = _serialPort.ReadLine().Split(",")[1].Replace(".", ",");
             }
 
-            string[] stringParams = outputMessage.ToString().Split(",");
-            stringParams[0] = stringParams[0].Replace(".", ",");
-            stringParams[1] = stringParams[1].Replace(".", ",");
+
+            
+
+             // responseDecimalArray czasami ostatni element ma równy null
+             for (int i=0; i < responseStringArray.Length; i++)
+             {
+                try
+                {
+                    responseDecimalArray[i] = decimal.Parse(responseStringArray[i], NumberStyles.Float);
+                }
+                catch (System.ArgumentNullException)
+                {
+                    responseDecimalArray[i] = -1;
+                }
+                
+             }
 
 
-            switch (muliplierUnit)
+
+            // jeżeli wybierzemy tryb z pojemnością, to Farady są zawsze na pierwszym miejscu
+            if (msType.Contains("Cs"))
             {
-                case "pF":
-                    returnParametricData[0] *= 0.000000000001m;
-                    break;
-                case "nF":
-                    returnParametricData[0] *= 0.000000001m;
-                    break;
-                case "μF":
-                    returnParametricData[0] *= 0.000001m;
-                    break;
-                case "mF":
-                    returnParametricData[0] *= 0.001m;
-                    break;
+                switch (muliplierFarad)
+                {
+                    case "pF":
+                        responseDecimalArray[0] *= 1000000000000m;
+                        break;
+                    case "nF":
+                        responseDecimalArray[0] *= 1000000000m;
+                        break;
+                    case "μF":
+                        responseDecimalArray[0] *= 1000000m;
+                        break;
+                    case "mF":
+                        responseDecimalArray[0] *= 1000m;
+                        break;
+                }
             }
 
-            returnParametricData[0] = decimal.Parse(stringParams[0], NumberStyles.Float);
-            returnParametricData[1] = decimal.Parse(stringParams[1], NumberStyles.Float);
-
-            return returnParametricData;
+            return responseDecimalArray;
         }
 
 
+<<<<<<< HEAD
+=======
         public void testFullParams()
         {
 
@@ -172,6 +226,7 @@ namespace GwinstekLCRTester
         }
 
 
+>>>>>>> b07c0a8d406d34d3ea6fbc69a8e52a24e4312ea8
 
 
 
@@ -228,9 +283,18 @@ namespace GwinstekLCRTester
         public void setMeasurementInDevice(string command)
         {
             if (!measurementTypes.Contains(command)) throw new Exception(string.Format("Podano błędną wartość dla funkcji mierzenia! ({0})", command));
-
-            command = command.Insert(0, "func ").ToLower().Replace("z-0r", "z-thr").Replace("z-0d", "z-thd");
+            _serialPort.DiscardInBuffer();
+            _serialPort.Dispose();
+            _serialPort.Close();
+            _serialPort.Open();
+            System.Threading.Thread.Sleep(500);
+            command = command.Insert(0, "FUNC ").Replace("z-0r", "z-thr").Replace("z-0d", "z-thd");
             _serialPort.WriteLine(command);
+            _serialPort.DiscardInBuffer();
+            _serialPort.Dispose();
+            _serialPort.Close();
+            _serialPort.Open();
+            System.Threading.Thread.Sleep(500);
 
         }
 

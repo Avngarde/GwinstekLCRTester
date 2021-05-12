@@ -152,7 +152,7 @@ namespace GwinstekLCRTester
                 handshakeType: handshake
              );
 
-            rsConnector.changeMon1InDevice(DParameter.IsChecked == true);
+            /*rsConnector.changeMon1InDevice(DParameter.IsChecked == true);*/
 
             foreach (string freq in frequencies)
             {
@@ -160,6 +160,11 @@ namespace GwinstekLCRTester
                 {
                     System.Threading.Thread.Sleep(1000);
                     rsConnector.changeHzInDevice(freq);
+<<<<<<< HEAD
+                    decimal[] responseParams = rsConnector.testFullParams("Cs-Rs", addD : true);
+                   
+                    rsConnector.writeToCSV(responseParams, unitList.Text, freq);
+=======
                     decimal resultD = -1;
                     decimal[] result = rsConnector.getBasicParametricData(unitList.Text);
                     if (DParameter.IsChecked == true)
@@ -167,6 +172,7 @@ namespace GwinstekLCRTester
                         resultD = rsConnector.testIMP();
                     }
                     rsConnector.writeToCSV(result, unitList.Text, freq, resultD);
+>>>>>>> b07c0a8d406d34d3ea6fbc69a8e52a24e4312ea8
                 }
             }
 
