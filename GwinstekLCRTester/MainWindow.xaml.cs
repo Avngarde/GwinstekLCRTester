@@ -39,21 +39,21 @@ namespace GwinstekLCRTester
             };
 
             string[] units = new string[]
-            { 
-                "F",
-                "nF",
-                "mF",
-                "μF"
+            {
+                "Podstawowa jednostka",
+                "n",
+                "m",
+                "μ"
             };
 
-            uint[] bits = new uint[] 
-            { 
+            uint[] bits = new uint[]
+            {
                 7,
                 8
             };
 
-            uint[] baudRates = new uint[] 
-            { 
+            uint[] baudRates = new uint[]
+            {
                 4800,
                 9600,
                 14400,
@@ -66,7 +66,7 @@ namespace GwinstekLCRTester
 
             StopBits[] stopBits = new StopBits[]
             {
-                StopBits.One, 
+                StopBits.One,
                 StopBits.None,
                 StopBits.OnePointFive,
                 StopBits.Two
@@ -106,7 +106,9 @@ namespace GwinstekLCRTester
                 ComPorts.ItemsSource = ports;
                 ComPorts.SelectedItem = ports[0];
 
-            } catch (IndexOutOfRangeException) { 
+            }
+            catch (IndexOutOfRangeException)
+            {
                 System.Windows.MessageBox.Show("Nie znaleziono portów COM");
                 Close();
             };
@@ -160,19 +162,7 @@ namespace GwinstekLCRTester
                 {
                     System.Threading.Thread.Sleep(1000);
                     rsConnector.changeHzInDevice(freq);
-<<<<<<< HEAD
-                    decimal[] responseParams = rsConnector.testFullParams("Cs-Rs", addD : true);
-                   
-                    rsConnector.writeToCSV(responseParams, unitList.Text, freq);
-=======
-                    decimal resultD = -1;
-                    decimal[] result = rsConnector.getBasicParametricData(unitList.Text);
-                    if (DParameter.IsChecked == true)
-                    {
-                        resultD = rsConnector.testIMP();
-                    }
-                    rsConnector.writeToCSV(result, unitList.Text, freq, resultD);
->>>>>>> b07c0a8d406d34d3ea6fbc69a8e52a24e4312ea8
+                    decimal[] responseParams = rsConnector.testFullParams("Cs-Rs", addD: true);
                 }
             }
 
@@ -199,6 +189,18 @@ namespace GwinstekLCRTester
             {
                 FilePath.Text = browser.SelectedPath;
                 FileHandler.WriteNewPathToFile(browser.SelectedPath);
+            }
+        }
+
+        private void Change_Mode(object sender, SelectionChangedEventArgs e)
+        {
+            if (ModeList.SelectedItem.ToString().Contains("-D"))
+            {
+                DParameter.Visibility = Visibility.Hidden;
+            }
+            else
+            {
+                DParameter.Visibility = Visibility.Visible;
             }
         }
     }
