@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO.Ports;
@@ -136,7 +136,7 @@ namespace GwinstekLCRTester
 
         private void ExecuteTests()
         {
-            var portName = SerialPort.GetPortNames(); 
+            var portName = SerialPort.GetPortNames();
             var baudRate = TransSpeed.Text == "" ? 115200 : uint.Parse(TransSpeed.Text);
             var dataBits = DataBit.Text == "" ? 8 : uint.Parse(DataBit.Text);
             var parity = (Parity)Enum.Parse(typeof(Parity), ParityList.Text);
@@ -160,33 +160,36 @@ namespace GwinstekLCRTester
                 handshakeType: handshake
              );
 
-        
+
 
             for (int iter = 0; iter < uint.Parse(Cycles.Text); iter++)
             {
-                System.Windows.MessageBox.Show("Proszę podpiąć następne urządzenie numer: " + (iter + 1));
+                if (SerialTest.IsChecked != true)
+                {
+                    System.Windows.MessageBox.Show("Proszę podpiąć następne urządzenie numer: " + (iter + 1));
+                }
                 foreach (string freq in frequencies)
                 {
                     if (freq != "" || freq != "0")
                     {
-                        
+
                         System.Threading.Thread.Sleep(3000);
                         rsConnector.changeHzInDevice(freq);
                         decimal[] responseParams = rsConnector.testFullParams(ModeList.Text, unitList.Text, addD: (DParameter.Visibility == Visibility.Hidden) ? false : DParameter.IsChecked == true);
-                        rsConnector.writeToCSV(responseParams, unitList.Text, freq, ModeList.Text, FilePath.Text, (iter+1)); 
+                        rsConnector.writeToCSV(responseParams, unitList.Text, freq, ModeList.Text, FilePath.Text, (iter + 1));
                     }
                 }
             }
-           
+
             rsConnector.closeCSV();
             System.Threading.Thread.Sleep(200);
             rsConnector.unlockKeypadInDevice();
             rsConnector.closePort();
             rsConnector.Dispose();
-            
-            
-           System.Windows.MessageBox.Show("Wykonano wszystkie testy");
-           SendButton.Content = "Wykonaj test";
+
+
+            System.Windows.MessageBox.Show("Wykonano wszystkie testy");
+            SendButton.Content = "Wykonaj test";
         }
 
         private void Test_Data(object sender, RoutedEventArgs e)
