@@ -190,11 +190,12 @@ namespace GwinstekLCRTester
             else
             {
                 rsConnector.changeAVGInDevice(CyclesOrAVG.Text);
+                System.Threading.Thread.Sleep(2000);
                 foreach (string freq in frequencies)
                 {
                     if (freq != "" && freq != "0" && !string.IsNullOrEmpty(freq))
                     {
-                        System.Threading.Thread.Sleep(3000);
+                        System.Threading.Thread.Sleep(500);
                         rsConnector.changeHzInDevice(freq);
                         decimal[] responseParams = rsConnector.testFullParams(ModeList.Text, unitList.Text, addD: (DParameter.Visibility == Visibility.Hidden) ? false : DParameter.IsChecked == true);
                         rsConnector.writeToCSV(responseParams, unitList.Text, freq, ModeList.Text, FilePath.Text);
