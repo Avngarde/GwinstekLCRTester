@@ -229,6 +229,38 @@ namespace GwinstekLCRTester
                 unitList.Visibility = Visibility.Hidden;
                 UnitLabel.Visibility = Visibility.Hidden;
             }
+
+            if (selectedMode.Contains("DCR"))
+            {
+                Freq2.Visibility = Visibility.Hidden;
+                Freq3.Visibility = Visibility.Hidden;
+                Freq4.Visibility = Visibility.Hidden;
+                Freq2Label.Visibility = Visibility.Hidden;
+                Freq3Label.Visibility = Visibility.Hidden;
+                Freq4Label.Visibility = Visibility.Hidden;
+
+                HzLabel2.Visibility = Visibility.Hidden;
+                HzLabel3.Visibility = Visibility.Hidden;
+                HzLabel4.Visibility = Visibility.Hidden;
+
+                Freq1.IsReadOnly = true;
+                Freq1.Text = "120";
+            }
+            else
+            {
+                Freq2.Visibility = Visibility.Visible;
+                Freq3.Visibility = Visibility.Visible;
+                Freq4.Visibility = Visibility.Visible;
+                Freq2Label.Visibility = Visibility.Visible;
+                Freq3Label.Visibility = Visibility.Visible;
+                Freq4Label.Visibility = Visibility.Visible;
+
+                HzLabel2.Visibility = Visibility.Visible;
+                HzLabel3.Visibility = Visibility.Visible;
+                HzLabel4.Visibility = Visibility.Visible;
+
+                Freq1.IsReadOnly = false;
+            }
         }
     }
 }
