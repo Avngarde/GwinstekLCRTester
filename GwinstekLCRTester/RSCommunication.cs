@@ -57,6 +57,7 @@ namespace GwinstekLCRTester
             _serialPort.Open();
             if (!_serialPort.IsOpen) throw new Exception("Nie udało otworzyć się portu o takich parametrach");
             _serialPort.WriteLine("SYST:CODE OFF");
+            _serialPort.WriteLine("DISP:PAGE meas");
         }
 
 
@@ -71,8 +72,7 @@ namespace GwinstekLCRTester
                 
                 writer = File.AppendText(path);
                 // ustawianie odpowiednich kolumn w zależności od trybu pomiar
-                //przetestuj dla trybu DCR
-                string csvColumns = "Kondenstator;";
+                string csvColumns = "Numer cyklu;";
                 csvColumns += msType switch
                 {
                     "Cs-Rs" => string.Format("Cs ({0}F);Rs (Ω)", (multiplier == "Podstawowa jednostka") ? "" : multiplier),
@@ -97,8 +97,18 @@ namespace GwinstekLCRTester
                 csvColumns += ";dodatkowo wybrany parametr D;częstotliwość (Hz);czas pomiaru";
                 writer.WriteLine(csvColumns);
             }
-             // 0 to numer kondensatora w cyklu 1 i 2 paramArray, 2 to D, 3 to freq, 4 to data
-             writer.WriteLine("{0};{1};{2};{3};{4};{5}", cyclesIterator, paramArray[0].ToString().Replace(",","."), paramArray[1].ToString().Replace(",", "."), (paramArray[2] == -1) ? "__" : paramArray[2].ToString().Replace(",", "."), freq, DateTime.Now.ToString("dd-M-yyyy HH:mm:ss"));
+
+            if(msType != "DCR")
+            {
+                // 0 to numer cyklu 1 i 2 paramArray, 2 to D, 3 to freq, 4 to data
+                writer.WriteLine("{0};{1};{2};{3};{4};{5}", cyclesIterator, paramArray[0].ToString().Replace(",", "."), paramArray[1].ToString().Replace(",", "."), (paramArray[2] == -1) ? "__" : paramArray[2].ToString().Replace(",", "."), freq, DateTime.Now.ToString("dd-M-yyyy HH:mm:ss"));
+            }
+            else
+            {
+                decimal kiloOhms = paramArray[0] * 1000m;
+                writer.WriteLine("{0};{1};{2};{3};{4}", cyclesIterator, kiloOhms.ToString().Replace(",", "."), (paramArray[2] == -1) ? "__" : paramArray[2].ToString().Replace(",", "."), freq, DateTime.Now.ToString("dd-M-yyyy HH:mm:ss"));
+            }
+            
             
 
         }
@@ -124,6 +134,13 @@ namespace GwinstekLCRTester
             }
 
             // responseDecimalArray czasami ostatni element ma równy -1 to znaczy, że nie podano dodatkowego parametru D
+
+
+
+
+
+
+            // FormatException to błąd pomiaru, kiedy tryb jest ustawiony na DCR jest to SZCZEGÓLNY przypadek a nie błąd
             for (int i = 0; i < responseStringArray.Length; i++)
             {
                 try
@@ -133,6 +150,17 @@ namespace GwinstekLCRTester
                 catch (ArgumentNullException)
                 {
                     responseDecimalArray[i] = -1;
+                }
+                catch (FormatException)
+                {
+                    if(msType == "DCR")
+                    {
+                        responseDecimalArray[i] = -1;
+                    }
+                    else
+                    {
+                        throw new Exception("Błąd pomiaru, ponawianie testu z tymi samymi ustawieniami");
+                    }
                 }
 
             }
@@ -192,14 +220,14 @@ namespace GwinstekLCRTester
             _serialPort.Dispose();
             _serialPort.Close();
             _serialPort.Open();
-            System.Threading.Thread.Sleep(300);
+            System.Threading.Thread.Sleep(100);
             command = command.Insert(0, "FUNC ").Replace("z-0r", "z-thr").Replace("z-0d", "z-thd");
             _serialPort.WriteLine(command);
             _serialPort.DiscardInBuffer();
             _serialPort.Dispose();
             _serialPort.Close();
             _serialPort.Open();
-            System.Threading.Thread.Sleep(2000);
+            System.Threading.Thread.Sleep(3000);
         }
 
 
@@ -224,6 +252,14 @@ namespace GwinstekLCRTester
         public void unlockKeypadInDevice()
         {
             _serialPort.WriteLine("SYST:KEYLOCK OFF");
+        }
+
+        public void changeAVGInDevice(string avg)
+        {
+            bool isNumeric = uint.TryParse(avg, out _);
+            if (!isNumeric) throw new Exception("Podano złą wartość dla uśredniania");
+
+            _serialPort.WriteLine("aper " + avg);
         }
 
 
