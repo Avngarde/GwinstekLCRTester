@@ -20,7 +20,7 @@ namespace GwinstekLCRTester
             "Cs-Rs", "Cs-D", "Cp-Rp",
             "Cp-D","Lp-Rp", "Lp-Q", "Ls-Rs",
             "Ls-Q", "Rs-Q", "Rp-Q",
-            "R-X", "DCR", "Z-0r","Z-0d", 
+            "R-X", "DCR", "Z-0r","Z-0d",
             "Z-D", "Z-Q"
 
         };
@@ -34,7 +34,7 @@ namespace GwinstekLCRTester
         public StopBits StopBits { get; }
         public Handshake HandshakeType { get; }
 
-        public RSCommunication(string portName, uint baudRate, Parity parityNumber, uint dataBits, StopBits stopBits, Handshake handshakeType, int readTimeout = 3000, int writeTimeout = 3000)
+        public RSCommunication(string portName, uint baudRate, Parity parityNumber, uint dataBits, StopBits stopBits, Handshake handshakeType, int readTimeout = 30000, int writeTimeout = 30000)
         {
             _serialPort = new SerialPort();
 
@@ -69,7 +69,7 @@ namespace GwinstekLCRTester
 
             if (writer == null)
             {
-                
+
                 writer = File.AppendText(path);
                 // ustawianie odpowiednich kolumn w zależności od trybu pomiar
                 string csvColumns = "Numer cyklu;";
@@ -98,7 +98,7 @@ namespace GwinstekLCRTester
                 writer.WriteLine(csvColumns);
             }
 
-            if(msType != "DCR")
+            if (msType != "DCR")
             {
                 // 0 to numer cyklu 1 i 2 paramArray, 2 to D, 3 to freq, 4 to data
                 writer.WriteLine("{0};{1};{2};{3};{4};{5}", cyclesIterator, paramArray[0].ToString().Replace(",", "."), paramArray[1].ToString().Replace(",", "."), (paramArray[2] == -1) ? "__" : paramArray[2].ToString().Replace(",", "."), freq, DateTime.Now.ToString("dd-M-yyyy HH:mm:ss"));
@@ -108,8 +108,8 @@ namespace GwinstekLCRTester
                 decimal kiloOhms = paramArray[0] * 1000m;
                 writer.WriteLine("{0};{1};{2};{3};{4}", cyclesIterator, kiloOhms.ToString().Replace(",", "."), (paramArray[2] == -1) ? "__" : paramArray[2].ToString().Replace(",", "."), freq, DateTime.Now.ToString("dd-M-yyyy HH:mm:ss"));
             }
-            
-            
+
+
 
         }
 
@@ -153,7 +153,7 @@ namespace GwinstekLCRTester
                 }
                 catch (FormatException)
                 {
-                    if(msType == "DCR")
+                    if (msType == "DCR")
                     {
                         responseDecimalArray[i] = -1;
                     }

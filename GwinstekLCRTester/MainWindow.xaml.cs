@@ -167,23 +167,40 @@ namespace GwinstekLCRTester
              );
 
 
-
-            for (int iter = 0; iter < uint.Parse(Cycles.Text); iter++)
+            if (AVGText.Text != "AVG:")
             {
-                if (SerialTest.IsChecked != true)
+                for (int iter = 0; iter < uint.Parse(CyclesOrAVG.Text); iter++)
                 {
-                    System.Windows.MessageBox.Show("Proszę podpiąć następne urządzenie numer: " + (iter + 1));
+                    if (SerialTest.IsChecked != true)
+                    {
+                        System.Windows.MessageBox.Show("Proszę podpiąć następne urządzenie numer: " + (iter + 1));
+                    }
+                    foreach (string freq in frequencies)
+                    {
+                        if (freq != "" && freq != "0" && !string.IsNullOrEmpty(freq))
+                        {
+                            System.Threading.Thread.Sleep(3000);
+                            rsConnector.changeHzInDevice(freq);
+                            decimal[] responseParams = rsConnector.testFullParams(ModeList.Text, unitList.Text, addD: (DParameter.Visibility == Visibility.Hidden) ? false : DParameter.IsChecked == true);
+                            rsConnector.writeToCSV(responseParams, unitList.Text, freq, ModeList.Text, FilePath.Text, (iter + 1));
+                        }
+                    }
                 }
+            }
+            else
+            {
+                rsConnector.changeAVGInDevice(CyclesOrAVG.Text);
                 foreach (string freq in frequencies)
                 {
-                    if (freq != "" || freq != "0")
+                    if (freq != "" && freq != "0" && !string.IsNullOrEmpty(freq))
                     {
                         System.Threading.Thread.Sleep(3000);
                         rsConnector.changeHzInDevice(freq);
                         decimal[] responseParams = rsConnector.testFullParams(ModeList.Text, unitList.Text, addD: (DParameter.Visibility == Visibility.Hidden) ? false : DParameter.IsChecked == true);
-                        rsConnector.writeToCSV(responseParams, unitList.Text, freq, ModeList.Text, FilePath.Text, (iter + 1));
+                        rsConnector.writeToCSV(responseParams, unitList.Text, freq, ModeList.Text, FilePath.Text);
                     }
                 }
+                rsConnector.changeAVGInDevice("1");
             }
 
             rsConnector.closeCSV();
@@ -270,6 +287,11 @@ namespace GwinstekLCRTester
 
                 Freq1.IsReadOnly = false;
             }
+        }
+
+        private void SerialTest_Checked(object sender, RoutedEventArgs e)
+        {
+            AVGText.Text = "AVG:";
         }
     }
 }

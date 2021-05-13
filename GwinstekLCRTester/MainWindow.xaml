@@ -51,8 +51,8 @@
         <Button Content="Wybierz folder na plik z pomiarami" Click="Set_File_Path" Grid.Column="1" HorizontalAlignment="Left" Margin="1010,0,0,0" VerticalAlignment="Center" RenderTransformOrigin="0.12,2.051" Width="240" Grid.Row="1"/>
         <Label Content="Obecna ścieżka:" Grid.Column="1" HorizontalAlignment="Left" Margin="1010,344,0,0" VerticalAlignment="Top" Width="95" Grid.Row="1"/>
         <TextBox Grid.Column="1" HorizontalAlignment="Left" Name="FilePath" IsReadOnly="True" Margin="1110,348,0,0" Text="Brak" TextWrapping="Wrap" VerticalAlignment="Top" Width="140" Grid.Row="1" Height="22" FontSize="10"/>
-        <TextBox Text="1" Name="Cycles" HorizontalAlignment="Left" Height="29" Margin="1169,164,0,0" TextWrapping="Wrap" FontSize="20" VerticalAlignment="Top" Width="56" Grid.Column="1" Grid.Row="1"/>
-        <TextBlock HorizontalAlignment="Left" Text="Ilość cyklów:" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="1055,166,0,0" Grid.Column="1" Grid.Row="1"/>
-        <CheckBox Content="Test seryjny" Name="SerialTest" FontSize="20" Grid.Column="1" HorizontalAlignment="Left" Margin="1077,230,0,0" VerticalAlignment="Top" Grid.Row="1"/>
+        <TextBox Text="1" Name="CyclesOrAVG" HorizontalAlignment="Left" Height="29" Margin="1169,164,0,0" TextWrapping="Wrap" FontSize="20" VerticalAlignment="Top" Width="56" Grid.Column="1" Grid.Row="1"/>
+        <TextBlock Name="AVGText" HorizontalAlignment="Left" Text="Ilość cyklów:" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="1055,166,0,0" Grid.Column="1" Grid.Row="1"/>
+        <CheckBox Checked="SerialTest_Checked" Content="Test seryjny" Name="SerialTest" FontSize="20" Grid.Column="1" HorizontalAlignment="Left" Margin="1077,230,0,0" VerticalAlignment="Top" Grid.Row="1"/>
     </Grid>
 </Window>
