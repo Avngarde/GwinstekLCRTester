@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO.Ports;
@@ -116,7 +116,7 @@ namespace GwinstekLCRTester
             catch (IndexOutOfRangeException)
             {
                 System.Windows.MessageBox.Show("Nie znaleziono portów COM");
-                // Close();
+                Close();
             };
         }
 
@@ -136,7 +136,7 @@ namespace GwinstekLCRTester
 
         private void ExecuteTests()
         {
-            var portName = "COM1"; // PAMIĘTAJ TO POTEM USUNĄĆ <-=-=-=-=-=-=--=-=-=-=-=-=-=-
+            var portName = SerialPort.GetPortNames(); 
             var baudRate = TransSpeed.Text == "" ? 115200 : uint.Parse(TransSpeed.Text);
             var dataBits = DataBit.Text == "" ? 8 : uint.Parse(DataBit.Text);
             var parity = (Parity)Enum.Parse(typeof(Parity), ParityList.Text);
@@ -151,8 +151,8 @@ namespace GwinstekLCRTester
                 Freq4.Text,
             };
 
-            /* RSCommunication rsConnector = new RSCommunication(
-                portName: portName,
+            RSCommunication rsConnector = new RSCommunication(
+                portName: ComPorts.Text,
                 baudRate: baudRate,
                 parityNumber: parity,
                 dataBits: dataBits,
@@ -160,7 +160,7 @@ namespace GwinstekLCRTester
                 handshakeType: handshake
              );
 
-            rsConnector.changeMon1InDevice(DParameter.IsChecked == true); */
+        
 
             for (int iter = 0; iter < uint.Parse(Cycles.Text); iter++)
             {
@@ -169,21 +169,22 @@ namespace GwinstekLCRTester
                 {
                     if (freq != "" || freq != "0")
                     {
-                        System.Threading.Thread.Sleep(1000);
-                        /*
-                        System.Threading.Thread.Sleep(1000);
+                        
+                        System.Threading.Thread.Sleep(3000);
                         rsConnector.changeHzInDevice(freq);
                         decimal[] responseParams = rsConnector.testFullParams(ModeList.Text, unitList.Text, addD: (DParameter.Visibility == Visibility.Hidden) ? false : DParameter.IsChecked == true);
-                        rsConnector.writeToCSV(responseParams, unitList.Text, freq, ModeList.Text, FilePath.Text); */
+                        rsConnector.writeToCSV(responseParams, unitList.Text, freq, ModeList.Text, FilePath.Text, (iter+1)); 
                     }
                 }
             }
-           /*
+           
             rsConnector.closeCSV();
             System.Threading.Thread.Sleep(200);
             rsConnector.unlockKeypadInDevice();
             rsConnector.closePort();
-            */
+            rsConnector.Dispose();
+            
+            
            System.Windows.MessageBox.Show("Wykonano wszystkie testy");
            SendButton.Content = "Wykonaj test";
         }
@@ -228,38 +229,6 @@ namespace GwinstekLCRTester
             {
                 unitList.Visibility = Visibility.Hidden;
                 UnitLabel.Visibility = Visibility.Hidden;
-            }
-
-            if (selectedMode.Contains("DCR"))
-            {
-                Freq2.Visibility = Visibility.Hidden;
-                Freq3.Visibility = Visibility.Hidden;
-                Freq4.Visibility = Visibility.Hidden;
-                Freq2Label.Visibility = Visibility.Hidden;
-                Freq3Label.Visibility = Visibility.Hidden;
-                Freq4Label.Visibility = Visibility.Hidden;
-
-                HzLabel2.Visibility = Visibility.Hidden;
-                HzLabel3.Visibility = Visibility.Hidden;
-                HzLabel4.Visibility = Visibility.Hidden;
-
-                Freq1.IsReadOnly = true;
-                Freq1.Text = "120";
-            }
-            else
-            {
-                Freq2.Visibility = Visibility.Visible;
-                Freq3.Visibility = Visibility.Visible;
-                Freq4.Visibility = Visibility.Visible;
-                Freq2Label.Visibility = Visibility.Visible;
-                Freq3Label.Visibility = Visibility.Visible;
-                Freq4Label.Visibility = Visibility.Visible;
-
-                HzLabel2.Visibility = Visibility.Visible;
-                HzLabel3.Visibility = Visibility.Visible;
-                HzLabel4.Visibility = Visibility.Visible;
-
-                Freq1.IsReadOnly = false;
             }
         }
     }
