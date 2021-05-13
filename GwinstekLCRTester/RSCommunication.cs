@@ -109,9 +109,9 @@ namespace GwinstekLCRTester
 
         public decimal[] testFullParams(string msType, string multiplier = "μ", bool addD = false)
         {
+
             string[] responseStringArray = new string[3];
             decimal[] responseDecimalArray = new decimal[3];
-
 
             setMeasurementInDevice(msType);
             _serialPort.WriteLine("FETCH?");
@@ -119,17 +119,14 @@ namespace GwinstekLCRTester
             responseStringArray[0] = _serialPort.ReadLine().Split(",")[0].Replace(".", ",");
             responseStringArray[1] = _serialPort.ReadLine().Split(",")[1].Replace(".", ",");
 
-
             if (addD)
             {
-
                 setMeasurementInDevice("Cs-D");
                 _serialPort.WriteLine("FETCH?");
                 responseStringArray[2] = _serialPort.ReadLine().Split(",")[1].Replace(".", ",");
             }
 
-
-            // responseDecimalArray czasami ostatni element ma równy null
+            // responseDecimalArray czasami ostatni element ma równy -1 to znaczy, że nie podano dodatkowego parametru D
             for (int i = 0; i < responseStringArray.Length; i++)
             {
                 try
@@ -143,10 +140,8 @@ namespace GwinstekLCRTester
 
             }
 
-
-
-            // jeżeli wybierzemy tryb z pojemnością, to Farady są zawsze na pierwszym miejscu
-            if (msType.Contains("Cs"))
+            // jeżeli mierzymy farady lub henry to możemy dodawać do nich mnożniki
+            if (msType.Contains("Cs") || msType.Contains("Cp") || msType.Contains("Ls") || msType.Contains("Lp"))
             {
                 switch (multiplier)
                 {
@@ -182,9 +177,8 @@ namespace GwinstekLCRTester
                 throw new Exception("Podano wartość dla Hz w złej formie!");
             }
 
-
-            if (Hz < 0) throw new Exception("Podano liczbę ujemną dla Hz!");
             if (Hz < 10 && Hz != 0) throw new Exception("Podano za małą wartość dla Hz! (min 10Hz)");
+            if (Hz < 0) throw new Exception("Podano liczbę ujemną dla Hz!");
             if (Hz > 300000) throw new Exception("Podano za dużą wartość dla Hz! (maks 30kHz)");
 
             string command = "FREQ " + Hz;
