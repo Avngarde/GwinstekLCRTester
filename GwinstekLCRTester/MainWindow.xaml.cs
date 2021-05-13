@@ -143,13 +143,19 @@ namespace GwinstekLCRTester
             var stopBits = (StopBits)Enum.Parse(typeof(StopBits), StopBitsList.Text);
             var handshake = (Handshake)Enum.Parse(typeof(Handshake), Handshakes.Text);
 
-            string[] frequencies = new string[]
+            string[] frequencies = new string[4];
+
+            if (ModeList.SelectedItem.ToString() != "DCR")
             {
-                Freq1.Text,
-                Freq2.Text,
-                Freq3.Text,
-                Freq4.Text,
-            };
+                frequencies[0] = Freq1.Text;
+                frequencies[1] = Freq2.Text;
+                frequencies[2] = Freq3.Text;
+                frequencies[3] = Freq4.Text;
+            } 
+            else 
+            {
+                frequencies[0] = Freq1.Text;
+            }
 
             RSCommunication rsConnector = new RSCommunication(
                 portName: ComPorts.Text,
@@ -172,7 +178,6 @@ namespace GwinstekLCRTester
                 {
                     if (freq != "" || freq != "0")
                     {
-
                         System.Threading.Thread.Sleep(3000);
                         rsConnector.changeHzInDevice(freq);
                         decimal[] responseParams = rsConnector.testFullParams(ModeList.Text, unitList.Text, addD: (DParameter.Visibility == Visibility.Hidden) ? false : DParameter.IsChecked == true);
