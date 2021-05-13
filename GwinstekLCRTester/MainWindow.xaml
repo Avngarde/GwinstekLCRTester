@@ -42,7 +42,7 @@
         <TextBlock HorizontalAlignment="Left" Text="Częstotliwość 4:" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="516,281,0,0" Grid.Column="1" Grid.Row="1"/>
         <Border BorderThickness="1" CornerRadius="10" BorderBrush="Black" HorizontalAlignment="Left" Height="400" Margin="470,76,0,0" VerticalAlignment="Top" Width="874" Grid.Column="1" Grid.Row="1"/>
         <ComboBox Grid.Column="1" HorizontalAlignment="Left" Margin="685,335,0,0" Name="unitList" VerticalAlignment="Top" Width="200" Grid.Row="1"></ComboBox>
-        <TextBlock HorizontalAlignment="Left" Text="Przedrostek jednostki dla 1 wartości:" TextWrapping="Wrap" VerticalAlignment="Top" Margin="470,337,0,0" Grid.Column="1" Grid.Row="1" Width="210" FontSize="13"/>
+        <TextBlock Name="UnitLabel" HorizontalAlignment="Left" Text="Przedrostek jednostki dla 1 wartości:" TextWrapping="Wrap" VerticalAlignment="Top" Margin="470,337,0,0" Grid.Column="1" Grid.Row="1" Width="210" FontSize="13"/>
         <ComboBox SelectionChanged="Change_Mode" Grid.Column="1" HorizontalAlignment="Left" Margin="685,384,0,0" Name="ModeList" VerticalAlignment="Top" Width="200" Grid.Row="1"/>
         <TextBlock HorizontalAlignment="Left" Text="Tryb pomiaru:" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="525,379,0,0" Grid.Column="1" Grid.Row="1"/>
         <ComboBox Grid.Column="1" Name="TransSpeed" HorizontalAlignment="Left" Margin="235,164,0,0" VerticalAlignment="Top" Width="200" Grid.Row="1"/>

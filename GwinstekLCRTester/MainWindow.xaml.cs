@@ -208,13 +208,26 @@ namespace GwinstekLCRTester
 
         private void Change_Mode(object sender, SelectionChangedEventArgs e)
         {
-            if (ModeList.SelectedItem.ToString().Contains("-D"))
+            string selectedMode = ModeList.SelectedItem.ToString();
+
+            if (selectedMode.Contains("-D"))
             {
                 DParameter.Visibility = Visibility.Hidden;
             }
             else
             {
                 DParameter.Visibility = Visibility.Visible;
+            }
+
+            if (selectedMode.Contains("Cp-") || selectedMode.Contains("Cs-") || selectedMode.Contains("Lp-") || selectedMode.Contains("Ls-"))
+            {
+                unitList.Visibility = Visibility.Visible;
+                UnitLabel.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                unitList.Visibility = Visibility.Hidden;
+                UnitLabel.Visibility = Visibility.Hidden;
             }
         }
     }
