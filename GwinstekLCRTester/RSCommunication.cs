@@ -8,7 +8,7 @@ using System;
 
 namespace GwinstekLCRTester
 {
-    public class RSCommunication
+    public class RSCommunication : IDisposable
     {
 
 
@@ -18,10 +18,9 @@ namespace GwinstekLCRTester
         public static readonly string[] measurementTypes = { ///0 is 0xE9
 
             "Cs-Rs", "Cs-D", "Cp-Rp",
-            "Cp-D", "Lp-Q", "Ls-Rs",
+            "Cp-D","Lp-Rp", "Lp-Q", "Ls-Rs",
             "Ls-Q", "Rs-Q", "Rp-Q",
-            "R-X", "DCR", "Z-0r",
-            "Z-thr", "Z-0d", "Z-thd",
+            "R-X", "DCR", "Z-0r","Z-0d", 
             "Z-D", "Z-Q"
 
         };
@@ -73,25 +72,23 @@ namespace GwinstekLCRTester
                 writer = File.AppendText(path);
                 // ustawianie odpowiednich kolumn w zależności od trybu pomiar
                 //przetestuj dla trybu DCR
-                string csvColumns = "Kondenstator";
+                string csvColumns = "Kondenstator;";
                 csvColumns += msType switch
                 {
-                    "Cs-Rs" => string.Format("Cs ({0} F);Rs (Ω)", (multiplier == "Podstawowa jednostka") ? "" : multiplier),
+                    "Cs-Rs" => string.Format("Cs ({0}F);Rs (Ω)", (multiplier == "Podstawowa jednostka") ? "" : multiplier),
                     "Cs-D" => string.Format("Cs ({0}F);D", (multiplier == "Podstawowa jednostka") ? "" : multiplier),
                     "Cp-Rp" => string.Format("Cp ({0}F);Rp (Ω)", (multiplier == "Podstawowa jednostka") ? "" : multiplier),
-                    "Cp-D" => string.Format("Cp ({0})F;D", (multiplier == "Podstawowa jednostka") ? "" : multiplier),
+                    "Cp-D" => string.Format("Cp ({0}F);D", (multiplier == "Podstawowa jednostka") ? "" : multiplier),
                     "Lp-Rp" => string.Format("Lp ({0}H);Rp (Ω)", (multiplier == "Podstawowa jednostka") ? "" : multiplier),
-                    "Lp-Q" => string.Format("Lp ({0}H);Rp (Ω)", (multiplier == "Podstawowa jednostka") ? "" : multiplier),
-                    "Ls-Rs" => string.Format("Lp ({0}H);Rp (Ω)", (multiplier == "Podstawowa jednostka") ? "" : multiplier),
-                    "Ls-Q" => string.Format("Lp ({0}H);Rp (Ω)", (multiplier == "Podstawowa jednostka") ? "" : multiplier),
+                    "Lp-Q" => string.Format("Lp ({0}H);Q", (multiplier == "Podstawowa jednostka") ? "" : multiplier),
+                    "Ls-Rs" => string.Format("Ls ({0}H);Rp (Ω)", (multiplier == "Podstawowa jednostka") ? "" : multiplier),
+                    "Ls-Q" => string.Format("Ls ({0}H);Q", (multiplier == "Podstawowa jednostka") ? "" : multiplier),
                     "Rs-Q" => "Rs (Ω);Q",
                     "Rp-Q" => "Rp (Ω);Q",
                     "R-X" => "R (Ω);X (Ω)",
                     "DCR" => "DCR (Ω)",
                     "Z-0r" => "Z (Ω);0 (r)",
-                    "Z-thr" => "Z (Ω);0 (r)",
                     "Z-0d" => "Z (Ω);0 (º)",
-                    "Z-thd" => "Z (Ω);0 (º)",
                     "Z-D" => "Z (Ω);D",
                     "Z-Q" => "Z (Ω);Q",
                     _ => throw new NotImplementedException()
@@ -133,7 +130,7 @@ namespace GwinstekLCRTester
                 {
                     responseDecimalArray[i] = decimal.Parse(responseStringArray[i], NumberStyles.Float);
                 }
-                catch (System.ArgumentNullException)
+                catch (ArgumentNullException)
                 {
                     responseDecimalArray[i] = -1;
                 }
@@ -141,6 +138,7 @@ namespace GwinstekLCRTester
             }
 
             // jeżeli mierzymy farady lub henry to możemy dodawać do nich mnożniki
+            // dodatkowe zabezpieczenie oprócz GUI
             if (msType.Contains("Cs") || msType.Contains("Cp") || msType.Contains("Ls") || msType.Contains("Lp"))
             {
                 switch (multiplier)
@@ -194,14 +192,14 @@ namespace GwinstekLCRTester
             _serialPort.Dispose();
             _serialPort.Close();
             _serialPort.Open();
-            System.Threading.Thread.Sleep(1000);
+            System.Threading.Thread.Sleep(300);
             command = command.Insert(0, "FUNC ").Replace("z-0r", "z-thr").Replace("z-0d", "z-thd");
             _serialPort.WriteLine(command);
             _serialPort.DiscardInBuffer();
             _serialPort.Dispose();
             _serialPort.Close();
             _serialPort.Open();
-            System.Threading.Thread.Sleep(1300);
+            System.Threading.Thread.Sleep(2000);
         }
 
 
@@ -232,6 +230,7 @@ namespace GwinstekLCRTester
         public void closeCSV()
         {
             writer.Close();
+            writer = null;
         }
 
         public void closePort()
@@ -239,5 +238,14 @@ namespace GwinstekLCRTester
             _serialPort.Close();
         }
 
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        public void Dispose(bool v)
+        {
+            GC.SuppressFinalize(this);
+        }
     }
 }
