@@ -116,7 +116,7 @@ namespace GwinstekLCRTester
             catch (IndexOutOfRangeException)
             {
                 System.Windows.MessageBox.Show("Nie znaleziono portów COM");
-                Close();
+                // Close();
             };
         }
 
@@ -136,7 +136,7 @@ namespace GwinstekLCRTester
 
         private void ExecuteTests()
         {
-            var portName = ComPorts.Text;
+            var portName = "COM1"; // PAMIĘTAJ TO POTEM USUNĄĆ <-=-=-=-=-=-=--=-=-=-=-=-=-=-
             var baudRate = TransSpeed.Text == "" ? 115200 : uint.Parse(TransSpeed.Text);
             var dataBits = DataBit.Text == "" ? 8 : uint.Parse(DataBit.Text);
             var parity = (Parity)Enum.Parse(typeof(Parity), ParityList.Text);
@@ -151,7 +151,7 @@ namespace GwinstekLCRTester
                 Freq4.Text,
             };
 
-            RSCommunication rsConnector = new RSCommunication(
+            /* RSCommunication rsConnector = new RSCommunication(
                 portName: portName,
                 baudRate: baudRate,
                 parityNumber: parity,
@@ -160,25 +160,32 @@ namespace GwinstekLCRTester
                 handshakeType: handshake
              );
 
-            /*rsConnector.changeMon1InDevice(DParameter.IsChecked == true);*/
+            rsConnector.changeMon1InDevice(DParameter.IsChecked == true); */
 
-            foreach (string freq in frequencies)
+            for (int iter = 0; iter < uint.Parse(Cycles.Text); iter++)
             {
-                if (freq != "" || freq != "0")
+                System.Windows.MessageBox.Show("Proszę podpiąć następne urządzenie numer: " + (iter + 1));
+                foreach (string freq in frequencies)
                 {
-                    System.Threading.Thread.Sleep(1000);
-                    rsConnector.changeHzInDevice(freq);
-                    decimal[] responseParams = rsConnector.testFullParams(ModeList.Text, unitList.Text, addD: (DParameter.Visibility == Visibility.Hidden) ? false : DParameter.IsChecked == true);
-                    rsConnector.writeToCSV(responseParams, unitList.Text, freq, ModeList.Text, FilePath.Text);
+                    if (freq != "" || freq != "0")
+                    {
+                        System.Threading.Thread.Sleep(1000);
+                        /*
+                        System.Threading.Thread.Sleep(1000);
+                        rsConnector.changeHzInDevice(freq);
+                        decimal[] responseParams = rsConnector.testFullParams(ModeList.Text, unitList.Text, addD: (DParameter.Visibility == Visibility.Hidden) ? false : DParameter.IsChecked == true);
+                        rsConnector.writeToCSV(responseParams, unitList.Text, freq, ModeList.Text, FilePath.Text); */
+                    }
                 }
             }
-
+           /*
             rsConnector.closeCSV();
             System.Threading.Thread.Sleep(200);
             rsConnector.unlockKeypadInDevice();
             rsConnector.closePort();
-            System.Windows.MessageBox.Show("Wykonano wszystkie testy");
-            SendButton.Content = "Wykonaj test";
+            */
+           System.Windows.MessageBox.Show("Wykonano wszystkie testy");
+           SendButton.Content = "Wykonaj test";
         }
 
         private void Test_Data(object sender, RoutedEventArgs e)
