@@ -167,7 +167,7 @@ namespace GwinstekLCRTester
              );
 
 
-            if (AVGText.Text != "AVG:")
+            if (AVGValue.Text != "AVG:")
             {
                 for (int iter = 0; iter < uint.Parse(CyclesOrAVG.Text); iter++)
                 {
@@ -294,10 +294,17 @@ namespace GwinstekLCRTester
                 Freq1.IsReadOnly = false;
             }
         }
-
+        
         private void SerialTest_Checked(object sender, RoutedEventArgs e)
         {
-            AVGText.Text = "AVG:";
+            AVGTextLabel.Visibility = Visibility.Visible;
+            AVGValue.Visibility = Visibility.Visible;
+        }
+
+        private void SerialTest_Unchecked(object sender, RoutedEventArgs e)
+        {
+            AVGTextLabel.Visibility = Visibility.Hidden;
+            AVGValue.Visibility = Visibility.Hidden;
         }
     }
 }
