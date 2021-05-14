@@ -41,7 +41,7 @@ namespace GwinstekLCRTester
                 _serialPort.Parity = parityNumber;
                 _serialPort.StopBits = stopBits;
             }
-            catch (System.ArgumentOutOfRangeException e) { Console.WriteLine(e.Message); }
+            catch (ArgumentOutOfRangeException e) { Console.WriteLine(e.Message); }
 
             _serialPort.RtsEnable = true;
             if (_serialPort.IsOpen) _serialPort.Close();
@@ -102,33 +102,49 @@ namespace GwinstekLCRTester
         public decimal[] getMeasurementParams(string msType, string multiplier, bool addD = false, int waitFetchMs = 0)
         {
 
-            string[] responseStringArray = new string[3];
+            string d_Parameter = null;
             decimal[] responseDecimalArray = new decimal[3];
-
-            setMeasurementInDevice(msType);
-            System.Threading.Thread.Sleep(waitFetchMs);
-            _serialPort.WriteLine("FETCH?");
-
-            responseStringArray[0] = _serialPort.ReadLine().Split(",")[0].Replace(".", ",");
-            responseStringArray[1] = _serialPort.ReadLine().Split(",")[1].Replace(".", ",");
 
             if (addD)
             {
                 setMeasurementInDevice("Cs-D");
                 System.Threading.Thread.Sleep(waitFetchMs);
                 _serialPort.WriteLine("FETCH?");
-                responseStringArray[2] = _serialPort.ReadLine().Split(",")[1].Replace(".", ",");
+                d_Parameter = _serialPort.ReadLine().Split(",")[1].Replace(".", ",");
             }
 
-            // responseDecimalArray czasami ostatni element ma równy -1 to znaczy, że nie podano dodatkowego parametru D
+            setMeasurementInDevice(msType);
+            System.Threading.Thread.Sleep(waitFetchMs);
+            _serialPort.WriteLine("FETCH?");
 
+            try
+            {
+                responseDecimalArray[0] = decimal.Parse(_serialPort.ReadLine().Split(",")[0].Replace(".", ","), NumberStyles.Float);
+                responseDecimalArray[1] = decimal.Parse(_serialPort.ReadLine().Split(",")[1].Replace(".", ","), NumberStyles.Float);
+                responseDecimalArray[2] = (d_Parameter != null) ? decimal.Parse(_serialPort.ReadLine().Split(",")[1].Replace(".", ","), NumberStyles.Float) : -1;
+            }
 
-
-
-
-
+            // TODO : przetestuj dla DCR
             // FormatException to błąd pomiaru, kiedy tryb jest ustawiony na DCR jest to SZCZEGÓLNY przypadek a nie błąd
-            for (int i = 0; i < responseStringArray.Length; i++)
+            catch (FormatException)
+            {
+                if (msType == "DCR") 
+                    responseDecimalArray[1] = -1;
+                else 
+                    throw new Exception("asd");
+            }
+
+            
+
+            
+
+
+
+
+
+
+            
+            /*for (int i = 0; i < responseStringArray.Length; i++)
             {
                 try
                 {
@@ -150,30 +166,30 @@ namespace GwinstekLCRTester
                     }
                 }
 
-            }
+            }*/
 
             // jeżeli mierzymy farady lub henry to możemy dodawać do nich mnożniki
             // dodatkowe zabezpieczenie oprócz GUI
             if (msType.Contains("Cs") || msType.Contains("Cp") || msType.Contains("Ls") || msType.Contains("Lp"))
             {
-                switch (multiplier)
-                {
-                    case "p":
-                        responseDecimalArray[0] *= 1000000000000m;
-                        break;
-                    case "n":
-                        responseDecimalArray[0] *= 1000000000m;
-                        break;
-                    case "μ":
-                        responseDecimalArray[0] *= 1000000m;
-                        break;
-                    case "m":
-                        responseDecimalArray[0] *= 1000m;
-                        break;
-                }
+                responseDecimalArray[0] = applyMulitplier(responseDecimalArray[0], multiplier);
             }
 
             return responseDecimalArray;
+        }
+
+
+        public decimal applyMulitplier(decimal paramValue, string multiplier)
+        {
+            return multiplier switch 
+            {
+                "p" => paramValue *= 1000000000000m,
+                "n" => paramValue *= 1000000000m,
+                "μ" => paramValue *= 1000000m,
+                "m" => paramValue *= 1000m,
+                _ => paramValue
+            };
+
         }
 
 
@@ -216,23 +232,6 @@ namespace GwinstekLCRTester
             _serialPort.Open();
             System.Threading.Thread.Sleep(3000);
         }
-
-
-
-        public bool checkDeviceConnected()
-        {
-            _serialPort.WriteLine("FETCH?");
-
-            // interesują nas tylko ohmy stąd tylko [1] indeks
-            decimal ohmResistance = decimal.Parse(_serialPort.ReadLine().Split(",")[1].Replace(".", ","), NumberStyles.Float);
-
-            // tutaj jakiś warunek sprawdzający czy ohmy są wystrczająco duże 
-            // jeżeli nie to niech wyświetli się komunikat czy na pewno podłączono urządzenie? (bardzo duża/mała rezystancja)
-            return true;
-        }
-
-
-
 
 
         // powinno być używane tylko i wyłącznie po zakończeniu wszystkich operacji!
