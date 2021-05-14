@@ -226,18 +226,12 @@ namespace GwinstekLCRTester
         // UWAGA : liczby, które po przemnożeniu przez 1000 nadal są zmiennoprzecinkowe są zaokrąglane
         public void changeHzInDevice(string HzString)
         {
-            int Hz = -1;
-            try
-            {
-                Hz = (HzString.EndsWith("k") || HzString.EndsWith("K")) ? Convert.ToInt32(Convert.ToDecimal(HzString.Replace(".", ",").Remove(HzString.Length - 1)) * 1000) : Convert.ToInt32(HzString);
-            }
-            catch (FormatException)
-            {
-                throw new Exception("Podano wartość dla Hz w złej formie!");
-            }
 
-            if (Hz < 10 && Hz != 0) throw new Exception("Podano za małą wartość dla Hz! (min 10Hz)");
-            if (Hz < 0) throw new Exception("Podano liczbę ujemną dla Hz!");
+            uint Hz;
+            bool isNumeric = uint.TryParse(HzString, out Hz);
+
+            if (!isNumeric) throw new Exception("Podano nienumeryczną lub ujemną wartość dla uśredniania Hz");
+            if (Hz < 10) throw new Exception("Podano za małą wartość dla Hz! (min 10Hz)");
             if (Hz > 300000) throw new Exception("Podano za dużą wartość dla Hz! (maks 30kHz)");
 
             string command = "FREQ " + Hz;
