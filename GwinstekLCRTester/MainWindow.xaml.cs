@@ -189,15 +189,20 @@ namespace GwinstekLCRTester
             }
             else
             {
-                rsConnector.changeAVGInDevice(CyclesOrAVG.Text);
                 System.Threading.Thread.Sleep(2000);
+                rsConnector.changeAVGInDevice(CyclesOrAVG.Text);
+
+
+               
+                System.Threading.Thread.Sleep(2000);
+                int waitMs = (int)((int.Parse(CyclesOrAVG.Text) / 2.9090909 + 1) * 1000);
                 foreach (string freq in frequencies)
                 {
                     if (freq != "" && freq != "0" && !string.IsNullOrEmpty(freq))
                     {
                         System.Threading.Thread.Sleep(500);
                         rsConnector.changeHzInDevice(freq);
-                        decimal[] responseParams = rsConnector.testFullParams(ModeList.Text, unitList.Text, addD: (DParameter.Visibility == Visibility.Hidden) ? false : DParameter.IsChecked == true);
+                        decimal[] responseParams = rsConnector.testFullParams(ModeList.Text, unitList.Text, addD: (DParameter.Visibility == Visibility.Hidden) ? false : DParameter.IsChecked == true, waitMs);
                         rsConnector.writeToCSV(responseParams, unitList.Text, freq, ModeList.Text, FilePath.Text);
                     }
                 }
