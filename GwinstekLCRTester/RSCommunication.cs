@@ -71,7 +71,7 @@ namespace GwinstekLCRTester
             {
 
                 writer = File.AppendText(path);
-                // ustawianie odpowiednich kolumn w zależności od trybu pomiar
+                //ustawianie odpowiednich kolumn w zależności od trybu pomiar
                 string csvColumns = "Numer cyklu; AVG;";
                 csvColumns += msType switch
                 {
