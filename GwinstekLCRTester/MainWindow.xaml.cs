@@ -294,11 +294,6 @@ namespace GwinstekLCRTester
                 Freq1.IsReadOnly = false;
             }
         }
-
-        private void SerialTest_Checked(object sender, RoutedEventArgs e)
-        {
-            AVGText.Text = "AVG:";
-        }
         
         private void SerialTest_Checked(object sender, RoutedEventArgs e)
         {
