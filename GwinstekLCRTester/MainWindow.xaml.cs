@@ -1,37 +1,26 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.IO.Ports;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.IO;
 using System.Windows.Forms;
 
 namespace GwinstekLCRTester
 {
     public partial class MainWindow : Window
     {
+        private Settings settings = FileHandler.ReadSettings();
         public MainWindow()
         {
             InitializeComponent();
 
             // Set data for WPF form
-            FilePath.Text = FileHandler.ReadTestFilesPath();
+            FilePath.Text = settings.CSVPath;
 
             string[] ports = SerialPort.GetPortNames();
 
-            if (FileHandler.ReadTestFilesPath() == string.Empty)
+            if (FileHandler.ReadSettings().ToString() == string.Empty)
             {
-                string default_path = FileHandler.CreateDefaultPath();
+                string default_path = FileHandler.CreateDefaultSettings().CSVPath;
                 FilePath.Text = default_path;
             }
 
@@ -90,24 +79,24 @@ namespace GwinstekLCRTester
             try
             {
                 ParityList.ItemsSource = parities;
-                ParityList.SelectedItem = parities[0];
+                ParityList.SelectedItem = settings.Parity;
                 StopBitsList.ItemsSource = stopBits;
-                StopBitsList.SelectedItem = stopBits[0];
+                StopBitsList.SelectedItem = settings.StopBit;
 
                 Handshakes.ItemsSource = handshakes;
-                Handshakes.SelectedItem = handshakes[0];
+                Handshakes.SelectedItem = settings.HandShake;
 
                 unitList.ItemsSource = units;
-                unitList.SelectedItem = units[0];
+                unitList.SelectedItem = settings.MultiplierUnit;
 
                 ModeList.ItemsSource = RSCommunication.measurementTypes;
-                ModeList.SelectedItem = RSCommunication.measurementTypes[0];
+                ModeList.SelectedItem = settings.MeasurmentType;
 
                 TransSpeed.ItemsSource = baudRates;
-                TransSpeed.SelectedItem = baudRates[7];
+                TransSpeed.SelectedItem = settings.TransmissionSpeed;
 
                 DataBit.ItemsSource = bits;
-                DataBit.SelectedItem = bits[1];
+                DataBit.SelectedItem = settings.DataBits;
 
                 ComPorts.ItemsSource = ports;
                 ComPorts.SelectedItem = ports[0];
@@ -116,7 +105,7 @@ namespace GwinstekLCRTester
             catch (IndexOutOfRangeException)
             {
                 System.Windows.MessageBox.Show("Nie znaleziono portów COM");
-                Close();
+                // Close();
             };
         }
 
@@ -151,8 +140,8 @@ namespace GwinstekLCRTester
                 frequencies[1] = Freq2.Text;
                 frequencies[2] = Freq3.Text;
                 frequencies[3] = Freq4.Text;
-            } 
-            else 
+            }
+            else
             {
                 frequencies[0] = Freq1.Text;
             }
@@ -169,11 +158,17 @@ namespace GwinstekLCRTester
 
             if (AVGValue.Text != "AVG:")
             {
-                for (int iter = 0; iter < uint.Parse(CyclesOrAVG.Text); iter++)
+                System.Windows.MessageBox.Show("Rozpoczynanie mierzenia dla parametrów: Częstotliwości: " + Freq1.Text + " " + Freq2.Text + " " + Freq3.Text + " " + Freq4.Text);
+                int iter = 0;
+                while (true)
                 {
                     if (SerialTest.IsChecked != true)
                     {
-                        System.Windows.MessageBox.Show("Proszę podpiąć następne urządzenie numer: " + (iter + 1));
+                        System.Windows.MessageBoxResult result = System.Windows.MessageBox.Show("Jeśli chcesz rozpocząć mierzenie urządzenia numer: " + (iter + 1) + " kilknij OK, jeśli chcesz zakończyć mierzenie wciśnij Cancel", "Czy kontynuować?", MessageBoxButton.OKCancel);
+                        if (result != MessageBoxResult.OK)
+                        {
+                            break;
+                        }
                     }
                     foreach (string freq in frequencies)
                     {
@@ -185,15 +180,13 @@ namespace GwinstekLCRTester
                             rsConnector.writeToCSV(responseParams, unitList.Text, freq, ModeList.Text, FilePath.Text, (iter + 1));
                         }
                     }
+                    iter++;
                 }
             }
             else
             {
                 System.Threading.Thread.Sleep(2000);
                 rsConnector.changeAVGInDevice(CyclesOrAVG.Text);
-
-
-               
                 System.Threading.Thread.Sleep(2000);
                 int waitMs = (int)((int.Parse(CyclesOrAVG.Text) / 2.9090909 + 1) * 1000);
                 foreach (string freq in frequencies)
@@ -234,7 +227,8 @@ namespace GwinstekLCRTester
             if (result.ToString() != string.Empty)
             {
                 FilePath.Text = browser.SelectedPath;
-                FileHandler.WriteNewPathToFile(browser.SelectedPath);
+                settings.CSVPath = browser.SelectedPath;
+                FileHandler.WriteNewSettings(settings);
             }
         }
 
@@ -294,11 +288,10 @@ namespace GwinstekLCRTester
                 Freq1.IsReadOnly = false;
             }
         }
-        
+
         private void SerialTest_Checked(object sender, RoutedEventArgs e)
         {
-            AVGTextLabel.Visibility = Visibility.Visible;
-            AVGValue.Visibility = Visibility.Visible;
+            AVGValue.Text = "AVG:";
         }
 
         private void SerialTest_Unchecked(object sender, RoutedEventArgs e)

@@ -1,43 +1,57 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.IO;
+﻿using System.IO;
+using Newtonsoft.Json;
 
 namespace GwinstekLCRTester
 {
     class FileHandler
     {
-        private static string TestFilesPath = Directory.GetCurrentDirectory() + "/test_files_path.txt";
+        private static string SettingFilePath = Directory.GetCurrentDirectory() + "/settings.json";
+        private static TextWriter writer;
 
-        public static string CreateDefaultPath()
+        public static Settings CreateDefaultSettings()
         {
-            WriteNewPathToFile(Directory.GetCurrentDirectory());
-            return Directory.GetCurrentDirectory(); // Return the default path
-        }
-
-        private static void CreateTestFilesPathFile()
-        {
-            File.Create(TestFilesPath);
-        }
-
-        public static string ReadTestFilesPath()
-        {
-            if (!File.Exists(TestFilesPath))
+            Settings defaultSettings = new Settings()
             {
-                CreateTestFilesPathFile();
-            }
+                Freq1 = "120",
+                Freq2 = "100k",
+                Freq3 = "200k",
+                Freq4 = "300k",
 
-            string path = File.ReadAllText(TestFilesPath);
-            return path;
+                Cycles = "1",
+                AVG = "1",
+                CSVPath = Directory.GetCurrentDirectory(),
+                DChecked = false,
+                SerialTestChecked = false,
+                MultiplierUnit = "Podstawowa jednostka",
+
+                TransmissionSpeed = 115200,
+                StopBit = System.IO.Ports.StopBits.None,
+                HandShake = System.IO.Ports.Handshake.None,
+                Parity = System.IO.Ports.Parity.None,
+                DataBits = 8
+            };
+
+            WriteNewSettings(defaultSettings);
+            return defaultSettings;
         }
 
-        public static void WriteNewPathToFile(string newPath)
+        public static Settings ReadSettings()
         {
-            StreamWriter sw = File.CreateText(TestFilesPath);
-            sw.WriteLine(newPath);
-            sw.Close();
+            if (!File.Exists(SettingFilePath))
+            {
+                CreateDefaultSettings();
+            }
+            string rawJson = File.ReadAllText(SettingFilePath);
+            Settings currentSettings = JsonConvert.DeserializeObject<Settings>(rawJson);
+
+            return currentSettings;
+        } 
+
+        public static void WriteNewSettings(Settings settings)
+        {
+            string serializedSettings = JsonConvert.SerializeObject(settings);
+            writer = File.CreateText(SettingFilePath);
+            writer.Write(settings);
         }
     }
 }
