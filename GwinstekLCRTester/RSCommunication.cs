@@ -226,7 +226,6 @@ namespace GwinstekLCRTester
         // UWAGA : liczby, które po przemnożeniu przez 1000 nadal są zmiennoprzecinkowe są zaokrąglane
         public void changeHzInDevice(string HzString)
         {
-
             uint Hz;
             bool isNumeric = uint.TryParse(HzString, out Hz);
 
@@ -242,14 +241,19 @@ namespace GwinstekLCRTester
 
         public void setMeasurementInDevice(string command)
         {
-            if (!measurementTypes.Contains(command)) throw new Exception(string.Format("Podano błędną wartość dla funkcji mierzenia! ({0})", command));
+
+            if (!measurementTypes.Contains(command)) 
+                throw new Exception(string.Format("Podano błędną wartość dla funkcji mierzenia! ({0})", command));
+
             _serialPort.DiscardInBuffer();
             _serialPort.Dispose();
             _serialPort.Close();
             _serialPort.Open();
+
             System.Threading.Thread.Sleep(100);
             command = command.Insert(0, "FUNC ").Replace("z-0r", "z-thr").Replace("z-0d", "z-thd");
             _serialPort.WriteLine(command);
+
             _serialPort.DiscardInBuffer();
             _serialPort.Dispose();
             _serialPort.Close();
@@ -266,10 +270,10 @@ namespace GwinstekLCRTester
 
         public void changeAVGInDevice(string avg)
         {
-            bool isNumeric = uint.TryParse(avg, out _);
-            if (!isNumeric) throw new Exception("Podano nienumeryczną wartość dla uśredniania (prawidłowe wartości to liczby całkowite od 1 do 256)");
+            uint avgN;
+            bool isNumeric = uint.TryParse(avg, out avgN);
 
-            uint avgN = uint.Parse(avg);
+            if (!isNumeric) throw new Exception("Podano nienumeryczną wartość dla uśredniania (prawidłowe wartości to liczby całkowite od 1 do 256)");
             if (avgN > 256 || avgN < 1) throw new Exception("Podano złą wartość dla avg (prawidłowe wartości to liczby całkowite od 1 do 256)");
 
             _serialPort.WriteLine("aper " + avg);
