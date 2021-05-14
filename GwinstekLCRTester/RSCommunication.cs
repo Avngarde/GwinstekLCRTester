@@ -86,7 +86,7 @@ namespace GwinstekLCRTester
                     "Rs-Q" => "Rs (Ω);Q",
                     "Rp-Q" => "Rp (Ω);Q",
                     "R-X" => "R (Ω);X (Ω)",
-                    "DCR" => "DCR (Ω)",
+                    "DCR" => "DCR (kΩ)",
                     "Z-0r" => "Z (Ω);0 (r)",
                     "Z-0d" => "Z (Ω);0 (º)",
                     "Z-D" => "Z (Ω);D",
@@ -105,8 +105,7 @@ namespace GwinstekLCRTester
             }
             else
             {
-                decimal kiloOhms = paramArray[0] * 1000m;
-                writer.WriteLine("{0};{1};{2};{3};{4}", cyclesIterator, kiloOhms.ToString().Replace(",", "."), (paramArray[2] == -1) ? "__" : paramArray[2].ToString().Replace(",", "."), freq, DateTime.Now.ToString("dd-M-yyyy HH:mm:ss"));
+                writer.WriteLine("{0};{1};{2};{3};{4}", cyclesIterator, paramArray[0] * 0.001m, (paramArray[2] == -1) ? "__" : paramArray[2].ToString().Replace(",", "."), freq, DateTime.Now.ToString("dd-M-yyyy HH:mm:ss"));
             }
 
 
@@ -114,13 +113,14 @@ namespace GwinstekLCRTester
         }
 
 
-        public decimal[] testFullParams(string msType, string multiplier = "μ", bool addD = false)
+        public decimal[] testFullParams(string msType, string multiplier = "μ", bool addD = false, int waitFetchMs = 0)
         {
 
             string[] responseStringArray = new string[3];
             decimal[] responseDecimalArray = new decimal[3];
 
             setMeasurementInDevice(msType);
+            System.Threading.Thread.Sleep(waitFetchMs);
             _serialPort.WriteLine("FETCH?");
 
             responseStringArray[0] = _serialPort.ReadLine().Split(",")[0].Replace(".", ",");
@@ -129,6 +129,7 @@ namespace GwinstekLCRTester
             if (addD)
             {
                 setMeasurementInDevice("Cs-D");
+                System.Threading.Thread.Sleep(waitFetchMs);
                 _serialPort.WriteLine("FETCH?");
                 responseStringArray[2] = _serialPort.ReadLine().Split(",")[1].Replace(".", ",");
             }
@@ -257,7 +258,10 @@ namespace GwinstekLCRTester
         public void changeAVGInDevice(string avg)
         {
             bool isNumeric = uint.TryParse(avg, out _);
-            if (!isNumeric) throw new Exception("Podano złą wartość dla uśredniania");
+            if (!isNumeric) throw new Exception("Podano nienumeryczną wartość dla uśredniania (prawidłowe wartości to liczby całkowite od 1 do 256)");
+
+            uint avgN = uint.Parse(avg);
+            if (avgN > 256 || avgN < 1) throw new Exception("Podano złą wartość dla avg (prawidłowe wartości to liczby całkowite od 1 do 256)");
 
             _serialPort.WriteLine("aper " + avg);
         }
