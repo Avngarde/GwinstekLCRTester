@@ -63,7 +63,7 @@ namespace GwinstekLCRTester
 
 
         // paramArray[0] i [1] są głównymi pomiarami zależnymi od trybu, [2] jest opcjonalnym D
-        public void writeToCSV(decimal[] paramArray, string multiplier, string freq, string msType, string pathOutput, int cyclesIterator = 0)
+        public void writeToCSV(decimal[] paramArray, string multiplier, string freq, string msType, string pathOutput, int cyclesIterator, uint avg=1)
         {
             string path = pathOutput.Replace(@"\", @"\\").Replace("\r\n", "") + "\\pomiary_" + DateTime.Now.ToString("dd-M-yyyy--HH-mm-ss") + ".csv";
 
@@ -72,7 +72,7 @@ namespace GwinstekLCRTester
 
                 writer = File.AppendText(path);
                 // ustawianie odpowiednich kolumn w zależności od trybu pomiar
-                string csvColumns = "Numer cyklu;";
+                string csvColumns = "Numer cyklu; AVG;";
                 csvColumns += msType switch
                 {
                     "Cs-Rs" => string.Format("Cs ({0}F);Rs (Ω)", (multiplier == "Podstawowa jednostka") ? "" : multiplier),
@@ -100,8 +100,8 @@ namespace GwinstekLCRTester
 
             if (msType != "DCR")
             {
-                // 0 to numer cyklu 1 i 2 paramArray, 2 to D, 3 to freq, 4 to data
-                writer.WriteLine("{0};{1};{2};{3};{4};{5}", cyclesIterator, paramArray[0].ToString().Replace(",", "."), paramArray[1].ToString().Replace(",", "."), (paramArray[2] == -1) ? "__" : paramArray[2].ToString().Replace(",", "."), freq, DateTime.Now.ToString("dd-M-yyyy HH:mm:ss"));
+                // 0 to numer cyklu, 1 to AVG,  2 i 3 paramArray, 4 to D, 5 to freq, 6 to data
+                writer.WriteLine("{0};{1};{2};{3};{4};{5};{6}", cyclesIterator, (avg!=1) ? avg : "NIE",  paramArray[0].ToString().Replace(",", "."), paramArray[1].ToString().Replace(",", "."), (paramArray[2] == -1) ? "__" : paramArray[2].ToString().Replace(",", "."), freq, DateTime.Now.ToString("dd-M-yyyy HH:mm:ss"));
             }
             else
             {
