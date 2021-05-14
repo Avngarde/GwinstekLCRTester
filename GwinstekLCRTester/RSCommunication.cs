@@ -25,15 +25,6 @@ namespace GwinstekLCRTester
 
         };
 
-
-
-        public string PortName { get; }
-        public uint BaudRate { get; }
-        public Parity ParityNumber { get; }
-        public uint DataBits { get; }
-        public StopBits StopBits { get; }
-        public Handshake HandshakeType { get; }
-
         public RSCommunication(string portName, uint baudRate, Parity parityNumber, uint dataBits, StopBits stopBits, Handshake handshakeType, int readTimeout = 30000, int writeTimeout = 30000)
         {
             _serialPort = new SerialPort();
@@ -41,8 +32,8 @@ namespace GwinstekLCRTester
             _serialPort.PortName = portName;
             _serialPort.DataBits = (int)dataBits;
             _serialPort.BaudRate = (int)baudRate;
-            _serialPort.ReadTimeout = (int)readTimeout;
-            _serialPort.WriteTimeout = (int)writeTimeout;
+            _serialPort.ReadTimeout = readTimeout;
+            _serialPort.WriteTimeout = writeTimeout;
 
             try
             {
@@ -61,8 +52,7 @@ namespace GwinstekLCRTester
         }
 
 
-
-        // paramArray[0] i [1] są głównymi pomiarami zależnymi od trybu, [2] jest opcjonalnym D
+        // TODO: przenieś to do FileHandlera
         public void writeToCSV(decimal[] paramArray, string multiplier, string freq, string msType, string pathOutput, int cyclesIterator, uint avg=1)
         {
             string path = pathOutput.Replace(@"\", @"\\").Replace("\r\n", "") + "\\pomiary_" + DateTime.Now.ToString("dd-M-yyyy--HH-mm-ss") + ".csv";
@@ -71,7 +61,6 @@ namespace GwinstekLCRTester
             {
 
                 writer = File.AppendText(path);
-                //ustawianie odpowiednich kolumn w zależności od trybu pomiar
                 string csvColumns = "Numer cyklu; AVG;";
                 csvColumns += msType switch
                 {
@@ -105,15 +94,12 @@ namespace GwinstekLCRTester
             }
             else
             {
-                writer.WriteLine("{0};{1};{2};{3};{4}", cyclesIterator, paramArray[0] * 0.001m, (paramArray[2] == -1) ? "__" : paramArray[2].ToString().Replace(",", "."), freq, DateTime.Now.ToString("dd-M-yyyy HH:mm:ss"));
+                writer.WriteLine("{0};{1};{2};{3};{4};{5}", cyclesIterator, (avg != 1) ? avg : "NIE", paramArray[0] * 0.001m, (paramArray[2] == -1) ? "__" : paramArray[2].ToString().Replace(",", "."), freq, DateTime.Now.ToString("dd-M-yyyy HH:mm:ss"));
             }
-
-
-
         }
 
 
-        public decimal[] testFullParams(string msType, string multiplier = "μ", bool addD = false, int waitFetchMs = 0)
+        public decimal[] getMeasurementParams(string msType, string multiplier, bool addD = false, int waitFetchMs = 0)
         {
 
             string[] responseStringArray = new string[3];
