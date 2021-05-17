@@ -8,7 +8,7 @@
 * [CSV file format](#CSV-file-format)
 * [Comments and adnotations](#Comments-and-adnotations)
 * [Technologies used](#Used-technologies)
-* [Config.json](#Config.json)
+* [Config.json](#configjson)
 * [Licence](#Licence)
 * [Authors](#Authors)
 
