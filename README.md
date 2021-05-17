@@ -3,9 +3,9 @@
 GwinstekLCRTester jest to program napisany w C# przy użyciu WPF, służący do automatyzacji testów urządzeń mierniczych z serii Gwinstek LCR 6000
 
 ## Nawigacja
-* [Funkcjonalności aplikacji](##Funkcjonalności-aplikacji)
-* [Opis GUI](##Opis-GUI)
-* [Opis struktury obiektów](##Opis-struktury-obiektów)
+* [Funkcjonalności aplikacji](#Funkcjonalności-aplikacji)
+* [Opis GUI](#Opis-GUI)
+* [Opis struktury obiektów](#Opis-struktury-obiektów)
 * [Kompatybilność sprzętowa](##Kompatybilność-sprzętowa)
 * [Uwagi i wyjaśnienia](##Uwagi)
 * [Użyte technologie](##Użyte-technologie)
