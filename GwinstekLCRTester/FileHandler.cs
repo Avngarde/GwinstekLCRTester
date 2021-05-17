@@ -72,11 +72,6 @@ namespace GwinstekLCRTester
         public static void WriteNewSettings(Settings settings)
         {
 
-            if (!File.Exists(settingsPath))
-            {
-                writer = File.CreateText(settingsPath);
-            }
-
             writer.Write(JsonConvert.SerializeObject(settings));
             writer.Flush();
 

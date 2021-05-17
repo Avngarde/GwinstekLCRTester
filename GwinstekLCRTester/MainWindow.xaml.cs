@@ -11,6 +11,7 @@ namespace GwinstekLCRTester
     {
 
 
+        private FileHandler fileHandler = new FileHandler();
         
 
         public MainWindow()
@@ -20,17 +21,9 @@ namespace GwinstekLCRTester
 
 
 
-            FileHandler fileHandler = new FileHandler();
-            // Set data for WPF form
-            /*FilePath.Text = settings.CSVPath;
-
             
-
-            if (FileHandler.ReadSettings().ToString() == string.Empty)
-            {
-                string default_path = FileHandler.CreateDefaultSettings().CSVPath;
-                FilePath.Text = default_path;
-            }*/
+            // Set data for WPF form
+            FilePath.Text = fileHandler.currentSettings.CSVPath;
 
             string[] ports = SerialPort.GetPortNames();
 
@@ -89,25 +82,25 @@ namespace GwinstekLCRTester
             try
             {
                 ParityList.ItemsSource = parities;
-                //ParityList.SelectedItem = settings.Parity;
+                ParityList.SelectedItem = fileHandler.currentSettings.Parity;
+
                 StopBitsList.ItemsSource = stopBits;
-                //StopBitsList.SelectedItem = settings.StopBit;
+                StopBitsList.SelectedItem = fileHandler.currentSettings.StopBit;
 
                 Handshakes.ItemsSource = handshakes;
-                //Handshakes.SelectedItem = settings.HandShake;
+                Handshakes.SelectedItem = fileHandler.currentSettings.HandShake;
 
                 unitList.ItemsSource = units;
-                //unitList.SelectedItem = settings.MultiplierUnit;
+                unitList.SelectedItem = fileHandler.currentSettings.MultiplierUnit;
 
                 ModeList.ItemsSource = RSCommunication.measurementTypes;
-                //ModeList.SelectedItem = settings.MeasurmentType;
+                ModeList.SelectedItem = fileHandler.currentSettings.MeasurmentType;
 
                 TransSpeed.ItemsSource = baudRates;
-                //TransSpeed.SelectedItem = settings.TransmissionSpeed;
-                TransSpeed.SelectedItem = "231ui23y7i12y37812y38";
-
+                TransSpeed.SelectedItem = fileHandler.currentSettings.TransmissionSpeed;
+                
                 DataBit.ItemsSource = bits;
-                //DataBit.SelectedItem = settings.DataBits;
+                DataBit.SelectedItem = fileHandler.currentSettings.DataBits;
 
                 ComPorts.ItemsSource = ports;
                 ComPorts.SelectedItem = ports[0];
@@ -115,8 +108,8 @@ namespace GwinstekLCRTester
             }
             catch (IndexOutOfRangeException)
             {
-                System.Windows.MessageBox.Show("Nie znaleziono portów COM!!!!!!!!!!!");
-                // Close();
+                System.Windows.MessageBox.Show("Nie znaleziono aktywnych portów COM");
+                //Close();
             };
         }
 
