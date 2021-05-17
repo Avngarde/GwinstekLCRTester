@@ -1,5 +1,5 @@
 # GwinstekLCRTester
-
+[![Version](https://badge.fury.io/gh/tterb%2FHyde.svg)](https://badge.fury.io/gh/tterb%2FHyde)
 
 ## Table of Contents
 * [How it works](#How-it-works)
@@ -27,6 +27,10 @@ This application's main usage is to automatise measuring various parameters of c
 
 
 ## GUI specification
+
+![GUI](https://github.com/Avngarde/GwinstekLCRTester/blob/main/README_images/GUI.png)
+
+
 
 Before we start our application we must ensure that we connected Gwinstek device properly to our computer. To do so, we must find an RS-232 cable along with USB adapter and plug it into computer. Our program checks if COM ports are established and then GUI is loaded
 
