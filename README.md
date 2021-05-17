@@ -2,39 +2,60 @@
 
 GwinstekLCRTester jest to program napisany w C# przy użyciu WPF, służący do automatyzacji testów urządzeń mierniczych z serii Gwinstek LCR 6000
 
-## Nawigacja
-* [Funkcjonalności aplikacji](#Funkcjonalności-aplikacji)
-* [Opis GUI](#Opis-GUI)
-* [Opis struktury obiektów](#Opis-struktury-obiektów)
-* [Kompatybilność sprzętowa](##Kompatybilność-sprzętowa)
-* [Uwagi i wyjaśnienia](##Uwagi)
-* [Użyte technologie](##Użyte-technologie)
-* [Licencja](##Licencja)
-* [Autorzy](##Autorzy)
+## Table of Contents
+* [How it works](#How-it-works)
+* [GUI specification](#GUI-specification)
+* [Device compatibility](#Device-compatibility)
+* [Comments and adnotations](#Comments-and-adnotations)
+* [Technologies used](#Used-technologies)
+* [Config.js](#Config.js)
+* [Licence](#Licence)
+* [Authors](#Authors)
 
 
 
-## Funkcjonalności aplikacji
-
-Aplikacja umożliwia zautomatyzowane mierzenie kondensatorów na podstawie podanych przez użytkownika wartości. Takie pomiary są zapisywane do plików csv w celu prostego porównywania danych w programach skoroszytowych. Mamy dwa sposoby mierzenia:
-
-* **Test wielu kondensatorów (domyślny)** : Dla tego trybu podajemy częstotliwości mierzenia oraz (liczbę cykli)[##Uwagi-i-wyjaśnienia]. Po wciśnięciu przycisku "Wykonaj testy" program pokazuje na jakich wpisanych parametrach wykona pomiary oraz prosi o podłączenie kondensatora do miernika. Po kliknięciu "OK" wykonywane są testy dla częstotliwości powtarzane przez ilość cykli. Po zakończeniu pomiarów wyświetla się następne okinko z prośbą o podłączenie następnego urządzenia. Jeśli chcemy przerwać testy klikamy "Cancel"
-
-* **Test seryjny** : Jest to tryb pomiaru jednego kondensatora. Mamy tutaj do podania (parametr AVG)[##Uwagi-i-wyjaśnienia], który odpowiada za uśrednianie każdego pomiaru, oraz liczbę cykli. Program po wykonaniu zadanych obliczeń poinformuje nas o zakończeniu testów
+## How it works
 
 
+This application's main usage is to automatise measuring various parameters of capacitors on [Gwinstek LCR 6300][#Device-compatibility]. Such measured data is then stored in csv files in order to easily open and read it in stylesheet programs. GwinstekLCRTester supports two main measure methods: 
 
-## Opis GUI
+* **Test of several capacitors (default)** : For this method user must specify one or more frequencies of measure and the (number of cycles)[#Comments-and-adnotations]. After hitting "Do tests" button we are prompted with inputed parameters on which tests will be performed. After completion of measurements for one capacitor message box appears asking ask whether we want to plug in another device or not
 
-Do rozpoczęcia pracy z programem niezbędne jest podłączenie miernika Gwinstek kablem RS-232 z przejściówką USB do komputera. Aby upewnić się, że połączenie zostało ustawione można przejść do Menedżera Urządzeń, a następnie sprawdzić zakładkę Porty(COM i LPT1). Program po włączeniu automatycznie sprawdza aktywne porty COM i jeśli je znajduje pokazuje swoje GUI. GUI dzieli się na 3 panele:
-
-* Panel lewy : Służy do ustawienia parametrów połączenia RS takich jak szybkość transmisjii, bitów stopu, bitów parzystości itp. Wszystkie parametry muszą być w 100% zgodne z specyfikacją miernika 
-
-* Panel środkowy : Tutaj ustalamy częstotliwości pojedyńczych testów, tryb pomiaru, [mnożnik jednostek pomiaru](##Uwagi) oraz [opcjonalny parametr D](##Uwagi)
-
-* Panel prawy : Odpowiada za ustalanie [cykli pomiarów](##Uwagi), [testów seryjnych](##Uwagi) oraz pozwala na ustalenie swojej własnej ścieżki wyjściowej dla plików csv
+* **Serial test**: This test is performed only on one capacitor. Here, we have an additional parameter to specify, [AVG](#Comments-and-adnotations). After completing measurements program will prompt us information about it
 
 
-## Opis struktury obiektów
 
-lorem ipsum sid dolor
+
+## GUI specification
+
+Before we start our application we must ensure that we connected Gwinstek device properly to our computer. To do so, we must find an RS-232 cable along with USB adapter and plug it into computer. Our program checks if COM ports are established and then GUI is loaded
+
+GUI is divided into two "panels":
+
+
+* **Left panel** : Here we specify parameters for connecting to device via RS-232. Check docs of your appliance for specific settings 
+
+* **Right panel** : Is used for setting different frequencies, SI multipliers for params, measurement types and [additional parameter D](##Comments-and-adnotations). We can specify also numbers of cycles whether we serial test or not, set AVG param and output folder for csv data files
+
+
+## Device compatibility
+
+- Tested on Windows 10 Pro and Windows 7 Professional
+- Tested on Gwinstek LCR 6300 model
+- Compatible with Gwinstek LCR-6300/6200/6100/6020/6002 models according to [official manual](https://www.gwinstek.com/en-global/products/downloadSeriesDownNew/10208/754)
+
+
+## Comments and adnotations
+
+- Number of cycles : indicates how many times we wish to measure measure parameters on one frequency. For example if we had 4 frequencies and clicked 2 cycles we get 2 measurements for each written frequency resulting in total of 8 tests
+
+- AVG parameter : is set on device to get an average survey from given measurements. For example AVG 20 tells us that every mensuration in csv files is average of 20 mensurations in machine
+
+- Additional parameter D : For measurement types that don't include parameter D we can force it's mensuration
+
+- Speed of speed of serial test : Please note that serial test heavily depends on given AVG number. If we set AVG to 120, single test is going to last 43 seconds roughly! Since this is an machine calculations we in application cannot speed it up
+
+
+
+
+
