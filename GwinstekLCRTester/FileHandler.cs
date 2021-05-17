@@ -48,7 +48,7 @@ namespace GwinstekLCRTester
                 MeasurmentType = "Cs-Rs",
 
                 TransmissionSpeed = 115200,
-                StopBit = System.IO.Ports.StopBits.None,
+                StopBit = System.IO.Ports.StopBits.One,
                 HandShake = System.IO.Ports.Handshake.None,
                 Parity = System.IO.Ports.Parity.None,
                 DataBits = 8

@@ -56,7 +56,7 @@ namespace GwinstekLCRTester
 
 
 
-        public decimal[] getMeasurementParams(string msType, string multiplier, bool addD = false, int waitFetchMs = 500)
+        public decimal[] getMeasurementParams(string msType, string multiplier, bool addD = false, int waitFetchMs = 700)
         {
 
             string d_Parameter = null;
