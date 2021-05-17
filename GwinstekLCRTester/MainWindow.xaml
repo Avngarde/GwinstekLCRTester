@@ -27,7 +27,7 @@
         <TextBlock HorizontalAlignment="Left" Text="Handshake" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="76,383,0,0" Grid.Column="1" Grid.Row="1"/>
         <ComboBox HorizontalAlignment="Left" VerticalAlignment="Top" Name="StopBitsList" Width="200" FontSize="12" Margin="235,338,0,0" Height="20" RenderTransformOrigin="0.675,-0.366" Grid.Column="1" Grid.Row="1"/>
         <ComboBox HorizontalAlignment="Left" VerticalAlignment="Top" Name="Handshakes" Width="200" FontSize="12" Margin="235,392,0,0" Height="20" RenderTransformOrigin="0.675,-0.366" Grid.Column="1" Grid.Row="1"/>
-        <Border BorderThickness="1" CornerRadius="10" BorderBrush="Black" HorizontalAlignment="Left" Height="400" Margin="1380,76,0,0" VerticalAlignment="Top" Width="449" Grid.Row="1" Grid.Column="1"/>
+        <Border BorderThickness="1" CornerRadius="10" BorderBrush="Black" HorizontalAlignment="Left" Height="400" Margin="10,76,0,0" VerticalAlignment="Top" Width="449" Grid.Row="1" Grid.Column="1"/>
         <TextBlock HorizontalAlignment="Left" Text="Hz" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="890,127,0,0" Width="50" Grid.Column="1" Grid.Row="1"/>
         <TextBox Text="" HorizontalAlignment="Left" Name="Freq1" Height="34" Margin="685,123,0,0" TextWrapping="Wrap" FontSize="20" VerticalAlignment="Top" Width="200" Grid.Column="1" Grid.Row="1"/>
         <Border BorderThickness="1" CornerRadius="10" BorderBrush="Black" HorizontalAlignment="Left" Height="400" VerticalAlignment="Top" Width="40" Margin="1465,76,0,0" Grid.Column="1" Grid.Row="1"/>
@@ -41,7 +41,7 @@
         <TextBlock Name="HzLabel4" HorizontalAlignment="Left" Text="Hz" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="890,281,0,0" Width="50" Grid.Column="1" Grid.Row="1"/>
         <TextBox HorizontalAlignment="Left" Name="Freq4" Height="34" Margin="685,277,0,0" Text="" TextWrapping="Wrap" FontSize="20" VerticalAlignment="Top" Width="200" Grid.Column="1" Grid.Row="1"/>
         <TextBlock Name="Freq4Label" HorizontalAlignment="Left" Text="Częstotliwość 4:" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Top" Margin="516,281,0,0" Grid.Column="1" Grid.Row="1"/>
-        <Border BorderThickness="1" CornerRadius="10" BorderBrush="Black" HorizontalAlignment="Left" Height="400" Margin="478,76,0,0" VerticalAlignment="Top" Width="874" Grid.Column="1" Grid.Row="1"/>
+        <Border BorderThickness="1" CornerRadius="10" BorderBrush="Black" HorizontalAlignment="Left" Height="400" Margin="464,76,0,0" VerticalAlignment="Top" Width="874" Grid.Column="1" Grid.Row="1"/>
         <ComboBox Grid.Column="1" HorizontalAlignment="Left" Margin="685,335,0,0" Name="unitList" VerticalAlignment="Top" Width="200" Grid.Row="1"></ComboBox>
         <TextBlock Name="UnitLabel" HorizontalAlignment="Left" Text="Przedrostek jednostki dla 1 wartości:" TextWrapping="Wrap" VerticalAlignment="Top" Margin="475,337,0,0" Grid.Column="1" Grid.Row="1" Width="210" FontSize="13"/>
         <ComboBox SelectionChanged="Change_Mode" Grid.Column="1" HorizontalAlignment="Left" Margin="685,384,0,0" Name="ModeList" VerticalAlignment="Top" Width="200" Grid.Row="1"/>

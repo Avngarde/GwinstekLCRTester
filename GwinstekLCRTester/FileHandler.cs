@@ -5,7 +5,7 @@ namespace GwinstekLCRTester
 {
     class FileHandler
     {
-        private static string settingsPath = Directory.GetCurrentDirectory() + "/settings.json";
+        private string settingsPath = Directory.GetCurrentDirectory() + "/settings.json";
 
         private TextWriter writer;
 
@@ -15,21 +15,19 @@ namespace GwinstekLCRTester
 
         public FileHandler()
         {
-            writer = File.CreateText(settingsPath);
-
             if (!File.Exists(settingsPath))
             {
+                writer = File.CreateText(settingsPath);
                 currentSettings = createDefaultSettings();
                 writer.Write(JsonConvert.SerializeObject(createDefaultSettings()));
                 writer.Flush();
+                writer.Dispose();
+                writer.Close();
             }
             else
             {
                 currentSettings = readSettings();
             }
-
-            writer.Dispose();
-            writer.Close();
         }
 
        public Settings createDefaultSettings()
