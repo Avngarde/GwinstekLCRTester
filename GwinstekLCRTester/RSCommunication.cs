@@ -13,7 +13,6 @@ namespace GwinstekLCRTester
 
 
         private static SerialPort _serialPort;
-        private static TextWriter writer;
 
         public static readonly string[] measurementTypes = {
 
@@ -54,71 +53,7 @@ namespace GwinstekLCRTester
         }
 
 
-        // TODO: przenieś to do FileHandlera
-        public void writeToCSV(decimal[] paramArray, string multiplier, string freq, string msType, int cyclesIterator, uint avg=1)
-        {
-
-            // pathOutput zmienić na jakis atrybut kiedy przniesie się tą metodę do fileHandlera.cs
-            //string path = pathOutput.Replace(@"\", @"\\").Replace("\r\n", "") + "\\pomiary_" + DateTime.Now.ToString("dd-M-yyyy--HH-mm-ss") + ".csv";
-            string path = "asdjashd";
-            if (writer == null)
-            {
-                // tworzenie kolumn do pliku csv
-                writer = File.AppendText(path);
-                string csvColumns = "Numer cyklu; AVG;";
-                csvColumns += msType switch
-                {
-                    "Cs-Rs" => string.Format("Cs ({0}F);Rs (Ω)", (multiplier == "Podstawowa jednostka") ? "" : multiplier),
-                    "Cs-D" => string.Format("Cs ({0}F);D", (multiplier == "Podstawowa jednostka") ? "" : multiplier),
-                    "Cp-Rp" => string.Format("Cp ({0}F);Rp (Ω)", (multiplier == "Podstawowa jednostka") ? "" : multiplier),
-                    "Cp-D" => string.Format("Cp ({0}F);D", (multiplier == "Podstawowa jednostka") ? "" : multiplier),
-                    "Lp-Rp" => string.Format("Lp ({0}H);Rp (Ω)", (multiplier == "Podstawowa jednostka") ? "" : multiplier),
-                    "Lp-Q" => string.Format("Lp ({0}H);Q", (multiplier == "Podstawowa jednostka") ? "" : multiplier),
-                    "Ls-Rs" => string.Format("Ls ({0}H);Rp (Ω)", (multiplier == "Podstawowa jednostka") ? "" : multiplier),
-                    "Ls-Q" => string.Format("Ls ({0}H);Q", (multiplier == "Podstawowa jednostka") ? "" : multiplier),
-                    "Rs-Q" => "Rs (Ω);Q",
-                    "Rp-Q" => "Rp (Ω);Q",
-                    "R-X" => "R (Ω);X (Ω)",
-                    "DCR" => "DCR (kΩ)",
-                    "Z-0r" => "Z (Ω);0 (r)",
-                    "Z-0d" => "Z (Ω);0 (º)",
-                    "Z-D" => "Z (Ω);D",
-                    "Z-Q" => "Z (Ω);Q",
-                    _ => throw new NotImplementedException()
-                };
-
-                csvColumns += ";dodatkowo wybrany parametr D;częstotliwość (Hz);czas pomiaru";
-                writer.WriteLine(csvColumns);
-            }
-
-            if (msType != "DCR")
-            {
-                writer.WriteLine
-                (
-                    "{0};{1};{2};{3};{4};{5};{6}", 
-                    cyclesIterator,                                                                 // numer kondensatora
-                    (avg!=1) ? avg : "NIE",                                                         // mierzenie z parametrem avg
-                    paramArray[0].ToString().Replace(",", "."),                                     // główny parametr pomiaru
-                    paramArray[1].ToString().Replace(",", "."),                                     // drugi główny parametr pomiaru                       
-                    (paramArray[2] != -1) ? paramArray[2].ToString().Replace(",", ".") : "NIE",     // dodatkowy parametr D
-                    freq,                                                                           // częstotliwość pomiaru
-                    DateTime.Now.ToString("dd-M-yyyy HH:mm:ss")                                     // czas pomiaru
-                );
-            }
-            else
-            {
-                writer.WriteLine
-                (
-                    "{0};{1};{2};{3};{4};{5}", 
-                    cyclesIterator,                                                                 // numer kondenstatora
-                    (avg != 1) ? avg : "NIE",                                                       // mierzenie z parametrem avg
-                    paramArray[0] * 0.001m,                                                         // główny i jedyny dla DCR parametr pomiaru
-                    (paramArray[2] == -1) ? "NIE" : paramArray[2].ToString().Replace(",", "."),     // dodatkowy parametr D
-                    freq,                                                                           // częstotliwość pomiaru
-                    DateTime.Now.ToString("dd-M-yyyy HH:mm:ss")                                     // czas pomiaru
-                );
-            }
-        }
+        
 
 
         public decimal[] getMeasurementParams(string msType, string multiplier, bool addD = false, int waitFetchMs = 500)
@@ -149,49 +84,16 @@ namespace GwinstekLCRTester
                 responseDecimalArray[2] = (d_Parameter != null) ? decimal.Parse(_serialPort.ReadLine().Split(",")[1].Replace(".", ","), NumberStyles.Float) : -1;
             }
 
-            // TODO : przetestuj dla DCR
             // FormatException to błąd pomiaru, kiedy tryb jest ustawiony na DCR jest to SZCZEGÓLNY przypadek a nie błąd
             catch (FormatException)
             {
                 if (msType == "DCR") 
                     responseDecimalArray[1] = -1;
                 else 
-                    throw new Exception("asd");
+                    //TODO : dodaj potem logikę ponownego sprawdzenia
+                    throw new Exception("wystąpił błąd pomiaru, ponawianie mierzenia...");
             }
 
-            
-
-            
-
-
-
-
-
-
-            
-            /*for (int i = 0; i < responseStringArray.Length; i++)
-            {
-                try
-                {
-                    responseDecimalArray[i] = decimal.Parse(responseStringArray[i], NumberStyles.Float);
-                }
-                catch (ArgumentNullException)
-                {
-                    responseDecimalArray[i] = -1;
-                }
-                catch (FormatException)
-                {
-                    if (msType == "DCR")
-                    {
-                        responseDecimalArray[i] = -1;
-                    }
-                    else
-                    {
-                        throw new Exception("Błąd pomiaru, ponawianie testu z tymi samymi ustawieniami");
-                    }
-                }
-
-            }*/
 
             // dodawanie mnożników, jeśli jednostka pomiaru pozwala na to
             // dodatkowe zabezpieczenie oprócz GUI
@@ -279,12 +181,6 @@ namespace GwinstekLCRTester
             _serialPort.WriteLine("aper " + avg);
         }
 
-
-        public void closeCSV()
-        {
-            writer.Close();
-            writer = null;
-        }
 
         public void closePort()
         {

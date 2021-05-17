@@ -179,6 +179,7 @@ namespace GwinstekLCRTester
                             rsConnector.changeHzInDevice(freq);
                             decimal[] responseParams = rsConnector.getMeasurementParams(ModeList.Text, unitList.Text, addD: (DParameter.Visibility == Visibility.Hidden) ? false : DParameter.IsChecked == true);
                             //rsConnector.writeToCSV(responseParams, unitList.Text, freq, ModeList.Text, FilePath.Text, (iter + 1));
+                            
                         }
                     }
                     iter++;
@@ -197,13 +198,13 @@ namespace GwinstekLCRTester
                         System.Threading.Thread.Sleep(500);
                         rsConnector.changeHzInDevice(freq);
                         decimal[] responseParams = rsConnector.getMeasurementParams(ModeList.Text, unitList.Text, addD: (DParameter.Visibility == Visibility.Hidden) ? false : DParameter.IsChecked == true, waitMs);
-                        //rsConnector.writeToCSV(responseParams, unitList.Text, freq, ModeList.Text, FilePath.Text);
+                        fileHandler.writeCSV(responseParams, unitList.Text, freq, ModeList.Text, avg : AVGValue.Text);
                     }
                 }
                 rsConnector.changeAVGInDevice("1");
             }
 
-            rsConnector.closeCSV();
+            fileHandler.closeWriter();
             System.Threading.Thread.Sleep(200);
             rsConnector.unlockKeypadInDevice();
             rsConnector.closePort();

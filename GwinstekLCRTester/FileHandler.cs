@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using Newtonsoft.Json;
 
 namespace GwinstekLCRTester
@@ -15,12 +16,21 @@ namespace GwinstekLCRTester
 
         public FileHandler()
         {
+<<<<<<< HEAD
+            
+
+=======
+>>>>>>> 6ca9e38b16f63a098279c2db510c2eccba7076c9
             if (!File.Exists(settingsPath))
             {
                 writer = File.CreateText(settingsPath);
                 currentSettings = createDefaultSettings();
                 writer.Write(JsonConvert.SerializeObject(createDefaultSettings()));
                 writer.Flush();
+<<<<<<< HEAD
+
+=======
+>>>>>>> 6ca9e38b16f63a098279c2db510c2eccba7076c9
                 writer.Dispose();
                 writer.Close();
             }
@@ -28,6 +38,10 @@ namespace GwinstekLCRTester
             {
                 currentSettings = readSettings();
             }
+<<<<<<< HEAD
+
+=======
+>>>>>>> 6ca9e38b16f63a098279c2db510c2eccba7076c9
         }
 
        public Settings createDefaultSettings()
@@ -76,6 +90,82 @@ namespace GwinstekLCRTester
             writer.Flush();
             writer.Dispose();
             writer.Close();
+        }
+
+
+
+
+        
+        public void writeCSV(decimal[] paramArray, string multiplier, string freq, string msType, int cyclesIterator = 1, string avg = "1")
+        {
+            //string path = pathOutput.Replace(@"\", @"\\").Replace("\r\n", "") + "\\pomiary_" + DateTime.Now.ToString("dd-M-yyyy--HH-mm-ss") + ".csv";
+            string path = currentSettings.CSVPath + "/pomiary_" + DateTime.Now.ToString("dd-M-yyyy--HH-mm-ss") + ".csv";
+            if (writer == null)
+            {
+                // tworzenie kolumn do pliku csv
+                writer = File.AppendText(path);
+                string csvColumns = "Numer cyklu; AVG;";
+                csvColumns += msType switch
+                {
+                    "Cs-Rs" => string.Format("Cs ({0}F);Rs (Ω)", (multiplier == "Podstawowa jednostka") ? "" : multiplier),
+                    "Cs-D" => string.Format("Cs ({0}F);D", (multiplier == "Podstawowa jednostka") ? "" : multiplier),
+                    "Cp-Rp" => string.Format("Cp ({0}F);Rp (Ω)", (multiplier == "Podstawowa jednostka") ? "" : multiplier),
+                    "Cp-D" => string.Format("Cp ({0}F);D", (multiplier == "Podstawowa jednostka") ? "" : multiplier),
+                    "Lp-Rp" => string.Format("Lp ({0}H);Rp (Ω)", (multiplier == "Podstawowa jednostka") ? "" : multiplier),
+                    "Lp-Q" => string.Format("Lp ({0}H);Q", (multiplier == "Podstawowa jednostka") ? "" : multiplier),
+                    "Ls-Rs" => string.Format("Ls ({0}H);Rp (Ω)", (multiplier == "Podstawowa jednostka") ? "" : multiplier),
+                    "Ls-Q" => string.Format("Ls ({0}H);Q", (multiplier == "Podstawowa jednostka") ? "" : multiplier),
+                    "Rs-Q" => "Rs (Ω);Q",
+                    "Rp-Q" => "Rp (Ω);Q",
+                    "R-X" => "R (Ω);X (Ω)",
+                    "DCR" => "DCR (kΩ)",
+                    "Z-0r" => "Z (Ω);0 (r)",
+                    "Z-0d" => "Z (Ω);0 (º)",
+                    "Z-D" => "Z (Ω);D",
+                    "Z-Q" => "Z (Ω);Q",
+                    _ => throw new NotImplementedException()
+                };
+
+                csvColumns += ";dodatkowo wybrany parametr D;częstotliwość (Hz);czas pomiaru";
+                writer.WriteLine(csvColumns);
+            }
+
+            if (msType != "DCR")
+            {
+                writer.WriteLine
+                (
+                    "{0};{1};{2};{3};{4};{5};{6}",
+                    cyclesIterator,                                                                 // numer kondensatora
+                    (avg != "1") ? avg : "NIE",                                                         // mierzenie z parametrem avg
+                    paramArray[0].ToString().Replace(",", "."),                                     // główny parametr pomiaru
+                    paramArray[1].ToString().Replace(",", "."),                                     // drugi główny parametr pomiaru                       
+                    (paramArray[2] != -1) ? paramArray[2].ToString().Replace(",", ".") : "NIE",     // dodatkowy parametr D
+                    freq,                                                                           // częstotliwość pomiaru
+                    DateTime.Now.ToString("dd-M-yyyy HH:mm:ss")                                     // czas pomiaru
+                );
+            }
+            else
+            {
+                writer.WriteLine
+                (
+                    "{0};{1};{2};{3};{4};{5}",
+                    cyclesIterator,                                                                 // numer kondenstatora
+                    (avg != "1") ? avg : "NIE",                                                       // mierzenie z parametrem avg
+                    paramArray[0] * 0.001m,                                                         // główny i jedyny dla DCR parametr pomiaru
+                    (paramArray[2] == -1) ? "NIE" : paramArray[2].ToString().Replace(",", "."),     // dodatkowy parametr D
+                    freq,                                                                           // częstotliwość pomiaru
+                    DateTime.Now.ToString("dd-M-yyyy HH:mm:ss")                                     // czas pomiaru
+                );
+            }
+        }
+
+
+        public void closeWriter()
+        {
+            writer.Flush();
+            writer.Close();
+            writer.Dispose();
+            writer = null;
         }
     }
 }
