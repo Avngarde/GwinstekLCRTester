@@ -59,8 +59,8 @@ namespace GwinstekLCRTester
         {
 
             // pathOutput zmienić na jakis atrybut kiedy przniesie się tą metodę do fileHandlera.cs
-            string path = pathOutput.Replace(@"\", @"\\").Replace("\r\n", "") + "\\pomiary_" + DateTime.Now.ToString("dd-M-yyyy--HH-mm-ss") + ".csv";
-
+            //string path = pathOutput.Replace(@"\", @"\\").Replace("\r\n", "") + "\\pomiary_" + DateTime.Now.ToString("dd-M-yyyy--HH-mm-ss") + ".csv";
+            string path = "asdjashd";
             if (writer == null)
             {
                 // tworzenie kolumn do pliku csv

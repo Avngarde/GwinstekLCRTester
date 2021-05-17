@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.IO.Ports;
 using System.Windows;
 using System.Windows.Controls;
@@ -8,21 +9,30 @@ namespace GwinstekLCRTester
 {
     public partial class MainWindow : Window
     {
-        private Settings settings = FileHandler.ReadSettings();
+
+
+        
+
         public MainWindow()
         {
             InitializeComponent();
 
-            // Set data for WPF form
-            FilePath.Text = settings.CSVPath;
 
-            string[] ports = SerialPort.GetPortNames();
+
+
+            FileHandler fileHandler = new FileHandler();
+            // Set data for WPF form
+            /*FilePath.Text = settings.CSVPath;
+
+            
 
             if (FileHandler.ReadSettings().ToString() == string.Empty)
             {
                 string default_path = FileHandler.CreateDefaultSettings().CSVPath;
                 FilePath.Text = default_path;
-            }
+            }*/
+
+            string[] ports = SerialPort.GetPortNames();
 
             Parity[] parities = new Parity[]
             {
@@ -79,24 +89,25 @@ namespace GwinstekLCRTester
             try
             {
                 ParityList.ItemsSource = parities;
-                ParityList.SelectedItem = settings.Parity;
+                //ParityList.SelectedItem = settings.Parity;
                 StopBitsList.ItemsSource = stopBits;
-                StopBitsList.SelectedItem = settings.StopBit;
+                //StopBitsList.SelectedItem = settings.StopBit;
 
                 Handshakes.ItemsSource = handshakes;
-                Handshakes.SelectedItem = settings.HandShake;
+                //Handshakes.SelectedItem = settings.HandShake;
 
                 unitList.ItemsSource = units;
-                unitList.SelectedItem = settings.MultiplierUnit;
+                //unitList.SelectedItem = settings.MultiplierUnit;
 
                 ModeList.ItemsSource = RSCommunication.measurementTypes;
-                ModeList.SelectedItem = settings.MeasurmentType;
+                //ModeList.SelectedItem = settings.MeasurmentType;
 
                 TransSpeed.ItemsSource = baudRates;
-                TransSpeed.SelectedItem = settings.TransmissionSpeed;
+                //TransSpeed.SelectedItem = settings.TransmissionSpeed;
+                TransSpeed.SelectedItem = "231ui23y7i12y37812y38";
 
                 DataBit.ItemsSource = bits;
-                DataBit.SelectedItem = settings.DataBits;
+                //DataBit.SelectedItem = settings.DataBits;
 
                 ComPorts.ItemsSource = ports;
                 ComPorts.SelectedItem = ports[0];
@@ -104,7 +115,7 @@ namespace GwinstekLCRTester
             }
             catch (IndexOutOfRangeException)
             {
-                System.Windows.MessageBox.Show("Nie znaleziono portów COM");
+                System.Windows.MessageBox.Show("Nie znaleziono portów COM!!!!!!!!!!!");
                 // Close();
             };
         }
@@ -176,8 +187,8 @@ namespace GwinstekLCRTester
                         {
                             System.Threading.Thread.Sleep(3000);
                             rsConnector.changeHzInDevice(freq);
-                            decimal[] responseParams = rsConnector.testFullParams(ModeList.Text, unitList.Text, addD: (DParameter.Visibility == Visibility.Hidden) ? false : DParameter.IsChecked == true);
-                            rsConnector.writeToCSV(responseParams, unitList.Text, freq, ModeList.Text, FilePath.Text, (iter + 1));
+                            decimal[] responseParams = rsConnector.getMeasurementParams(ModeList.Text, unitList.Text, addD: (DParameter.Visibility == Visibility.Hidden) ? false : DParameter.IsChecked == true);
+                            //rsConnector.writeToCSV(responseParams, unitList.Text, freq, ModeList.Text, FilePath.Text, (iter + 1));
                         }
                     }
                     iter++;
@@ -195,8 +206,8 @@ namespace GwinstekLCRTester
                     {
                         System.Threading.Thread.Sleep(500);
                         rsConnector.changeHzInDevice(freq);
-                        decimal[] responseParams = rsConnector.testFullParams(ModeList.Text, unitList.Text, addD: (DParameter.Visibility == Visibility.Hidden) ? false : DParameter.IsChecked == true, waitMs);
-                        rsConnector.writeToCSV(responseParams, unitList.Text, freq, ModeList.Text, FilePath.Text);
+                        decimal[] responseParams = rsConnector.getMeasurementParams(ModeList.Text, unitList.Text, addD: (DParameter.Visibility == Visibility.Hidden) ? false : DParameter.IsChecked == true, waitMs);
+                        //rsConnector.writeToCSV(responseParams, unitList.Text, freq, ModeList.Text, FilePath.Text);
                     }
                 }
                 rsConnector.changeAVGInDevice("1");
@@ -227,8 +238,8 @@ namespace GwinstekLCRTester
             if (result.ToString() != string.Empty)
             {
                 FilePath.Text = browser.SelectedPath;
-                settings.CSVPath = browser.SelectedPath;
-                FileHandler.WriteNewSettings(settings);
+               // settings.CSVPath = browser.SelectedPath;
+                //FileHandler.WriteNewSettings(settings);
             }
         }
 

@@ -5,10 +5,32 @@ namespace GwinstekLCRTester
 {
     class FileHandler
     {
-        private static string SettingFilePath = Directory.GetCurrentDirectory() + "/settings.json";
+        private static string settingsPath = Directory.GetCurrentDirectory() + "/settings.json";
+
         private static TextWriter writer;
 
-        public static Settings CreateDefaultSettings()
+        public readonly Settings currentSettings; 
+
+
+
+        public FileHandler()
+        {
+
+            if (!File.Exists(settingsPath))
+            {
+                currentSettings = createDefaultSettings();
+
+                writer = File.CreateText(settingsPath);
+                writer.Write(JsonConvert.SerializeObject(createDefaultSettings()));
+                writer.Flush();
+            }
+            else
+            {
+                currentSettings = readSettings();
+            }
+        }
+
+       public static Settings createDefaultSettings()
         {
             Settings defaultSettings = new Settings()
             {
@@ -23,6 +45,7 @@ namespace GwinstekLCRTester
                 DChecked = false,
                 SerialTestChecked = false,
                 MultiplierUnit = "Podstawowa jednostka",
+                MeasurmentType = "Cs-Rs",
 
                 TransmissionSpeed = 115200,
                 StopBit = System.IO.Ports.StopBits.None,
@@ -31,17 +54,16 @@ namespace GwinstekLCRTester
                 DataBits = 8
             };
 
-            WriteNewSettings(defaultSettings);
             return defaultSettings;
         }
 
-        public static Settings ReadSettings()
+        public static Settings readSettings()
         {
-            if (!File.Exists(SettingFilePath))
+            if (!File.Exists(settingsPath))
             {
-                CreateDefaultSettings();
+                createDefaultSettings();
             }
-            string rawJson = File.ReadAllText(SettingFilePath);
+            string rawJson = File.ReadAllText(settingsPath);
             Settings currentSettings = JsonConvert.DeserializeObject<Settings>(rawJson);
 
             return currentSettings;
@@ -49,9 +71,15 @@ namespace GwinstekLCRTester
 
         public static void WriteNewSettings(Settings settings)
         {
-            string serializedSettings = JsonConvert.SerializeObject(settings);
-            writer = File.CreateText(SettingFilePath);
-            writer.Write(settings);
+
+            if (!File.Exists(settingsPath))
+            {
+                writer = File.CreateText(settingsPath);
+            }
+
+            writer.Write(JsonConvert.SerializeObject(settings));
+            writer.Flush();
+
         }
     }
 }
