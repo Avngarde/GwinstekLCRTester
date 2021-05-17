@@ -3,7 +3,7 @@
 ![Language](https://forthebadge.com/images/badges/made-with-c-sharp.svg)
 ![powered](https://forthebadge.com/images/badges/powered-by-electricity.svg)
 
-[![CC-0 license](https://img.shields.io/badge/License-CC--0-blue.svg)](https://creativecommons.org/licenses/by-nd/4.0)
+[![CC BY-NC-SA 4.0][cc-by-nc-sa-shield]][cc-by-nc-sa]
 [![Version](https://badge.fury.io/gh/tterb%2FHyde.svg)](https://badge.fury.io/gh/tterb%2FHyde)
 [![No Maintenance Intended](http://unmaintained.tech/badge.svg)](http://unmaintained.tech/)
 
@@ -91,7 +91,8 @@ This file is automatically created and updated by application and should not be 
 
 ## Licence
 
-All rights reserved
+This work is licensed under a
+[Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License][cc-by-nc-sa].
 
 
 ## Authors
