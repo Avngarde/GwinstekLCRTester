@@ -8,7 +8,7 @@
 * [CSV file format](#CSV-file-format)
 * [Comments and adnotations](#Comments-and-adnotations)
 * [Technologies used](#Used-technologies)
-* [Config.json](#configjson)
+* [settings.json](#settingsjson)
 * [Licence](#Licence)
 * [Authors](#Authors)
 
@@ -71,9 +71,11 @@ GUI is divided into two "panels":
 
 
 
-## Config.json
+## config.json
 
-This file is automatically created and updated by application and should not be changed manually. Config.json sets default values in inputs such as RS connection data, so that you do not have to enter the same data over and over again. Default settings set is visibl on the screenshoot. After closing program, config file is updated
+![defualt settings.json](https://github.com/Avngarde/GwinstekLCRTester/README_img)
+
+This file is automatically created and updated by application and should not be changed manually. settings.json sets default values in inputs such as RS connection data, so that you do not have to enter the same data over and over again. Default settings set is visible on the screenshoot (by defualt path to csv folder is next to .exe build file). After closing program, config file is updated
 
 
 ## Licence
@@ -83,5 +85,5 @@ All rights reserved
 
 ## Authors
 
-- Jan Napieralski [R3VANEK](https://github.com/R3VANEK)
-- Kamil Paczkowski [Avngarde](https://github.com/Avngarde)
+- Jan Napieralski  [R3VANEK](https://github.com/R3VANEK)
+- Kamil Paczkowski  [Avngarde](https://github.com/Avngarde)
