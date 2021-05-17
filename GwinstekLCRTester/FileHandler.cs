@@ -7,7 +7,7 @@ namespace GwinstekLCRTester
     {
         private static string settingsPath = Directory.GetCurrentDirectory() + "/settings.json";
 
-        private static TextWriter writer;
+        private TextWriter writer;
 
         public readonly Settings currentSettings; 
 
@@ -15,12 +15,11 @@ namespace GwinstekLCRTester
 
         public FileHandler()
         {
+            writer = File.CreateText(settingsPath);
 
             if (!File.Exists(settingsPath))
             {
                 currentSettings = createDefaultSettings();
-
-                writer = File.CreateText(settingsPath);
                 writer.Write(JsonConvert.SerializeObject(createDefaultSettings()));
                 writer.Flush();
             }
@@ -28,9 +27,12 @@ namespace GwinstekLCRTester
             {
                 currentSettings = readSettings();
             }
+
+            writer.Dispose();
+            writer.Close();
         }
 
-       public static Settings createDefaultSettings()
+       public Settings createDefaultSettings()
         {
             Settings defaultSettings = new Settings()
             {
@@ -57,7 +59,7 @@ namespace GwinstekLCRTester
             return defaultSettings;
         }
 
-        public static Settings readSettings()
+        public Settings readSettings()
         {
             if (!File.Exists(settingsPath))
             {
@@ -69,12 +71,13 @@ namespace GwinstekLCRTester
             return currentSettings;
         } 
 
-        public static void WriteNewSettings(Settings settings)
+        public void writeNewSettings(Settings settings)
         {
-
+            writer = File.CreateText(settingsPath);
             writer.Write(JsonConvert.SerializeObject(settings));
             writer.Flush();
-
+            writer.Dispose();
+            writer.Close();
         }
     }
 }

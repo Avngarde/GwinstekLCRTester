@@ -9,19 +9,12 @@ namespace GwinstekLCRTester
 {
     public partial class MainWindow : Window
     {
-
-
         private FileHandler fileHandler = new FileHandler();
-        
 
         public MainWindow()
         {
             InitializeComponent();
 
-
-
-
-            
             // Set data for WPF form
             FilePath.Text = fileHandler.currentSettings.CSVPath;
 
@@ -102,9 +95,13 @@ namespace GwinstekLCRTester
                 DataBit.ItemsSource = bits;
                 DataBit.SelectedItem = fileHandler.currentSettings.DataBits;
 
+                Freq1.Text = fileHandler.currentSettings.Freq1;
+                Freq2.Text = fileHandler.currentSettings.Freq2;
+                Freq3.Text = fileHandler.currentSettings.Freq3;
+                Freq4.Text = fileHandler.currentSettings.Freq4;
+
                 ComPorts.ItemsSource = ports;
                 ComPorts.SelectedItem = ports[0];
-
             }
             catch (IndexOutOfRangeException)
             {
@@ -190,9 +187,9 @@ namespace GwinstekLCRTester
             else
             {
                 System.Threading.Thread.Sleep(2000);
-                rsConnector.changeAVGInDevice(CyclesOrAVG.Text);
+                rsConnector.changeAVGInDevice(Cycles.Text);
                 System.Threading.Thread.Sleep(2000);
-                int waitMs = (int)((int.Parse(CyclesOrAVG.Text) / 2.9090909 + 1) * 1000);
+                int waitMs = (int)((int.Parse(Cycles.Text) / 2.9090909 + 1) * 1000);
                 foreach (string freq in frequencies)
                 {
                     if (freq != "" && freq != "0" && !string.IsNullOrEmpty(freq))
@@ -302,6 +299,35 @@ namespace GwinstekLCRTester
         {
             AVGTextLabel.Visibility = Visibility.Hidden;
             AVGValue.Visibility = Visibility.Hidden;
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            Settings newSettings = new Settings();
+
+            //Connection values
+            newSettings.TransmissionSpeed = (uint)TransSpeed.SelectedItem;
+            newSettings.DataBits = (uint)DataBit.SelectedItem;
+            newSettings.Parity = (Parity)ParityList.SelectedItem;
+            newSettings.StopBit = (StopBits)StopBitsList.SelectedItem;
+            newSettings.HandShake = (Handshake)Handshakes.SelectedItem;
+
+            //Test values
+            newSettings.Freq1 = Freq1.Text;
+            newSettings.Freq2 = Freq2.Text;
+            newSettings.Freq3 = Freq3.Text;
+            newSettings.Freq4 = Freq4.Text;
+
+            newSettings.MultiplierUnit = unitList.Text;
+            newSettings.MeasurmentType = ModeList.Text;
+            newSettings.DChecked = DParameter.IsChecked.Value;
+
+            newSettings.AVG = AVGValue.Text;
+            newSettings.Cycles = Cycles.Text;
+            newSettings.SerialTestChecked = SerialTest.IsChecked.Value;
+            newSettings.CSVPath = FilePath.Text;
+
+            fileHandler.writeNewSettings(newSettings);
         }
     }
 }
