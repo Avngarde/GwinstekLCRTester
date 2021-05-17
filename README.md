@@ -73,7 +73,7 @@ GUI is divided into two "panels":
 
 ## config.json
 
-![defualt settings.json](https://github.com/Avngarde/GwinstekLCRTester/README_img)
+![defualt settings.json](https://github.com/Avngarde/GwinstekLCRTester/README_images/settings.png)
 
 This file is automatically created and updated by application and should not be changed manually. settings.json sets default values in inputs such as RS connection data, so that you do not have to enter the same data over and over again. Default settings set is visible on the screenshoot (by defualt path to csv folder is next to .exe build file). After closing program, config file is updated
 
