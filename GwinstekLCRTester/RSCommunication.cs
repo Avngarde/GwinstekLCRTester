@@ -128,6 +128,10 @@ namespace GwinstekLCRTester
         // UWAGA : liczby, które po przemnożeniu przez 1000 nadal są zmiennoprzecinkowe są zaokrąglane
         public void changeHzInDevice(string HzString)
         {
+
+            if(HzString.Contains("k") || HzString.Contains("K"))
+                HzString = HzString.Remove(HzString.Length - 1)+"000";
+            
             uint Hz;
             bool isNumeric = uint.TryParse(HzString, out Hz);
 
