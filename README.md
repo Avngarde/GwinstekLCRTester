@@ -1,14 +1,14 @@
 # GwinstekLCRTester
 
-GwinstekLCRTester jest to program napisany w C# przy użyciu WPF, służący do automatyzacji testów urządzeń mierniczych z serii Gwinstek LCR 6000
 
 ## Table of Contents
 * [How it works](#How-it-works)
 * [GUI specification](#GUI-specification)
 * [Device compatibility](#Device-compatibility)
+* [CSV file format](#CSV-file-format)
 * [Comments and adnotations](#Comments-and-adnotations)
 * [Technologies used](#Used-technologies)
-* [Config.js](#Config.js)
+* [Config.json](#Config.json)
 * [Licence](#Licence)
 * [Authors](#Authors)
 
@@ -53,9 +53,35 @@ GUI is divided into two "panels":
 
 - Additional parameter D : For measurement types that don't include parameter D we can force it's mensuration
 
-- Speed of speed of serial test : Please note that serial test heavily depends on given AVG number. If we set AVG to 120, single test is going to last 43 seconds roughly! Since this is an machine calculations we in application cannot speed it up
+- Speed of speed of serial test : Please note that serial test heavily depends on given AVG number. If we set AVG to 120, single test is going to last 43 seconds roughly! Since this is an machine calculations application cannot speed it up
 
 
 
 
 
+## Technologies Used
+
+- C# version 8.0
+- WPF
+- Newtonsoft.Json
+- System.IO.Ports 
+
+
+
+
+
+
+## Config.json
+
+This file is automatically created and updated by application and should not be changed manually. Config.json sets default values in inputs such as RS connection data, so that you do not have to enter the same data over and over again. Default settings set is visibl on the screenshoot. After closing program, config file is updated
+
+
+## Licence
+
+All rights reserved
+
+
+## Authors
+
+- Jan Napieralski [R3VANEK](https://github.com/R3VANEK)
+- Kamil Paczkowski [Avngarde](https://github.com/Avngarde)
