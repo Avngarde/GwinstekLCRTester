@@ -1,5 +1,12 @@
 # GwinstekLCRTester
+![Build](https://forthebadge.com/images/badges/built-with-love.svg)
+![Language](https://forthebadge.com/images/badges/made-with-c-sharp.svg)
+![powered](https://forthebadge.com/images/badges/powered-by-electricity.svg)
+
+[![CC-0 license](https://img.shields.io/badge/License-CC--0-blue.svg)](https://creativecommons.org/licenses/by-nd/4.0)
 [![Version](https://badge.fury.io/gh/tterb%2FHyde.svg)](https://badge.fury.io/gh/tterb%2FHyde)
+[![No Maintenance Intended](http://unmaintained.tech/badge.svg)](http://unmaintained.tech/)
+
 
 ## Table of Contents
 * [How it works](#How-it-works)
@@ -17,9 +24,9 @@
 ## How it works
 
 
-This application's main usage is to automatise measuring various parameters of capacitors on [Gwinstek LCR 6300][#Device-compatibility]. Such measured data is then stored in csv files in order to easily open and read it in stylesheet programs. GwinstekLCRTester supports two main measure methods: 
+This application's main usage is to automatise measuring various parameters of capacitors on [Gwinstek LCR 6300](#Device-compatibility). Such measured data is then stored in csv files in order to easily open and read it in stylesheet programs. GwinstekLCRTester supports two main measure methods: 
 
-* **Test of several capacitors (default)** : For this method user must specify one or more frequencies of measure and the (number of cycles)[#Comments-and-adnotations]. After hitting "Do tests" button we are prompted with inputed parameters on which tests will be performed. After completion of measurements for one capacitor message box appears asking ask whether we want to plug in another device or not
+* **Test of several capacitors (default)** : For this method user must specify one or more frequencies of measure and the [number of cycles](#Comments-and-adnotations). After hitting "Do tests" button we are prompted with inputed parameters on which tests will be performed. After completion of measurements for one capacitor message box appears asking ask whether we want to plug in another device or not
 
 * **Serial test**: This test is performed only on one capacitor. Here, we have an additional parameter to specify, [AVG](#Comments-and-adnotations). After completing measurements program will prompt us information about it
 
@@ -65,10 +72,10 @@ GUI is divided into two "panels":
 
 ## Technologies Used
 
-- C# version 8.0
+- C# version v.8.0
 - WPF
-- Newtonsoft.Json
-- System.IO.Ports 
+- Newtonsoft.Json v13.0.1
+- System.IO.Ports v5.0.1
 
 
 
