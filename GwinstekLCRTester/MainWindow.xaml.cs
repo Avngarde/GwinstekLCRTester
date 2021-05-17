@@ -58,7 +58,6 @@ namespace GwinstekLCRTester
             StopBits[] stopBits = new StopBits[]
             {
                 StopBits.One,
-                StopBits.None,
                 StopBits.OnePointFive,
                 StopBits.Two
             };
@@ -91,7 +90,7 @@ namespace GwinstekLCRTester
 
                 TransSpeed.ItemsSource = baudRates;
                 TransSpeed.SelectedItem = fileHandler.currentSettings.TransmissionSpeed;
-                
+
                 DataBit.ItemsSource = bits;
                 DataBit.SelectedItem = fileHandler.currentSettings.DataBits;
 
@@ -129,9 +128,9 @@ namespace GwinstekLCRTester
             var portName = SerialPort.GetPortNames();
             var baudRate = TransSpeed.Text == "" ? 115200 : uint.Parse(TransSpeed.Text);
             var dataBits = DataBit.Text == "" ? 8 : uint.Parse(DataBit.Text);
-            var parity = (Parity)Enum.Parse(typeof(Parity), ParityList.Text);
-            var stopBits = (StopBits)Enum.Parse(typeof(StopBits), StopBitsList.Text);
-            var handshake = (Handshake)Enum.Parse(typeof(Handshake), Handshakes.Text);
+            var parity = Enum.Parse(typeof(Parity), ParityList.Text);
+            var stopBits = Enum.Parse(typeof(StopBits), StopBitsList.Text);
+            var handshake = Enum.Parse(typeof(Handshake), Handshakes.Text);
 
             string[] frequencies = new string[4];
 
@@ -150,14 +149,14 @@ namespace GwinstekLCRTester
             RSCommunication rsConnector = new RSCommunication(
                 portName: ComPorts.Text,
                 baudRate: baudRate,
-                parityNumber: parity,
+                parityNumber: (Parity)parity,
                 dataBits: dataBits,
-                stopBits: stopBits,
-                handshakeType: handshake
+                stopBits: (StopBits)stopBits,
+                handshakeType: (Handshake)handshake
              );
 
 
-            if (AVGValue.Text != "AVG:")
+            if (AVGTextLabel.Visibility != Visibility.Visible)
             {
                 System.Windows.MessageBox.Show("Rozpoczynanie mierzenia dla parametrów: Częstotliwości: " + Freq1.Text + " " + Freq2.Text + " " + Freq3.Text + " " + Freq4.Text);
                 int iter = 0;
@@ -171,15 +170,17 @@ namespace GwinstekLCRTester
                             break;
                         }
                     }
-                    foreach (string freq in frequencies)
-                    {
-                        if (freq != "" && freq != "0" && !string.IsNullOrEmpty(freq))
+                    for (int cycle = 0; cycle < int.Parse(Cycles.Text); cycle++) {
+                        foreach (string freq in frequencies)
                         {
-                            System.Threading.Thread.Sleep(3000);
-                            rsConnector.changeHzInDevice(freq);
-                            decimal[] responseParams = rsConnector.getMeasurementParams(ModeList.Text, unitList.Text, addD: (DParameter.Visibility == Visibility.Hidden) ? false : DParameter.IsChecked == true);
-                            //rsConnector.writeToCSV(responseParams, unitList.Text, freq, ModeList.Text, FilePath.Text, (iter + 1));
-                            
+                            if (freq != "" && freq != "0" && !string.IsNullOrEmpty(freq))
+                            {
+                                System.Threading.Thread.Sleep(3000);
+                                rsConnector.changeHzInDevice(freq);
+                                decimal[] responseParams = rsConnector.getMeasurementParams(ModeList.Text, unitList.Text, addD: (DParameter.Visibility == Visibility.Hidden) ? false : DParameter.IsChecked == true);
+                                fileHandler.writeCSV(responseParams, unitList.Text, freq, ModeList.Text, cycle+1, AVGValue.Text);
+
+                            }
                         }
                     }
                     iter++;
@@ -188,17 +189,20 @@ namespace GwinstekLCRTester
             else
             {
                 System.Threading.Thread.Sleep(2000);
-                rsConnector.changeAVGInDevice(Cycles.Text);
+                rsConnector.changeAVGInDevice(AVGValue.Text);
                 System.Threading.Thread.Sleep(2000);
-                int waitMs = (int)((int.Parse(Cycles.Text) / 2.9090909 + 1) * 1000);
-                foreach (string freq in frequencies)
+                int waitMs = (int)((int.Parse(AVGValue.Text) / 2.9090909 + 1) * 1000);
+                for (int cycle = 0; cycle < int.Parse(Cycles.Text); cycle++)
                 {
-                    if (freq != "" && freq != "0" && !string.IsNullOrEmpty(freq))
+                    foreach (string freq in frequencies)
                     {
-                        System.Threading.Thread.Sleep(500);
-                        rsConnector.changeHzInDevice(freq);
-                        decimal[] responseParams = rsConnector.getMeasurementParams(ModeList.Text, unitList.Text, addD: (DParameter.Visibility == Visibility.Hidden) ? false : DParameter.IsChecked == true, waitMs);
-                        fileHandler.writeCSV(responseParams, unitList.Text, freq, ModeList.Text, avg : AVGValue.Text);
+                        if (freq != "" && freq != "0" && !string.IsNullOrEmpty(freq))
+                        {
+                            System.Threading.Thread.Sleep(500);
+                            rsConnector.changeHzInDevice(freq);
+                            decimal[] responseParams = rsConnector.getMeasurementParams(ModeList.Text, unitList.Text, addD: (DParameter.Visibility == Visibility.Hidden) ? false : DParameter.IsChecked == true, waitMs);
+                            fileHandler.writeCSV(responseParams, unitList.Text, freq, ModeList.Text, cycle+1, avg: AVGValue.Text);
+                        }
                     }
                 }
                 rsConnector.changeAVGInDevice("1");
@@ -229,7 +233,7 @@ namespace GwinstekLCRTester
             if (result.ToString() != string.Empty)
             {
                 FilePath.Text = browser.SelectedPath;
-               // settings.CSVPath = browser.SelectedPath;
+                // settings.CSVPath = browser.SelectedPath;
                 //FileHandler.WriteNewSettings(settings);
             }
         }
@@ -293,7 +297,9 @@ namespace GwinstekLCRTester
 
         private void SerialTest_Checked(object sender, RoutedEventArgs e)
         {
-            AVGValue.Text = "AVG:";
+            AVGTextLabel.Visibility = Visibility.Visible;
+            AVGValue.Visibility = Visibility.Visible;
+            AVGValue.Text = fileHandler.currentSettings.AVG;
         }
 
         private void SerialTest_Unchecked(object sender, RoutedEventArgs e)

@@ -10,27 +10,17 @@ namespace GwinstekLCRTester
 
         private TextWriter writer;
 
-        public readonly Settings currentSettings; 
-
+        public readonly Settings currentSettings;
 
 
         public FileHandler()
         {
-<<<<<<< HEAD
-            
-
-=======
->>>>>>> 6ca9e38b16f63a098279c2db510c2eccba7076c9
             if (!File.Exists(settingsPath))
             {
                 writer = File.CreateText(settingsPath);
                 currentSettings = createDefaultSettings();
                 writer.Write(JsonConvert.SerializeObject(createDefaultSettings()));
                 writer.Flush();
-<<<<<<< HEAD
-
-=======
->>>>>>> 6ca9e38b16f63a098279c2db510c2eccba7076c9
                 writer.Dispose();
                 writer.Close();
             }
@@ -38,13 +28,9 @@ namespace GwinstekLCRTester
             {
                 currentSettings = readSettings();
             }
-<<<<<<< HEAD
-
-=======
->>>>>>> 6ca9e38b16f63a098279c2db510c2eccba7076c9
         }
 
-       public Settings createDefaultSettings()
+        public Settings createDefaultSettings()
         {
             Settings defaultSettings = new Settings()
             {
@@ -81,7 +67,7 @@ namespace GwinstekLCRTester
             Settings currentSettings = JsonConvert.DeserializeObject<Settings>(rawJson);
 
             return currentSettings;
-        } 
+        }
 
         public void writeNewSettings(Settings settings)
         {
@@ -92,10 +78,6 @@ namespace GwinstekLCRTester
             writer.Close();
         }
 
-
-
-
-        
         public void writeCSV(decimal[] paramArray, string multiplier, string freq, string msType, int cyclesIterator = 1, string avg = "1")
         {
             //string path = pathOutput.Replace(@"\", @"\\").Replace("\r\n", "") + "\\pomiary_" + DateTime.Now.ToString("dd-M-yyyy--HH-mm-ss") + ".csv";
@@ -158,7 +140,6 @@ namespace GwinstekLCRTester
                 );
             }
         }
-
 
         public void closeWriter()
         {

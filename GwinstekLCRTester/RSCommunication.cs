@@ -16,12 +16,12 @@ namespace GwinstekLCRTester
 
         public static readonly string[] measurementTypes = {
 
-            "Cs-Rs", "Cs-D", 
+            "Cs-Rs", "Cs-D",
             "Cp-Rp", "Cp-D",
-            "Lp-Rp", "Lp-Q", 
-            "Ls-Rs", "Ls-Q", 
-            "Rs-Q", "Rp-Q", 
-            "R-X", "DCR", 
+            "Lp-Rp", "Lp-Q",
+            "Ls-Rs", "Ls-Q",
+            "Rs-Q", "Rp-Q",
+            "R-X", "DCR",
             "Z-0r","Z-0d",
             "Z-D", "Z-Q"
         };
@@ -40,12 +40,12 @@ namespace GwinstekLCRTester
             _serialPort.StopBits = stopBits;
             _serialPort.RtsEnable = true;
 
-            if (_serialPort.IsOpen) 
+            if (_serialPort.IsOpen)
                 _serialPort.Close();
 
             _serialPort.Open();
 
-            if (!_serialPort.IsOpen) 
+            if (!_serialPort.IsOpen)
                 throw new Exception("Nie udało otworzyć się portu o takich parametrach");
 
             _serialPort.WriteLine("SYST:CODE OFF");
@@ -53,7 +53,7 @@ namespace GwinstekLCRTester
         }
 
 
-        
+
 
 
         public decimal[] getMeasurementParams(string msType, string multiplier, bool addD = false, int waitFetchMs = 500)
@@ -87,9 +87,9 @@ namespace GwinstekLCRTester
             // FormatException to błąd pomiaru, kiedy tryb jest ustawiony na DCR jest to SZCZEGÓLNY przypadek a nie błąd
             catch (FormatException)
             {
-                if (msType == "DCR") 
+                if (msType == "DCR")
                     responseDecimalArray[1] = -1;
-                else 
+                else
                     //TODO : dodaj potem logikę ponownego sprawdzenia
                     throw new Exception("wystąpił błąd pomiaru, ponawianie mierzenia...");
             }
@@ -111,7 +111,7 @@ namespace GwinstekLCRTester
 
         public decimal applyMulitplier(decimal paramValue, string multiplier)
         {
-            return multiplier switch 
+            return multiplier switch
             {
                 "p" => paramValue *= 1000000000000m,
                 "n" => paramValue *= 1000000000m,
@@ -129,9 +129,9 @@ namespace GwinstekLCRTester
         public void changeHzInDevice(string HzString)
         {
 
-            if(HzString.Contains("k") || HzString.Contains("K"))
-                HzString = HzString.Remove(HzString.Length - 1)+"000";
-            
+            if (HzString.Contains("k") || HzString.Contains("K"))
+                HzString = HzString.Remove(HzString.Length - 1) + "000";
+
             uint Hz;
             bool isNumeric = uint.TryParse(HzString, out Hz);
 
@@ -148,7 +148,7 @@ namespace GwinstekLCRTester
         public void setMeasurementInDevice(string command)
         {
 
-            if (!measurementTypes.Contains(command)) 
+            if (!measurementTypes.Contains(command))
                 throw new Exception(string.Format("Podano błędną wartość dla funkcji mierzenia! ({0})", command));
 
             _serialPort.DiscardInBuffer();
