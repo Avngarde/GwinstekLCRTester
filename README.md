@@ -44,9 +44,9 @@ Before we start our application we must ensure that we connected Gwinstek device
 GUI is divided into two "panels":
 
 
-* **Left panel** : Here we specify parameters for connecting to device via RS-232. Check docs of your appliance for specific settings 
+* Left panel : Here we specify parameters for connecting to device via RS-232. Check docs of your appliance for specific settings 
 
-* **Right panel** : Is used for setting different frequencies, SI multipliers for params, measurement types and [additional parameter D](##Comments-and-adnotations). We can specify also numbers of cycles whether we serial test or not, set AVG param and output folder for csv data files
+* Right panel : Is used for setting different frequencies, SI multipliers for params, measurement types and [additional parameter D](##Comments-and-adnotations). We can specify also numbers of cycles whether we serial test or not, set AVG param and output folder for csv data files
 
 
 ## Device compatibility
@@ -103,7 +103,7 @@ Output csv file consists of serveral columns binded to fetched data. From the le
 
 ![defualt settings.json](https://github.com/Avngarde/GwinstekLCRTester/blob/main/README_images/settings.png)
 
-This file is automatically created and updated by application and should not be changed manually. settings.json sets default values in inputs such as RS connection data, so that you do not have to enter the same data over and over again. Default settings set is visible on the screenshoot (by defualt path to csv folder is next to .exe build file). After closing program, config file is updated
+This file is automatically created and updated by application and should not be changed manually. settings.json sets default values in inputs such as RS connection data, so that you do not have to enter the same data over and over again. Default settings set is visible on the screenshoot (by defualt path to csv folder is next to .exe build file). After closing program, config file is automatically updated
 
 
 ## Licence
