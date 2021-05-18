@@ -1,11 +1,7 @@
-﻿using System.Text;
-using System.Globalization;
-using System.IO;
+﻿using System.Globalization;
 using System.Linq;
 using System.IO.Ports;
-using System.Runtime;
 using System;
-using System.Windows;
 
 namespace GwinstekLCRTester
 {
