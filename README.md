@@ -56,6 +56,23 @@ GUI is divided into two "panels":
 - Compatible with Gwinstek LCR-6300/6200/6100/6020/6002 models according to [official manual](https://www.gwinstek.com/en-global/products/downloadSeriesDownNew/10208/754)
 
 
+## CSV file format
+
+![Example CSV file](https://github.com/Avngarde/GwinstekLCRTester/blob/main/README_images/csv_format.png)
+
+Files are automatically named "pomiary_{D}.csv" where D is datetime in format dd-MM-yyyy--HH:mm:ss  
+Above you can see an example of output for serial test (on one capacitor)  
+Output csv file consists of serveral columns binded to fetched data. From the left we have :  
+
+* Device number : for serial tests this is always 1
+* Cycle number : resets to 1 on next device
+* AVG : if not set in GUI, in csv it is listed as "NIE"
+* First main parameter with multiplier : depends on chosen measurement type and multplier
+* Second main parameter : it is never an unit that have multplier, in case of msType DCR it is not listed
+* Additional parameter D: when not set in GUI it is listed as "NIE"
+* Frequency : displayed as it was listed in GUI
+* Date of measurement : in format of dd-MM-yyyy HH:mm:ss
+
 ## Comments and adnotations
 
 - Number of cycles : indicates how many times we wish to measure measure parameters on one frequency. For example if we had 4 frequencies and clicked 2 cycles we get 2 measurements for each written frequency resulting in total of 8 tests
