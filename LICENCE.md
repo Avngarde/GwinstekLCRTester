@@ -1,0 +1,1 @@
+Ten utwór jest na licencji Creative Commons Uznanie autorstwa-Użycie niekomercyjne-Na tych samych warunkach 4.0 Międzynarodowe.Tekst licencji można znaleźć pod adresem: http://creativecommons.org/licenses/by-nc-sa/4.0/ lub uzyskać drogą korespondencyjną od:  Creative Commons, PO Box 1866, Mountain View, CA, 94042, USA.
