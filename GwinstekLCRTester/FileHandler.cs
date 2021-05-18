@@ -80,7 +80,7 @@ namespace GwinstekLCRTester
             writer = null;
         }
 
-        public void writeCSV(decimal[] paramArray, string multiplier, string freq, string msType, int cyclesIterator = 1, string avg = "1", int deviceIterator = 1)
+        public void writeCSV(decimal[] paramArray, string multiplier, string freq, string msType, int cyclesIterator, string avg = "1", int deviceIterator = 1)
         {
 
             string path = currentSettings.CSVPath + "/pomiary_" + DateTime.Now.ToString("dd-M-yyyy--HH-mm-ss") + ".csv";

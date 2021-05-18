@@ -144,11 +144,6 @@ namespace GwinstekLCRTester
                 throw new Exception("Podano nienumeryczną wartość dla Hz!");
             }
 
-
-            /*uint Hz;
-            bool isNumeric = uint.TryParse(HzString, out Hz);*/
-
-            //if (!isNumeric) throw new Exception("Podano nienumeryczną lub ujemną wartość dla uśredniania Hz");
             if (Hz < 10) throw new Exception("Podano za małą wartość dla Hz! (min 10Hz)");
             if (Hz > 300000) throw new Exception("Podano za dużą wartość dla Hz! (maks 30kHz)");
 
@@ -158,9 +153,11 @@ namespace GwinstekLCRTester
 
 
 
+        // ustawia tryby pomiaru np. CS-D
         public void setMeasurementInDevice(string command)
         {
 
+            // dodatkowe zabezpieczenie oprócz GUI
             if (!measurementTypes.Contains(command))
                 throw new Exception(string.Format("Podano błędną wartość dla funkcji mierzenia! ({0})", command));
 

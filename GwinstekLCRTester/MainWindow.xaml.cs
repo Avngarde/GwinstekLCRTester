@@ -131,6 +131,7 @@ namespace GwinstekLCRTester
 
         private void ExecuteTests1()
         {
+            // pobieranie parametrów połączenia z urządzeniem
             var baudRate = TransSpeed.Text == "" ? 115200 : uint.Parse(TransSpeed.Text);
             var dataBits = DataBit.Text == "" ? 8 : uint.Parse(DataBit.Text);
             var parity = Enum.Parse(typeof(Parity), ParityList.Text);
@@ -162,23 +163,45 @@ namespace GwinstekLCRTester
 
 
 
-
-            int waitMs = 700;
+            // zmienne pomocnicze
+            int waitMs;
             bool continueMeas = true;
             int deviceCounter = 1;
 
-            if (AVGTextLabel.Visibility == Visibility.Visible)
+
+           
+            
+            
+            System.Threading.Thread.Sleep(2000);
+
+            if(AVGTextLabel.Visibility == Visibility.Visible)
             {
-                System.Threading.Thread.Sleep(2000);
                 rsConnector.changeAVGInDevice(AVGValue.Text);
-                System.Threading.Thread.Sleep(2000);
+                // obliczane dokładnie na podstawie testów oczekiwania na maszynie Gwinstek LCR 6300
+                // 1,5s dodane żeby upewnić się co do przewidywalności wyników
                 waitMs = (int)((int.Parse(AVGValue.Text) / 2.9090909 + 1.5) * 1000);
             }
+            else
+            {
+                rsConnector.changeAVGInDevice("1");
+                waitMs = 700;
+            }
+                
+            System.Threading.Thread.Sleep(2000);
+            
 
             System.Windows.MessageBox.Show("Rozpoczynanie mierzenia dla parametrów: Częstotliwości: " + Freq1.Text + " " + Freq2.Text + " " + Freq3.Text + " " + Freq4.Text);
 
+
+
+
+            // główna pętla
             while (continueMeas)
             {
+
+                // dwa sposoby wyjścia z pętli
+                // 1 : test wielu kondenstatorów : wybór z okienka (if)
+                // 2 : test pojedyńczego kondensatora : automatyczne wyjście (else)
                 if (!(bool)SerialTest.IsChecked)
                 {
                     MessageBoxResult result = System.Windows.MessageBox.Show("Jeśli chcesz rozpocząć mierzenie urządzenia numer: " + deviceCounter + " kilknij OK, jeśli chcesz zakończyć mierzenie wciśnij Cancel", "Czy kontynuować?", MessageBoxButton.OKCancel);
@@ -187,7 +210,7 @@ namespace GwinstekLCRTester
                 else { continueMeas = false; }
                     
                 
-
+                // pobieranie i zapisywanie danych do csv
                 for (int cycle = 0; cycle < int.Parse(Cycles.Text); cycle++)
                 {
                     foreach (string freq in frequencies)
@@ -196,8 +219,19 @@ namespace GwinstekLCRTester
                         {
                             System.Threading.Thread.Sleep(3000);
                             rsConnector.changeHzInDevice(freq);
-                            decimal[] responseParams = rsConnector.getMeasurementParams(ModeList.Text, unitList.Text, waitFetchMs : waitMs, addD: (DParameter.Visibility == Visibility.Hidden) ? false : DParameter.IsChecked == true);
-                            fileHandler.writeCSV(responseParams, unitList.Text, freq, ModeList.Text, cycle + 1, AVGValue.Text, deviceCounter);
+
+
+                            // pobieranie danych z urządzenia
+                            decimal[] responseParams = rsConnector.getMeasurementParams(
+                                ModeList.Text,                                                                              // tryb pomiaru
+                                unitList.Text,                                                                              // mnożnik SI
+                                waitFetchMs : waitMs,                                                                       // odstęp czasowy
+                                addD: (DParameter.Visibility == Visibility.Hidden) ? false : DParameter.IsChecked == true   // parametr D
+                             );
+
+
+                            // zapis do pliku csv
+                            fileHandler.writeCSV( responseParams, unitList.Text, freq, ModeList.Text, cycle + 1, AVGValue.Text, deviceCounter);
 
                         }
                     }
@@ -220,6 +254,9 @@ namespace GwinstekLCRTester
 
 
 
+
+        // stara funkcja jako backup
+        // do usunięcia za jakiś czas
         private void ExecuteTests()
         {
            // var portName = SerialPort.GetPortNames();
