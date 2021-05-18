@@ -15,6 +15,7 @@ namespace GwinstekLCRTester
 
         public FileHandler()
         {
+
             if (!File.Exists(settingsPath))
             {
                 writer = File.CreateText(settingsPath);
@@ -29,6 +30,9 @@ namespace GwinstekLCRTester
             {
                 currentSettings = readSettings();
             }
+
+            if (!Directory.Exists(currentSettings.CSVPath))
+                Directory.CreateDirectory(currentSettings.CSVPath);
         }
 
         public Settings createDefaultSettings()
@@ -42,7 +46,7 @@ namespace GwinstekLCRTester
 
                 Cycles = "1",
                 AVG = "1",
-                CSVPath = Directory.GetCurrentDirectory(),
+                CSVPath = Directory.GetCurrentDirectory()+"\\csv",
                 DChecked = false,
                 SerialTestChecked = false,
                 MultiplierUnit = "Podstawowa jednostka",
@@ -126,7 +130,7 @@ namespace GwinstekLCRTester
                     paramArray[1].ToString().Replace(",", "."),                                     // drugi główny parametr pomiaru                       
                     (paramArray[2] != -1) ? paramArray[2].ToString().Replace(",", ".") : "NIE",     // dodatkowy parametr D
                     freq,                                                                           // częstotliwość pomiaru
-                    DateTime.Now.ToString("dd-M-yyyy HH:mm:ss")                                     // czas pomiaru
+                    DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss")                                     // czas pomiaru
                 );
             }
             else
