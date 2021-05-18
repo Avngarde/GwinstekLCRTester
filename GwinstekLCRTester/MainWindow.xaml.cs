@@ -119,6 +119,16 @@ namespace GwinstekLCRTester
             };
         }
 
+        private void returnToIdleAfterException(RSCommunication rsConnector, bool fileHandlerExist)
+        {
+            rsConnector.changeAVGInDevice("1");
+            if (fileHandlerExist) fileHandler.closeWriter();
+            System.Threading.Thread.Sleep(200);
+            rsConnector.unlockKeypadInDevice();
+            rsConnector.closePort();
+            rsConnector.Dispose();
+            SendButton.Content = "Wykonaj test";
+        }
 
         private void Test_Data(object sender, RoutedEventArgs e)
         {
@@ -152,43 +162,60 @@ namespace GwinstekLCRTester
                 frequencies[0] = Freq1.Text;
             }
 
-            RSCommunication rsConnector = new RSCommunication(
-                portName: ComPorts.Text,
-                baudRate: baudRate,
-                parityNumber: (Parity)parity,
-                dataBits: dataBits,
-                stopBits: (StopBits)stopBits,
-                handshakeType: (Handshake)handshake
-             );
+            RSCommunication rsConnector;
+            try
+            {
+                rsConnector = new RSCommunication(
+                    portName: ComPorts.Text,
+                    baudRate: baudRate,
+                    parityNumber: (Parity)parity,
+                    dataBits: dataBits,
+                    stopBits: (StopBits)stopBits,
+                    handshakeType: (Handshake)handshake
+                 );
+            }
+            catch (ArgumentException)
+            {
+                System.Windows.MessageBox.Show("Nie można się połączyć z danym portem");
+                return;
+            }
 
-
-
+            
             // zmienne pomocnicze
             int waitMs;
             bool continueMeas = true;
             int deviceCounter = 1;
 
 
-           
-            
-            
+
+
+
             System.Threading.Thread.Sleep(2000);
 
-            if(AVGTextLabel.Visibility == Visibility.Visible)
+            if (AVGTextLabel.Visibility == Visibility.Visible)
             {
-                rsConnector.changeAVGInDevice(AVGValue.Text);
-                // obliczane dokładnie na podstawie testów oczekiwania na maszynie Gwinstek LCR 6300
-                // 1,5s dodane żeby upewnić się co do przewidywalności wyników
-                waitMs = (int)((int.Parse(AVGValue.Text) / 2.9090909 + 1.5) * 1000);
+                if (int.Parse(AVGValue.Text) >= 1 && int.Parse(AVGValue.Text) <= 256)
+                {
+                    rsConnector.changeAVGInDevice(AVGValue.Text);
+                    // obliczane dokładnie na podstawie testów oczekiwania na maszynie Gwinstek LCR 6300
+                    // 1,5s dodane żeby upewnić się co do przewidywalności wyników
+                    waitMs = (int)((int.Parse(AVGValue.Text) / 2.9090909 + 1.5) * 1000);
+                }
+                else
+                {
+                    System.Windows.MessageBox.Show("Podano nie poprawną wartość AVG, AVG musi być liczbą całkowitą z zakresu od 1 do 256 włącznie");
+                    returnToIdleAfterException(rsConnector, false);
+                    return;
+                }
             }
             else
             {
                 rsConnector.changeAVGInDevice("1");
                 waitMs = 700;
             }
-                
+
             System.Threading.Thread.Sleep(2000);
-            
+
 
             System.Windows.MessageBox.Show("Rozpoczynanie mierzenia dla parametrów: Częstotliwości: " + Freq1.Text + " " + Freq2.Text + " " + Freq3.Text + " " + Freq4.Text);
 
@@ -208,152 +235,60 @@ namespace GwinstekLCRTester
                     if (result != MessageBoxResult.OK) break;
                 }
                 else { continueMeas = false; }
-                    
-                
+
+
                 // pobieranie i zapisywanie danych do csv
-                for (int cycle = 0; cycle < int.Parse(Cycles.Text); cycle++)
-                {
-                    foreach (string freq in frequencies)
+                try {
+                    if (int.Parse(Cycles.Text) < 0)
                     {
-                        if (freq != "" && freq != "0" && !string.IsNullOrEmpty(freq))
-                        {
-                            System.Threading.Thread.Sleep(3000);
-                            rsConnector.changeHzInDevice(freq);
-
-
-                            // pobieranie danych z urządzenia
-                            decimal[] responseParams = rsConnector.getMeasurementParams(
-                                ModeList.Text,                                                                              // tryb pomiaru
-                                unitList.Text,                                                                              // mnożnik SI
-                                waitFetchMs : waitMs,                                                                       // odstęp czasowy
-                                addD: (DParameter.Visibility == Visibility.Hidden) ? false : DParameter.IsChecked == true   // parametr D
-                             );
-
-
-                            // zapis do pliku csv
-                            fileHandler.writeCSV( responseParams, unitList.Text, freq, ModeList.Text, cycle + 1, AVGValue.Text, deviceCounter);
-
-                        }
+                        System.Windows.MessageBox.Show("Podana wartość dla cykli jest za mała, należy podać liczbę większą od 0");
+                        returnToIdleAfterException(rsConnector, false);
+                        return;
                     }
-                }
-                deviceCounter += 1;
-            }
 
-
-            // cleanup po wykonaniu zadanej serii testów
-            rsConnector.changeAVGInDevice("1");
-            fileHandler.closeWriter();
-            System.Threading.Thread.Sleep(200);
-            rsConnector.unlockKeypadInDevice();
-            rsConnector.closePort();
-            rsConnector.Dispose();
-
-            System.Windows.MessageBox.Show("Wykonano wszystkie testy");
-            SendButton.Content = "Wykonaj test";
-        }
-
-
-
-
-        // stara funkcja jako backup
-        // do usunięcia za jakiś czas
-        private void ExecuteTests()
-        {
-           // var portName = SerialPort.GetPortNames();
-            var baudRate = TransSpeed.Text == "" ? 115200 : uint.Parse(TransSpeed.Text);
-            var dataBits = DataBit.Text == "" ? 8 : uint.Parse(DataBit.Text);
-            var parity = Enum.Parse(typeof(Parity), ParityList.Text);
-            var stopBits = Enum.Parse(typeof(StopBits), StopBitsList.Text);
-            var handshake = Enum.Parse(typeof(Handshake), Handshakes.Text);
-
-            string[] frequencies = new string[4];
-
-            if (ModeList.SelectedItem.ToString() != "DCR")
-            {
-                frequencies[0] = Freq1.Text;
-                frequencies[1] = Freq2.Text;
-                frequencies[2] = Freq3.Text;
-                frequencies[3] = Freq4.Text;
-            }
-            else
-            {
-                frequencies[0] = Freq1.Text;
-            }
-
-            RSCommunication rsConnector = new RSCommunication(
-                portName: ComPorts.Text,
-                baudRate: baudRate,
-                parityNumber: (Parity)parity,
-                dataBits: dataBits,
-                stopBits: (StopBits)stopBits,
-                handshakeType: (Handshake)handshake
-             );
-
-
-            if (AVGTextLabel.Visibility != Visibility.Visible)
-            {
-                System.Windows.MessageBox.Show("Rozpoczynanie mierzenia dla parametrów: Częstotliwości: " + Freq1.Text + " " + Freq2.Text + " " + Freq3.Text + " " + Freq4.Text);
-                int iter = 0;
-                while (true)
-                {
-                    if (SerialTest.IsChecked != true)
+                    for (int cycle = 0; cycle < int.Parse(Cycles.Text); cycle++)
                     {
-                        System.Windows.MessageBoxResult result = System.Windows.MessageBox.Show("Jeśli chcesz rozpocząć mierzenie urządzenia numer: " + (iter + 1) + " kilknij OK, jeśli chcesz zakończyć mierzenie wciśnij Cancel", "Czy kontynuować?", MessageBoxButton.OKCancel);
-                        if (result != MessageBoxResult.OK)
-                        {
-                            break;
-                        }
-                    }
-                    for (int cycle = 0; cycle < int.Parse(Cycles.Text); cycle++) {
                         foreach (string freq in frequencies)
                         {
+                            uint freqNumber = RSCommunication.convertHz(freq);
+                            if ((freqNumber < 10 && freqNumber != 0) || freqNumber > 300000)
+                            {
+                                System.Windows.MessageBox.Show("Podano nie poprawną wartość częstotliwości. Hz musi być w zakresie od 10 do 300kHz");
+                                returnToIdleAfterException(rsConnector, false);
+                                return;
+                            }
+
                             if (freq != "" && freq != "0" && !string.IsNullOrEmpty(freq))
                             {
                                 System.Threading.Thread.Sleep(3000);
                                 rsConnector.changeHzInDevice(freq);
-                                decimal[] responseParams = rsConnector.getMeasurementParams(ModeList.Text, unitList.Text, addD: (DParameter.Visibility == Visibility.Hidden) ? false : DParameter.IsChecked == true);
-                                fileHandler.writeCSV(responseParams, unitList.Text, freq, ModeList.Text, cycle+1, AVGValue.Text);
 
+
+                                    // pobieranie danych z urządzenia
+                                decimal[] responseParams = rsConnector.getMeasurementParams(
+                                ModeList.Text,                                                                              // tryb pomiaru
+                                unitList.Text,                                                                              // mnożnik SI
+                                waitFetchMs: waitMs,                                                                       // odstęp czasowy
+                                addD: (DParameter.Visibility == Visibility.Hidden) ? false : DParameter.IsChecked == true   // parametr D
+                                );
+
+
+                                 // zapis do pliku csv
+                                fileHandler.writeCSV(responseParams, unitList.Text, freq, ModeList.Text, cycle + 1, AVGValue.Text, deviceCounter);
                             }
                         }
                     }
-                    iter++;
+                    deviceCounter += 1;
                 }
-            }
-            else
-            {
-                System.Threading.Thread.Sleep(2000);
-                rsConnector.changeAVGInDevice(AVGValue.Text);
-                System.Threading.Thread.Sleep(2000);
-                int waitMs = (int)((int.Parse(AVGValue.Text) / 2.9090909 + 1) * 1000);
-                for (int cycle = 0; cycle < int.Parse(Cycles.Text); cycle++)
+                catch (FormatException)
                 {
-                    foreach (string freq in frequencies)
-                    {
-                        if (freq != "" && freq != "0" && !string.IsNullOrEmpty(freq))
-                        {
-                            System.Threading.Thread.Sleep(500);
-                            rsConnector.changeHzInDevice(freq);
-                            decimal[] responseParams = rsConnector.getMeasurementParams(ModeList.Text, unitList.Text, addD: (DParameter.Visibility == Visibility.Hidden) ? false : DParameter.IsChecked == true, waitMs);
-                            fileHandler.writeCSV(responseParams, unitList.Text, freq, ModeList.Text, cycle+1, avg: AVGValue.Text);
-                        }
-                    }
+                    returnToIdleAfterException(rsConnector, false);
+                    System.Windows.MessageBox.Show("Podano nienumeryczną wartość dla częstotliwości bądź cyklów!");
+                    return;
                 }
-                rsConnector.changeAVGInDevice("1");
             }
-
-            fileHandler.closeWriter();
-            System.Threading.Thread.Sleep(200);
-            rsConnector.unlockKeypadInDevice();
-            rsConnector.closePort();
-            rsConnector.Dispose();
-
-
-            System.Windows.MessageBox.Show("Wykonano wszystkie testy");
-            SendButton.Content = "Wykonaj test";
         }
 
-       
         private void Set_File_Path(object sender, RoutedEventArgs e)
         {
             FolderBrowserDialog browser = new FolderBrowserDialog();

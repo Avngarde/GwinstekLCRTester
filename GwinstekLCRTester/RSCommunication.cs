@@ -5,13 +5,12 @@ using System.Linq;
 using System.IO.Ports;
 using System.Runtime;
 using System;
+using System.Windows;
 
 namespace GwinstekLCRTester
 {
     public class RSCommunication : IDisposable
     {
-
-
         private static SerialPort _serialPort;
 
         public static readonly string[] measurementTypes = {
@@ -28,35 +27,28 @@ namespace GwinstekLCRTester
 
         public RSCommunication(string portName, uint baudRate, Parity parityNumber, uint dataBits, StopBits stopBits, Handshake handshakeType, int readTimeout = 30000, int writeTimeout = 30000)
         {
-            _serialPort = new SerialPort();
+                _serialPort = new SerialPort();
 
-            _serialPort.PortName = portName;
-            _serialPort.DataBits = (int)dataBits;
-            _serialPort.BaudRate = (int)baudRate;
-            _serialPort.ReadTimeout = readTimeout;
-            _serialPort.WriteTimeout = writeTimeout;
-            _serialPort.Handshake = handshakeType;
-            _serialPort.Parity = parityNumber;
-            _serialPort.StopBits = stopBits;
-            _serialPort.RtsEnable = true;
+                _serialPort.PortName = portName;
+                _serialPort.DataBits = (int)dataBits;
+                _serialPort.BaudRate = (int)baudRate;
+                _serialPort.ReadTimeout = readTimeout;
+                _serialPort.WriteTimeout = writeTimeout;
+                _serialPort.Handshake = handshakeType;
+                _serialPort.Parity = parityNumber;
+                _serialPort.StopBits = stopBits;
+                _serialPort.RtsEnable = true;
 
-            if (_serialPort.IsOpen)
-                _serialPort.Close();
+                if (_serialPort.IsOpen)
+                    _serialPort.Close();
 
-            _serialPort.Open();
+                _serialPort.Open();
+                _serialPort.WriteLine("SYST:CODE OFF");
+                System.Threading.Thread.Sleep(300);
+                _serialPort.WriteLine("DISP:PAGE meas");
+                System.Threading.Thread.Sleep(300);
 
-            if (!_serialPort.IsOpen)
-                throw new Exception("Nie udało otworzyć się portu o takich parametrach");
-
-            _serialPort.WriteLine("SYST:CODE OFF");
-            System.Threading.Thread.Sleep(300);
-            _serialPort.WriteLine("DISP:PAGE meas");
-            System.Threading.Thread.Sleep(300);
         }
-
-
-
-
 
         public decimal[] getMeasurementParams(string msType, string multiplier, bool addD = false, int waitFetchMs = 700)
         {
@@ -124,6 +116,16 @@ namespace GwinstekLCRTester
 
         }
 
+        public static uint convertHz(string HzString)
+        {
+            uint Hz;
+            if (HzString.Contains("k") || HzString.Contains("K"))
+                Hz = Convert.ToUInt32(decimal.Round(Convert.ToDecimal(HzString.Remove(HzString.Length - 1).Replace(".", ",")) * 1000));
+            else
+                Hz = Convert.ToUInt32(HzString);
+
+            return Hz;
+        }
 
 
         // funkcja zmieniająca częstotliwość w urządzeniu
@@ -131,22 +133,7 @@ namespace GwinstekLCRTester
         public void changeHzInDevice(string HzString)
         {
             uint Hz;
-
-            try
-            {
-                if (HzString.Contains("k") || HzString.Contains("K"))
-                    Hz = Convert.ToUInt32(decimal.Round(Convert.ToDecimal(HzString.Remove(HzString.Length - 1).Replace(".", ",")) * 1000));
-                else
-                    Hz = Convert.ToUInt32(HzString);
-            }
-            catch (FormatException)
-            {
-                throw new Exception("Podano nienumeryczną wartość dla Hz!");
-            }
-
-            if (Hz < 10) throw new Exception("Podano za małą wartość dla Hz! (min 10Hz)");
-            if (Hz > 300000) throw new Exception("Podano za dużą wartość dla Hz! (maks 30kHz)");
-
+            Hz = convertHz(HzString);
             string command = "FREQ " + Hz;
             _serialPort.WriteLine(command);
         }
@@ -188,11 +175,7 @@ namespace GwinstekLCRTester
         {
             uint avgN;
             bool isNumeric = uint.TryParse(avg, out avgN);
-
-            if (!isNumeric) throw new Exception("Podano nienumeryczną wartość dla uśredniania (prawidłowe wartości to liczby całkowite od 1 do 256)");
-            if (avgN > 256 || avgN < 1) throw new Exception("Podano złą wartość dla avg (prawidłowe wartości to liczby całkowite od 1 do 256)");
-
-            _serialPort.WriteLine("aper " + avg);
+            _serialPort.WriteLine("aper " + avgN);
         }
 
 
