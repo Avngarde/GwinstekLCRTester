@@ -121,7 +121,7 @@ namespace GwinstekLCRTester
             uint Hz;
             if (HzString.Contains("k") || HzString.Contains("K"))
                 Hz = Convert.ToUInt32(decimal.Round(Convert.ToDecimal(HzString.Remove(HzString.Length - 1).Replace(".", ",")) * 1000));
-            else
+            else 
                 Hz = Convert.ToUInt32(HzString);
 
             return Hz;

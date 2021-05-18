@@ -250,21 +250,23 @@ namespace GwinstekLCRTester
                     {
                         foreach (string freq in frequencies)
                         {
-                            uint freqNumber = RSCommunication.convertHz(freq);
-                            if ((freqNumber < 10 && freqNumber != 0) || freqNumber > 300000)
-                            {
-                                System.Windows.MessageBox.Show("Podano niepoprawną wartość częstotliwości. Hz musi być w zakresie od 10 do 300kHz");
-                                returnToIdle(rsConnector, false);
-                                return;
-                            }
-
+                            
                             if (freq != "" && freq != "0" && !string.IsNullOrEmpty(freq))
                             {
+
+                                uint freqNumber = RSCommunication.convertHz(freq);
+                                if ((freqNumber < 10 && freqNumber != 0) || freqNumber > 300000)
+                                {
+                                    System.Windows.MessageBox.Show("Podano niepoprawną wartość częstotliwości. Hz musi być w zakresie od 10 do 300kHz");
+                                    returnToIdle(rsConnector, false);
+                                    return;
+                                }
+
                                 System.Threading.Thread.Sleep(3000);
                                 rsConnector.changeHzInDevice(freq);
 
 
-                                    // pobieranie danych z urządzenia
+                                // pobieranie danych z urządzenia
                                 decimal[] responseParams = rsConnector.getMeasurementParams(
                                 ModeList.Text,                                                                              // tryb pomiaru
                                 unitList.Text,                                                                              // mnożnik SI
