@@ -8,7 +8,7 @@ namespace GwinstekLCRTester
     {
         private string settingsPath = Directory.GetCurrentDirectory() + "/settings.json";
 
-        private TextWriter writer;
+        private TextWriter writer = null;
 
         public readonly Settings currentSettings;
 
@@ -23,6 +23,7 @@ namespace GwinstekLCRTester
                 writer.Flush();
                 writer.Dispose();
                 writer.Close();
+                writer = null;
             }
             else
             {
@@ -76,17 +77,18 @@ namespace GwinstekLCRTester
             writer.Flush();
             writer.Dispose();
             writer.Close();
+            writer = null;
         }
 
-        public void writeCSV(decimal[] paramArray, string multiplier, string freq, string msType, int cyclesIterator = 1, string avg = "1")
+        public void writeCSV(decimal[] paramArray, string multiplier, string freq, string msType, int cyclesIterator = 1, string avg = "1", int deviceIterator = 1)
         {
-            //string path = pathOutput.Replace(@"\", @"\\").Replace("\r\n", "") + "\\pomiary_" + DateTime.Now.ToString("dd-M-yyyy--HH-mm-ss") + ".csv";
+
             string path = currentSettings.CSVPath + "/pomiary_" + DateTime.Now.ToString("dd-M-yyyy--HH-mm-ss") + ".csv";
             if (writer == null)
             {
                 // tworzenie kolumn do pliku csv
                 writer = File.AppendText(path);
-                string csvColumns = "Numer cyklu; AVG;";
+                string csvColumns = "Numer urządzenia;Numer cyklu; AVG;";
                 csvColumns += msType switch
                 {
                     "Cs-Rs" => string.Format("Cs ({0}F);Rs (Ω)", (multiplier == "Podstawowa jednostka") ? "" : multiplier),
@@ -116,9 +118,10 @@ namespace GwinstekLCRTester
             {
                 writer.WriteLine
                 (
-                    "{0};{1};{2};{3};{4};{5};{6}",
-                    cyclesIterator,                                                                 // numer kondensatora
-                    (avg != "1") ? avg : "NIE",                                                         // mierzenie z parametrem avg
+                    "{0};{1};{2};{3};{4};{5};{6};{7}",
+                    deviceIterator,                                                                 // numer kondensatora
+                    cyclesIterator,                                                                 // numer cyklu
+                    (avg != "1") ? avg : "NIE",                                                     // mierzenie z parametrem avg
                     paramArray[0].ToString().Replace(",", "."),                                     // główny parametr pomiaru
                     paramArray[1].ToString().Replace(",", "."),                                     // drugi główny parametr pomiaru                       
                     (paramArray[2] != -1) ? paramArray[2].ToString().Replace(",", ".") : "NIE",     // dodatkowy parametr D
@@ -130,9 +133,10 @@ namespace GwinstekLCRTester
             {
                 writer.WriteLine
                 (
-                    "{0};{1};{2};{3};{4};{5}",
-                    cyclesIterator,                                                                 // numer kondenstatora
-                    (avg != "1") ? avg : "NIE",                                                       // mierzenie z parametrem avg
+                    "{0};{1};{2};{3};{4};{5};{6}",
+                    deviceIterator,                                                                 //numer kondensatora
+                    cyclesIterator,                                                                 // numer cyklu
+                    (avg != "1") ? avg : "NIE",                                                     // mierzenie z parametrem avg
                     paramArray[0] * 0.001m,                                                         // główny i jedyny dla DCR parametr pomiaru
                     (paramArray[2] == -1) ? "NIE" : paramArray[2].ToString().Replace(",", "."),     // dodatkowy parametr D
                     freq,                                                                           // częstotliwość pomiaru

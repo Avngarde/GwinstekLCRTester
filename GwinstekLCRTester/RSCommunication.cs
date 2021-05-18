@@ -49,7 +49,9 @@ namespace GwinstekLCRTester
                 throw new Exception("Nie udało otworzyć się portu o takich parametrach");
 
             _serialPort.WriteLine("SYST:CODE OFF");
+            System.Threading.Thread.Sleep(300);
             _serialPort.WriteLine("DISP:PAGE meas");
+            System.Threading.Thread.Sleep(300);
         }
 
 
@@ -81,7 +83,7 @@ namespace GwinstekLCRTester
             {
                 responseDecimalArray[0] = decimal.Parse(_serialPort.ReadLine().Split(",")[0].Replace(".", ","), NumberStyles.Float);
                 responseDecimalArray[1] = decimal.Parse(_serialPort.ReadLine().Split(",")[1].Replace(".", ","), NumberStyles.Float);
-                responseDecimalArray[2] = (d_Parameter != null) ? decimal.Parse(_serialPort.ReadLine().Split(",")[1].Replace(".", ","), NumberStyles.Float) : -1;
+                responseDecimalArray[2] = (addD) ? decimal.Parse(d_Parameter, NumberStyles.Float) : -1;
             }
 
             // FormatException to błąd pomiaru, kiedy tryb jest ustawiony na DCR jest to SZCZEGÓLNY przypadek a nie błąd

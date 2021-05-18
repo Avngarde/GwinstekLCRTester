@@ -111,21 +111,118 @@ namespace GwinstekLCRTester
 
         private void ChangeSendButtonText(bool finished)
         {
-            switch (finished)
-            {
-                case true:
-                    SendButton.Content = "Wykonaj testy";
-                    break;
-                case false:
-                    SendButton.Content = "Wykonywanie...";
-                    break;
 
-            }
+            SendButton.Content = finished switch
+            {
+                true => "Wykonaj testy",
+                false => "Wykonywanie..."
+            };
         }
+
+
+        private void Test_Data(object sender, RoutedEventArgs e)
+        {
+            ChangeSendButtonText(false); // Change button text during executing tests
+            ExecuteTests1();
+            ChangeSendButtonText(true); // Change button after tests are finished
+        }
+
+
+
+        private void ExecuteTests1()
+        {
+            var baudRate = TransSpeed.Text == "" ? 115200 : uint.Parse(TransSpeed.Text);
+            var dataBits = DataBit.Text == "" ? 8 : uint.Parse(DataBit.Text);
+            var parity = Enum.Parse(typeof(Parity), ParityList.Text);
+            var stopBits = Enum.Parse(typeof(StopBits), StopBitsList.Text);
+            var handshake = Enum.Parse(typeof(Handshake), Handshakes.Text);
+
+            string[] frequencies = new string[4];
+
+            if (ModeList.SelectedItem.ToString() != "DCR")
+            {
+                frequencies[0] = Freq1.Text;
+                frequencies[1] = Freq2.Text;
+                frequencies[2] = Freq3.Text;
+                frequencies[3] = Freq4.Text;
+            }
+            else
+            {
+                frequencies[0] = Freq1.Text;
+            }
+
+            RSCommunication rsConnector = new RSCommunication(
+                portName: ComPorts.Text,
+                baudRate: baudRate,
+                parityNumber: (Parity)parity,
+                dataBits: dataBits,
+                stopBits: (StopBits)stopBits,
+                handshakeType: (Handshake)handshake
+             );
+
+
+
+
+            int waitMs = 700;
+            bool continueMeas = true;
+            int deviceCounter = 1;
+
+            if (AVGTextLabel.Visibility == Visibility.Visible)
+            {
+                System.Threading.Thread.Sleep(2000);
+                rsConnector.changeAVGInDevice(AVGValue.Text);
+                System.Threading.Thread.Sleep(2000);
+                waitMs = (int)((int.Parse(AVGValue.Text) / 2.9090909 + 1.5) * 1000);
+            }
+
+            System.Windows.MessageBox.Show("Rozpoczynanie mierzenia dla parametrów: Częstotliwości: " + Freq1.Text + " " + Freq2.Text + " " + Freq3.Text + " " + Freq4.Text);
+
+            while (continueMeas)
+            {
+                if (!(bool)SerialTest.IsChecked)
+                {
+                    MessageBoxResult result = System.Windows.MessageBox.Show("Jeśli chcesz rozpocząć mierzenie urządzenia numer: " + deviceCounter + " kilknij OK, jeśli chcesz zakończyć mierzenie wciśnij Cancel", "Czy kontynuować?", MessageBoxButton.OKCancel);
+                    if (result != MessageBoxResult.OK) break;
+                }
+                else { continueMeas = false; }
+                    
+                
+
+                for (int cycle = 0; cycle < int.Parse(Cycles.Text); cycle++)
+                {
+                    foreach (string freq in frequencies)
+                    {
+                        if (freq != "" && freq != "0" && !string.IsNullOrEmpty(freq))
+                        {
+                            System.Threading.Thread.Sleep(3000);
+                            rsConnector.changeHzInDevice(freq);
+                            decimal[] responseParams = rsConnector.getMeasurementParams(ModeList.Text, unitList.Text, waitFetchMs : waitMs, addD: (DParameter.Visibility == Visibility.Hidden) ? false : DParameter.IsChecked == true);
+                            fileHandler.writeCSV(responseParams, unitList.Text, freq, ModeList.Text, cycle + 1, AVGValue.Text, deviceCounter);
+
+                        }
+                    }
+                }
+                deviceCounter += 1;
+            }
+
+
+            // cleanup po wykonaniu zadanej serii testów
+            rsConnector.changeAVGInDevice("1");
+            fileHandler.closeWriter();
+            System.Threading.Thread.Sleep(200);
+            rsConnector.unlockKeypadInDevice();
+            rsConnector.closePort();
+            rsConnector.Dispose();
+
+            System.Windows.MessageBox.Show("Wykonano wszystkie testy");
+            SendButton.Content = "Wykonaj test";
+        }
+
+
 
         private void ExecuteTests()
         {
-            var portName = SerialPort.GetPortNames();
+           // var portName = SerialPort.GetPortNames();
             var baudRate = TransSpeed.Text == "" ? 115200 : uint.Parse(TransSpeed.Text);
             var dataBits = DataBit.Text == "" ? 8 : uint.Parse(DataBit.Text);
             var parity = Enum.Parse(typeof(Parity), ParityList.Text);
@@ -219,13 +316,7 @@ namespace GwinstekLCRTester
             SendButton.Content = "Wykonaj test";
         }
 
-        private void Test_Data(object sender, RoutedEventArgs e)
-        {
-            ChangeSendButtonText(false); // Change button text during executing tests
-            ExecuteTests();
-            ChangeSendButtonText(true); // Change button after tests are finished
-        }
-
+       
         private void Set_File_Path(object sender, RoutedEventArgs e)
         {
             FolderBrowserDialog browser = new FolderBrowserDialog();
@@ -243,13 +334,10 @@ namespace GwinstekLCRTester
             string selectedMode = ModeList.SelectedItem.ToString();
 
             if (selectedMode.Contains("-D"))
-            {
                 DParameter.Visibility = Visibility.Hidden;
-            }
             else
-            {
                 DParameter.Visibility = Visibility.Visible;
-            }
+
 
             if (selectedMode.Contains("Cp-") || selectedMode.Contains("Cs-") || selectedMode.Contains("Lp-") || selectedMode.Contains("Ls-"))
             {
