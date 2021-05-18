@@ -119,7 +119,7 @@ namespace GwinstekLCRTester
             };
         }
 
-        private void returnToIdleAfterException(RSCommunication rsConnector, bool fileHandlerExist)
+        private void returnToIdle(RSCommunication rsConnector, bool fileHandlerExist)
         {
             rsConnector.changeAVGInDevice("1");
             if (fileHandlerExist) fileHandler.closeWriter();
@@ -204,7 +204,7 @@ namespace GwinstekLCRTester
                 else
                 {
                     System.Windows.MessageBox.Show("Podano nie poprawną wartość AVG, AVG musi być liczbą całkowitą z zakresu od 1 do 256 włącznie");
-                    returnToIdleAfterException(rsConnector, false);
+                    returnToIdle(rsConnector, false);
                     return;
                 }
             }
@@ -242,7 +242,7 @@ namespace GwinstekLCRTester
                     if (int.Parse(Cycles.Text) < 0)
                     {
                         System.Windows.MessageBox.Show("Podana wartość dla cykli jest za mała, należy podać liczbę większą od 0");
-                        returnToIdleAfterException(rsConnector, false);
+                        returnToIdle(rsConnector, false);
                         return;
                     }
 
@@ -253,8 +253,8 @@ namespace GwinstekLCRTester
                             uint freqNumber = RSCommunication.convertHz(freq);
                             if ((freqNumber < 10 && freqNumber != 0) || freqNumber > 300000)
                             {
-                                System.Windows.MessageBox.Show("Podano nie poprawną wartość częstotliwości. Hz musi być w zakresie od 10 do 300kHz");
-                                returnToIdleAfterException(rsConnector, false);
+                                System.Windows.MessageBox.Show("Podano niepoprawną wartość częstotliwości. Hz musi być w zakresie od 10 do 300kHz");
+                                returnToIdle(rsConnector, false);
                                 return;
                             }
 
@@ -279,10 +279,11 @@ namespace GwinstekLCRTester
                         }
                     }
                     deviceCounter += 1;
+                    returnToIdle(rsConnector, true);
                 }
                 catch (FormatException)
                 {
-                    returnToIdleAfterException(rsConnector, false);
+                    returnToIdle(rsConnector, false);
                     System.Windows.MessageBox.Show("Podano nienumeryczną wartość dla częstotliwości bądź cyklów!");
                     return;
                 }

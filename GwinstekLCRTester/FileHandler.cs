@@ -87,7 +87,7 @@ namespace GwinstekLCRTester
         public void writeCSV(decimal[] paramArray, string multiplier, string freq, string msType, int cyclesIterator, string avg = "1", int deviceIterator = 1)
         {
 
-            string path = currentSettings.CSVPath + "/pomiary_" + DateTime.Now.ToString("dd-M-yyyy--HH-mm-ss") + ".csv";
+            string path = currentSettings.CSVPath + "\\pomiary_" + DateTime.Now.ToString("dd-M-yyyy--HH-mm-ss") + ".csv";
             if (writer == null)
             {
                 // tworzenie kolumn do pliku csv
