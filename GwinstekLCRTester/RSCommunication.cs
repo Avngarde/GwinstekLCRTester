@@ -23,27 +23,27 @@ namespace GwinstekLCRTester
 
         public RSCommunication(string portName, uint baudRate, Parity parityNumber, uint dataBits, StopBits stopBits, Handshake handshakeType, int readTimeout = 30000, int writeTimeout = 30000)
         {
-                _serialPort = new SerialPort();
+            _serialPort = new SerialPort();
 
-                _serialPort.PortName = portName;
-                _serialPort.DataBits = (int)dataBits;
-                _serialPort.BaudRate = (int)baudRate;
-                _serialPort.ReadTimeout = readTimeout;
-                _serialPort.WriteTimeout = writeTimeout;
-                _serialPort.Handshake = handshakeType;
-                _serialPort.Parity = parityNumber;
-                _serialPort.StopBits = stopBits;
-                _serialPort.RtsEnable = true;
+            _serialPort.PortName = portName;
+            _serialPort.DataBits = (int)dataBits;
+            _serialPort.BaudRate = (int)baudRate;
+            _serialPort.ReadTimeout = readTimeout;
+            _serialPort.WriteTimeout = writeTimeout;
+            _serialPort.Handshake = handshakeType;
+            _serialPort.Parity = parityNumber;
+            _serialPort.StopBits = stopBits;
+            _serialPort.RtsEnable = true;
 
-                if (_serialPort.IsOpen)
-                    _serialPort.Close();
+            if (_serialPort.IsOpen)
+                _serialPort.Close();
 
 
-                _serialPort.Open();
-                _serialPort.WriteLine("SYST:CODE OFF");
-                System.Threading.Thread.Sleep(300);
-                _serialPort.WriteLine("DISP:PAGE meas");
-                System.Threading.Thread.Sleep(300);
+            _serialPort.Open();
+            _serialPort.WriteLine("SYST:CODE OFF");
+            System.Threading.Thread.Sleep(300);
+            _serialPort.WriteLine("DISP:PAGE meas");
+            System.Threading.Thread.Sleep(300);
 
         }
 
@@ -79,7 +79,7 @@ namespace GwinstekLCRTester
                 responseDecimalArray[0] = decimal.Parse(_serialPort.ReadLine().Split(",")[0].Replace(".", ","), NumberStyles.Float);
                 responseDecimalArray[2] = (addD) ? decimal.Parse(d_Parameter, NumberStyles.Float) : -1;
                 responseDecimalArray[1] = decimal.Parse(_serialPort.ReadLine().Split(",")[1].Replace(".", ","), NumberStyles.Float);
-                
+
             }
 
             // FormatException to błąd pomiaru, kiedy tryb jest ustawiony na DCR jest to SZCZEGÓLNY przypadek a nie błąd
@@ -125,7 +125,7 @@ namespace GwinstekLCRTester
             uint Hz;
             if (HzString.Contains("k") || HzString.Contains("K"))
                 Hz = Convert.ToUInt32(decimal.Round(Convert.ToDecimal(HzString.Remove(HzString.Length - 1).Replace(".", ",")) * 1000));
-            else 
+            else
                 Hz = Convert.ToUInt32(HzString);
 
             return Hz;
