@@ -158,7 +158,7 @@ namespace GwinstekLCRTester
             _serialPort.Open();
 
             System.Threading.Thread.Sleep(100);
-            command = command.Insert(0, "FUNC ").Replace("z-0r", "z-thr").Replace("z-0d", "z-thd");
+            command = command.Insert(0, "FUNC ").ToLower().Replace("z-0r", "z-thr").Replace("z-0d", "z-thd");
             _serialPort.WriteLine(command);
 
             _serialPort.DiscardInBuffer();
