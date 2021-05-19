@@ -317,7 +317,8 @@ namespace GwinstekLCRTester
                     return;
                 }
             }
-
+            
+            returnToIdle(rsConnector, false);
             System.Windows.MessageBox.Show("Zakończono wszystkie testy");
         }
 
