@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.IO.Ports;
 using System.Windows;
 using System.Windows.Controls;
@@ -118,8 +119,11 @@ namespace GwinstekLCRTester
             };
         }
 
-        private void returnToIdle(RSCommunication rsConnector, bool fileHandlerExist)
+        private void returnToIdle(RSCommunication rsConnector, bool fileHandlerExist, string errorMessage = "")
         {
+            if (errorMessage != "")
+                System.Windows.MessageBox.Show(errorMessage);
+
             rsConnector.changeAVGInDevice("1");
             if (fileHandlerExist) fileHandler.closeWriter();
             System.Threading.Thread.Sleep(200);
@@ -178,6 +182,11 @@ namespace GwinstekLCRTester
                 System.Windows.MessageBox.Show("Nie można się połączyć z danym portem");
                 return;
             }
+            catch (FileNotFoundException)
+            {
+                System.Windows.MessageBox.Show("Nie można się połączyć z danym portem, jesteś pewien, że nie został w trakcie rozłączony?");
+                return;
+            }
 
             
             // zmienne pomocnicze
@@ -202,8 +211,7 @@ namespace GwinstekLCRTester
                 }
                 else
                 {
-                    System.Windows.MessageBox.Show("Podano nie poprawną wartość AVG, AVG musi być liczbą całkowitą z zakresu od 1 do 256 włącznie");
-                    returnToIdle(rsConnector, false);
+                    returnToIdle(rsConnector, false, "Podano niepoprawną wartość AVG, poprawne wartości to liczby całkowite z zakresu od 1 do 256");
                     return;
                 }
             }
@@ -218,9 +226,6 @@ namespace GwinstekLCRTester
 
             System.Windows.MessageBox.Show("Rozpoczynanie mierzenia dla parametrów: Częstotliwości: " + Freq1.Text + " " + Freq2.Text + " " + Freq3.Text + " " + Freq4.Text);
 
-
-
-
             // główna pętla
             while (continueMeas)
             {
@@ -231,17 +236,18 @@ namespace GwinstekLCRTester
                 if (!(bool)SerialTest.IsChecked)
                 {
                     MessageBoxResult result = System.Windows.MessageBox.Show("Jeśli chcesz rozpocząć mierzenie urządzenia numer: " + deviceCounter + " kilknij OK, jeśli chcesz zakończyć mierzenie wciśnij Cancel", "Czy kontynuować?", MessageBoxButton.OKCancel);
-                    if (result != MessageBoxResult.OK) break;
+                    if (result != MessageBoxResult.OK)
+                        break;
                 }
                 else { continueMeas = false; }
 
 
                 // pobieranie i zapisywanie danych do csv
                 try {
+
                     if (int.Parse(Cycles.Text) < 0)
                     {
-                        System.Windows.MessageBox.Show("Podana wartość dla cykli jest za mała, należy podać liczbę większą od 0");
-                        returnToIdle(rsConnector, false);
+                        returnToIdle(rsConnector, false, "Podana wartość dla cykli jest za mała, należy podać liczbę całkowitą większą od 0");
                         return;
                     }
 
@@ -256,8 +262,7 @@ namespace GwinstekLCRTester
                                 uint freqNumber = RSCommunication.convertHz(freq);
                                 if ((freqNumber < 10 && freqNumber != 0) || freqNumber > 300000)
                                 {
-                                    System.Windows.MessageBox.Show("Podano niepoprawną wartość częstotliwości. Hz musi być w zakresie od 10 do 300kHz");
-                                    returnToIdle(rsConnector, false);
+                                    returnToIdle(rsConnector, false, "Podano niepoprawną waartość częstotliwości, Hz musi byc w zakresie od 10 do 300kHz");
                                     return;
                                 }
 
@@ -265,15 +270,23 @@ namespace GwinstekLCRTester
                                 rsConnector.changeHzInDevice(freq);
 
 
-                                // pobieranie danych z urządzenia
-                                decimal[] responseParams = rsConnector.getMeasurementParams(
-                                ModeList.Text,                                                                              // tryb pomiaru
-                                unitList.Text,                                                                              // mnożnik SI
-                                waitFetchMs: waitMs,                                                                       // odstęp czasowy
-                                addD: (DParameter.Visibility == Visibility.Hidden) ? false : DParameter.IsChecked == true   // parametr D
-                                );
-
-
+                                decimal[] responseParams = new decimal[3];
+                                try
+                                {
+                                    // pobieranie danych z urządzenia
+                                    responseParams = rsConnector.getMeasurementParams(
+                                    ModeList.Text,                                                                              // tryb pomiaru
+                                    unitList.Text,                                                                              // mnożnik SI
+                                    waitFetchMs: waitMs,                                                                       // odstęp czasowy
+                                    addD: (DParameter.Visibility == Visibility.Hidden) ? false : DParameter.IsChecked == true   // parametr D
+                                    );
+                                }
+                                catch (TimeoutException)
+                                {
+                                    returnToIdle(rsConnector, false, "Przekroczono czas oczekiwania na odpowiedź, czy jesteś pewny, że parametry połączenia się zgadzają?");
+                                    return;
+                                }
+                                
                                  // zapis do pliku csv
                                 fileHandler.writeCSV(responseParams, unitList.Text, freq, ModeList.Text, cycle + 1, AVGValue.Text, deviceCounter);
                             }
@@ -284,11 +297,12 @@ namespace GwinstekLCRTester
                 }
                 catch (FormatException)
                 {
-                    returnToIdle(rsConnector, false);
-                    System.Windows.MessageBox.Show("Podano nienumeryczną wartość dla częstotliwości bądź cyklów!");
+                    returnToIdle(rsConnector, false, "Podano nienumeryczną lub niepoprawną wartość dla częstotliwości bądź cyklów!");
                     return;
                 }
             }
+
+            System.Windows.MessageBox.Show("Zakończono wszystkie testy");
         }
 
         private void Set_File_Path(object sender, RoutedEventArgs e)

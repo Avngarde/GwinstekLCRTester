@@ -38,6 +38,7 @@ namespace GwinstekLCRTester
                 if (_serialPort.IsOpen)
                     _serialPort.Close();
 
+
                 _serialPort.Open();
                 _serialPort.WriteLine("SYST:CODE OFF");
                 System.Threading.Thread.Sleep(300);
