@@ -235,11 +235,15 @@ namespace GwinstekLCRTester
                 // 2 : test pojedyńczego kondensatora : automatyczne wyjście (else)
                 if (!(bool)SerialTest.IsChecked)
                 {
-                    MessageBoxResult result = System.Windows.MessageBox.Show("Jeśli chcesz rozpocząć mierzenie urządzenia numer: " + deviceCounter + " kilknij OK, jeśli chcesz zakończyć mierzenie wciśnij Cancel", "Czy kontynuować?", MessageBoxButton.OKCancel);
+                    MessageBoxResult result = System.Windows.MessageBox.Show("Jeśli chcesz rozpocząć mierzenie kondensatora numer: " + deviceCounter + " kilknij OK, jeśli chcesz zakończyć mierzenie wciśnij Cancel", "Czy kontynuować?", MessageBoxButton.OKCancel);
                     if (result != MessageBoxResult.OK)
                         break;
                 }
-                else { continueMeas = false; }
+                else 
+                {
+                    System.Windows.MessageBox.Show("Proszę podłączyć kondensator do testu seryjnego");
+                    continueMeas = false; 
+                }
 
 
                 // pobieranie i zapisywanie danych do csv
@@ -312,8 +316,6 @@ namespace GwinstekLCRTester
             if (result.ToString() != string.Empty)
             {
                 FilePath.Text = browser.SelectedPath;
-                // settings.CSVPath = browser.SelectedPath;
-                //FileHandler.WriteNewSettings(settings);
             }
         }
 

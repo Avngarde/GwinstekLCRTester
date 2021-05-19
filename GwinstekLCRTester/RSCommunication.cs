@@ -65,14 +65,21 @@ namespace GwinstekLCRTester
 
             // mierzenie głównych parametrów
             setMeasurementInDevice(msType);
+
+            if (msType == "DCR")
+                waitFetchMs += 3000;
+
             System.Threading.Thread.Sleep(waitFetchMs);
             _serialPort.WriteLine("FETCH?");
+
+            string cos = _serialPort.ReadLine();
 
             try
             {
                 responseDecimalArray[0] = decimal.Parse(_serialPort.ReadLine().Split(",")[0].Replace(".", ","), NumberStyles.Float);
-                responseDecimalArray[1] = decimal.Parse(_serialPort.ReadLine().Split(",")[1].Replace(".", ","), NumberStyles.Float);
                 responseDecimalArray[2] = (addD) ? decimal.Parse(d_Parameter, NumberStyles.Float) : -1;
+                responseDecimalArray[1] = decimal.Parse(_serialPort.ReadLine().Split(",")[1].Replace(".", ","), NumberStyles.Float);
+                
             }
 
             // FormatException to błąd pomiaru, kiedy tryb jest ustawiony na DCR jest to SZCZEGÓLNY przypadek a nie błąd
