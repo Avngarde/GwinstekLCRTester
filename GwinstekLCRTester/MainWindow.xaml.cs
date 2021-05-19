@@ -179,7 +179,7 @@ namespace GwinstekLCRTester
                 return;
             }
 
-            
+
             // zmienne pomocnicze
             int waitMs;
             bool continueMeas = true;
@@ -237,7 +237,8 @@ namespace GwinstekLCRTester
 
 
                 // pobieranie i zapisywanie danych do csv
-                try {
+                try
+                {
                     if (int.Parse(Cycles.Text) < 0)
                     {
                         System.Windows.MessageBox.Show("Podana wartość dla cykli jest za mała, należy podać liczbę większą od 0");
@@ -249,7 +250,7 @@ namespace GwinstekLCRTester
                     {
                         foreach (string freq in frequencies)
                         {
-                            
+
                             if (freq != "" && freq != "0" && !string.IsNullOrEmpty(freq))
                             {
 
@@ -274,7 +275,7 @@ namespace GwinstekLCRTester
                                 );
 
 
-                                 // zapis do pliku csv
+                                // zapis do pliku csv
                                 fileHandler.writeCSV(responseParams, unitList.Text, freq, ModeList.Text, cycle + 1, AVGValue.Text, deviceCounter);
                             }
                         }
