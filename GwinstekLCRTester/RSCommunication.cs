@@ -7,7 +7,7 @@ namespace GwinstekLCRTester
 {
     public class RSCommunication : IDisposable
     {
-        public SerialPort _serialPort;
+        private static SerialPort _serialPort;
 
         public static readonly string[] measurementTypes = {
 
