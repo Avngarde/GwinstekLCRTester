@@ -1,5 +1,6 @@
 ﻿using System.IO.Ports;
 
+
 namespace GwinstekLCRTester
 {
     class Settings
