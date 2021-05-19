@@ -177,8 +177,7 @@ namespace GwinstekLCRTester
 
         public void changeAVGInDevice(string avg)
         {
-            uint avgN;
-            bool isNumeric = uint.TryParse(avg, out avgN);
+            uint avgN = uint.Parse(avg);
             _serialPort.WriteLine("aper " + avgN);
         }
 

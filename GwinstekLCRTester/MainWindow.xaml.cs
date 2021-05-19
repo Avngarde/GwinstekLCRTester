@@ -105,7 +105,7 @@ namespace GwinstekLCRTester
             catch (IndexOutOfRangeException)
             {
                 System.Windows.MessageBox.Show("Nie znaleziono aktywnych portów COM");
-                //Close();
+                Close();
             };
         }
 
@@ -249,7 +249,6 @@ namespace GwinstekLCRTester
                     MessageBoxResult result = System.Windows.MessageBox.Show("Jeśli chcesz rozpocząć test seryjny kondensatora kilknij OK, jeśli nie wciśnij Cancel", "Czy kontynuować?", MessageBoxButton.OKCancel);
                     if (result != MessageBoxResult.OK)
                     {
-                        returnToIdle(rsConnector, false);
                         continueMeas = false;
                         break;
                     }
@@ -309,7 +308,7 @@ namespace GwinstekLCRTester
                         }
                     }
                     deviceCounter += 1;
-                    returnToIdle(rsConnector, true);
+                    fileHandler.closeWriter();
                 }
                 catch (FormatException)
                 {
