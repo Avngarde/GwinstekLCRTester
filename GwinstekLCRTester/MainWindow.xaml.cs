@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.IO.Ports;
 using System.Windows;
 using System.Windows.Controls;
@@ -118,8 +119,11 @@ namespace GwinstekLCRTester
             };
         }
 
-        private void returnToIdle(RSCommunication rsConnector, bool fileHandlerExist)
+        private void returnToIdle(RSCommunication rsConnector, bool fileHandlerExist, string errorMessage = "")
         {
+            if (errorMessage != "")
+                System.Windows.MessageBox.Show(errorMessage);
+
             rsConnector.changeAVGInDevice("1");
             if (fileHandlerExist) fileHandler.closeWriter();
             System.Threading.Thread.Sleep(200);
@@ -132,13 +136,13 @@ namespace GwinstekLCRTester
         private void Test_Data(object sender, RoutedEventArgs e)
         {
             ChangeSendButtonText(false); // Change button text during executing tests
-            ExecuteTests1();
+            ExecuteTests();
             ChangeSendButtonText(true); // Change button after tests are finished
         }
 
 
 
-        private void ExecuteTests1()
+        private void ExecuteTests()
         {
             // pobieranie parametrów połączenia z urządzeniem
             var baudRate = TransSpeed.Text == "" ? 115200 : uint.Parse(TransSpeed.Text);
@@ -178,16 +182,16 @@ namespace GwinstekLCRTester
                 System.Windows.MessageBox.Show("Nie można się połączyć z danym portem");
                 return;
             }
-
+            catch (FileNotFoundException)
+            {
+                System.Windows.MessageBox.Show("Nie można się połączyć z danym portem, jesteś pewien, że nie został w trakcie rozłączony?");
+                return;
+            }
 
             // zmienne pomocnicze
             int waitMs;
             bool continueMeas = true;
             int deviceCounter = 1;
-
-
-
-
 
             System.Threading.Thread.Sleep(2000);
 
@@ -202,8 +206,7 @@ namespace GwinstekLCRTester
                 }
                 else
                 {
-                    System.Windows.MessageBox.Show("Podano nie poprawną wartość AVG, AVG musi być liczbą całkowitą z zakresu od 1 do 256 włącznie");
-                    returnToIdle(rsConnector, false);
+                    returnToIdle(rsConnector, false, "Podano niepoprawną wartość AVG, poprawne wartości to liczby całkowite z zakresu od 1 do 256");
                     return;
                 }
             }
@@ -215,11 +218,14 @@ namespace GwinstekLCRTester
 
             System.Threading.Thread.Sleep(2000);
 
-
-            System.Windows.MessageBox.Show("Rozpoczynanie mierzenia dla parametrów: Częstotliwości: " + Freq1.Text + " " + Freq2.Text + " " + Freq3.Text + " " + Freq4.Text);
-
-
-
+            if (ModeList.SelectedItem.ToString() != "DCR")
+            {
+                System.Windows.MessageBox.Show("Rozpoczynanie mierzenia dla parametrów: Częstotliwości: " + Freq1.Text + " " + Freq2.Text + " " + Freq3.Text + " " + Freq4.Text);
+            }
+            else
+            {
+                System.Windows.MessageBox.Show("Rozpoczynanie mierzenia dla parametrów: Częstotliwości: " + Freq1.Text);
+            }
 
             // główna pętla
             while (continueMeas)
@@ -230,19 +236,34 @@ namespace GwinstekLCRTester
                 // 2 : test pojedyńczego kondensatora : automatyczne wyjście (else)
                 if (!(bool)SerialTest.IsChecked)
                 {
-                    MessageBoxResult result = System.Windows.MessageBox.Show("Jeśli chcesz rozpocząć mierzenie urządzenia numer: " + deviceCounter + " kilknij OK, jeśli chcesz zakończyć mierzenie wciśnij Cancel", "Czy kontynuować?", MessageBoxButton.OKCancel);
-                    if (result != MessageBoxResult.OK) break;
+                    MessageBoxResult result = System.Windows.MessageBox.Show("Jeśli chcesz rozpocząć mierzenie kondensatora numer: " + deviceCounter + " kilknij OK, jeśli chcesz zakończyć mierzenie wciśnij Cancel", "Czy kontynuować?", MessageBoxButton.OKCancel);
+                    if (result != MessageBoxResult.OK)
+                    {
+                        returnToIdle(rsConnector, false);
+                        continueMeas = false;
+                        break;
+                    }
                 }
-                else { continueMeas = false; }
+                else
+                {
+                    MessageBoxResult result = System.Windows.MessageBox.Show("Jeśli chcesz rozpocząć test seryjny kondensatora kilknij OK, jeśli nie wciśnij Cancel", "Czy kontynuować?", MessageBoxButton.OKCancel);
+                    if (result != MessageBoxResult.OK)
+                    {
+                        returnToIdle(rsConnector, false);
+                        continueMeas = false;
+                        break;
+                    }
+                    continueMeas = false;
+                }
 
 
                 // pobieranie i zapisywanie danych do csv
                 try
                 {
+
                     if (int.Parse(Cycles.Text) < 0)
                     {
-                        System.Windows.MessageBox.Show("Podana wartość dla cykli jest za mała, należy podać liczbę większą od 0");
-                        returnToIdle(rsConnector, false);
+                        returnToIdle(rsConnector, false, "Podana wartość dla cykli jest za mała, należy podać liczbę całkowitą większą od 0");
                         return;
                     }
 
@@ -257,8 +278,7 @@ namespace GwinstekLCRTester
                                 uint freqNumber = RSCommunication.convertHz(freq);
                                 if ((freqNumber < 10 && freqNumber != 0) || freqNumber > 300000)
                                 {
-                                    System.Windows.MessageBox.Show("Podano niepoprawną wartość częstotliwości. Hz musi być w zakresie od 10 do 300kHz");
-                                    returnToIdle(rsConnector, false);
+                                    returnToIdle(rsConnector, false, "Podano niepoprawną waartość częstotliwości, Hz musi byc w zakresie od 10 do 300kHz");
                                     return;
                                 }
 
@@ -266,14 +286,22 @@ namespace GwinstekLCRTester
                                 rsConnector.changeHzInDevice(freq);
 
 
-                                // pobieranie danych z urządzenia
-                                decimal[] responseParams = rsConnector.getMeasurementParams(
-                                ModeList.Text,                                                                              // tryb pomiaru
-                                unitList.Text,                                                                              // mnożnik SI
-                                waitFetchMs: waitMs,                                                                       // odstęp czasowy
-                                addD: (DParameter.Visibility == Visibility.Hidden) ? false : DParameter.IsChecked == true   // parametr D
-                                );
-
+                                decimal[] responseParams = new decimal[3];
+                                try
+                                {
+                                    // pobieranie danych z urządzenia
+                                    responseParams = rsConnector.getMeasurementParams(
+                                    ModeList.Text,                                                                              // tryb pomiaru
+                                    unitList.Text,                                                                              // mnożnik SI
+                                    waitFetchMs: waitMs,                                                                       // odstęp czasowy
+                                    addD: (DParameter.Visibility == Visibility.Hidden) ? false : DParameter.IsChecked == true   // parametr D
+                                    );
+                                }
+                                catch (TimeoutException)
+                                {
+                                    returnToIdle(rsConnector, false, "Przekroczono czas oczekiwania na odpowiedź, czy jesteś pewny, że parametry połączenia się zgadzają?");
+                                    return;
+                                }
 
                                 // zapis do pliku csv
                                 fileHandler.writeCSV(responseParams, unitList.Text, freq, ModeList.Text, cycle + 1, AVGValue.Text, deviceCounter);
@@ -285,11 +313,12 @@ namespace GwinstekLCRTester
                 }
                 catch (FormatException)
                 {
-                    returnToIdle(rsConnector, false);
-                    System.Windows.MessageBox.Show("Podano nienumeryczną wartość dla częstotliwości bądź cyklów!");
+                    returnToIdle(rsConnector, false, "Podano nienumeryczną lub niepoprawną wartość dla częstotliwości bądź cyklów!");
                     return;
                 }
             }
+
+            System.Windows.MessageBox.Show("Zakończono wszystkie testy");
         }
 
         private void Set_File_Path(object sender, RoutedEventArgs e)
@@ -299,8 +328,8 @@ namespace GwinstekLCRTester
             if (result.ToString() != string.Empty)
             {
                 FilePath.Text = browser.SelectedPath;
-                // settings.CSVPath = browser.SelectedPath;
-                //FileHandler.WriteNewSettings(settings);
+                fileHandler.currentSettings.CSVPath = browser.SelectedPath;
+                fileHandler.writeNewSettings(fileHandler.currentSettings);
             }
         }
 
@@ -340,6 +369,9 @@ namespace GwinstekLCRTester
 
                 Freq1.IsReadOnly = true;
                 Freq1.Text = "120";
+                Freq2.IsReadOnly = true;
+                Freq3.IsReadOnly = true;
+                Freq4.IsReadOnly = true;
             }
             else
             {

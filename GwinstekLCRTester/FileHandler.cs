@@ -10,7 +10,7 @@ namespace GwinstekLCRTester
 
         private TextWriter writer = null;
 
-        public readonly Settings currentSettings;
+        public Settings currentSettings;
 
 
         public FileHandler()
@@ -46,7 +46,7 @@ namespace GwinstekLCRTester
 
                 Cycles = "1",
                 AVG = "1",
-                CSVPath = Directory.GetCurrentDirectory()+"\\csv",
+                CSVPath = Directory.GetCurrentDirectory() + "\\csv",
                 DChecked = false,
                 SerialTestChecked = false,
                 MultiplierUnit = "Podstawowa jednostka",
