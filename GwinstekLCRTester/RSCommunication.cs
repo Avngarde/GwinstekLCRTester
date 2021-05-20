@@ -2,12 +2,13 @@
 using System.Linq;
 using System.IO.Ports;
 using System;
+using System.Windows;
 
 namespace GwinstekLCRTester
 {
     public class RSCommunication : IDisposable
     {
-        private static SerialPort _serialPort;
+        public SerialPort _serialPort;
 
         public static readonly string[] measurementTypes = {
 
@@ -88,8 +89,19 @@ namespace GwinstekLCRTester
                 if (msType == "DCR")
                     responseDecimalArray[1] = -1;
                 else
+                {
                     //TODO : dodaj potem logikę ponownego sprawdzenia
-                    throw new Exception("wystąpił błąd pomiaru, ponawianie mierzenia...");
+                    MessageBoxResult result = System.Windows.MessageBox.Show("Błąd pomiaru, czy chcesz ponowić pomiar na tych samych parametrach?", "Błąd", MessageBoxButton.OKCancel);
+                    if (result == MessageBoxResult.OK)
+                    {
+                        getMeasurementParams(msType, multiplier, addD, waitFetchMs += 700);
+                    }
+                    else
+                    {
+                        throw new Exception();
+                    }
+                }
+
             }
 
 

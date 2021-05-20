@@ -10,6 +10,7 @@ namespace GwinstekLCRTester
     public partial class MainWindow : Window
     {
         private FileHandler fileHandler = new FileHandler();
+        private RSCommunication rsConnector;
 
         public MainWindow()
         {
@@ -165,29 +166,30 @@ namespace GwinstekLCRTester
                 frequencies[0] = Freq1.Text;
             }
 
-            RSCommunication rsConnector;
-            try
+            if (rsConnector == null || !rsConnector._serialPort.IsOpen)
             {
-                rsConnector = new RSCommunication(
-                    portName: ComPorts.Text,
-                    baudRate: baudRate,
-                    parityNumber: (Parity)parity,
-                    dataBits: dataBits,
-                    stopBits: (StopBits)stopBits,
-                    handshakeType: (Handshake)handshake
-                 );
+                try
+                {
+                    rsConnector = new RSCommunication(
+                        portName: ComPorts.Text,
+                        baudRate: baudRate,
+                        parityNumber: (Parity)parity,
+                        dataBits: dataBits,
+                        stopBits: (StopBits)stopBits,
+                        handshakeType: (Handshake)handshake
+                     );
+                }
+                catch (ArgumentException)
+                {
+                    System.Windows.MessageBox.Show("Nie można się połączyć z danym portem");
+                    return;
+                }
+                catch (FileNotFoundException)
+                {
+                    System.Windows.MessageBox.Show("Nie można się połączyć z danym portem, jesteś pewien, że nie został w trakcie rozłączony?");
+                    return;
+                }
             }
-            catch (ArgumentException)
-            {
-                System.Windows.MessageBox.Show("Nie można się połączyć z danym portem");
-                return;
-            }
-            catch (FileNotFoundException)
-            {
-                System.Windows.MessageBox.Show("Nie można się połączyć z danym portem, jesteś pewien, że nie został w trakcie rozłączony?");
-                return;
-            }
-
             // zmienne pomocnicze
             int waitMs;
             bool continueMeas = true;
@@ -236,7 +238,7 @@ namespace GwinstekLCRTester
                 // 2 : test pojedyńczego kondensatora : automatyczne wyjście (else)
                 if (!(bool)SerialTest.IsChecked)
                 {
-                    MessageBoxResult result = System.Windows.MessageBox.Show("Jeśli chcesz rozpocząć mierzenie kondensatora numer: " + deviceCounter + " kilknij OK, jeśli chcesz zakończyć mierzenie wciśnij Cancel", "Czy kontynuować?", MessageBoxButton.OKCancel);
+                    MessageBoxResult result = System.Windows.MessageBox.Show("Jeśli chcesz rozpocząć mierzenie urządzenia numer: " + deviceCounter + " kilknij OK, jeśli chcesz zakończyć mierzenie wciśnij Cancel", "Czy kontynuować?", MessageBoxButton.OKCancel);
                     if (result != MessageBoxResult.OK)
                     {
                         returnToIdle(rsConnector, false);
@@ -246,9 +248,10 @@ namespace GwinstekLCRTester
                 }
                 else
                 {
-                    MessageBoxResult result = System.Windows.MessageBox.Show("Jeśli chcesz rozpocząć test seryjny kondensatora kilknij OK, jeśli nie wciśnij Cancel", "Czy kontynuować?", MessageBoxButton.OKCancel);
+                    MessageBoxResult result = System.Windows.MessageBox.Show("Jeśli chcesz rozpocząć test seryjny urządzenia kilknij OK, jeśli nie wciśnij Cancel", "Czy kontynuować?", MessageBoxButton.OKCancel);
                     if (result != MessageBoxResult.OK)
                     {
+                        returnToIdle(rsConnector, false);
                         continueMeas = false;
                         break;
                     }
@@ -301,6 +304,11 @@ namespace GwinstekLCRTester
                                     returnToIdle(rsConnector, false, "Przekroczono czas oczekiwania na odpowiedź, czy jesteś pewny, że parametry połączenia się zgadzają?");
                                     return;
                                 }
+                                catch (Exception)
+                                {
+                                    returnToIdle(rsConnector, false, "Wstrzymano pomiar");
+                                    return;
+                                }
 
                                 // zapis do pliku csv
                                 fileHandler.writeCSV(responseParams, unitList.Text, freq, ModeList.Text, cycle + 1, AVGValue.Text, deviceCounter);
@@ -316,8 +324,7 @@ namespace GwinstekLCRTester
                     return;
                 }
             }
-            
-            returnToIdle(rsConnector, false);
+
             System.Windows.MessageBox.Show("Zakończono wszystkie testy");
         }
 
@@ -387,6 +394,13 @@ namespace GwinstekLCRTester
                 HzLabel4.Visibility = Visibility.Visible;
 
                 Freq1.IsReadOnly = false;
+                Freq2.IsReadOnly = false;
+                Freq3.IsReadOnly = false;
+                Freq4.IsReadOnly = false;
+                Freq1.Text = fileHandler.currentSettings.Freq1;
+                Freq2.Text = fileHandler.currentSettings.Freq2;
+                Freq3.Text = fileHandler.currentSettings.Freq3;
+                Freq4.Text = fileHandler.currentSettings.Freq4;
             }
         }
 
@@ -430,6 +444,10 @@ namespace GwinstekLCRTester
             newSettings.CSVPath = FilePath.Text;
 
             fileHandler.writeNewSettings(newSettings);
+            if(rsConnector != null)
+            {
+                rsConnector.closePort();
+            }
         }
     }
 }
