@@ -81,7 +81,7 @@ Output csv file consists of serveral columns binded to fetched data. From the le
 
 - Additional parameter D : For measurement types that don't include parameter D we can force it's mensuration
 
-- Speed of speed of serial test : Please note that serial test heavily depends on given AVG number. If we set AVG to 120, single test is going to last 43 seconds roughly! Since this is an machine calculations application cannot speed it up
+- Speed of speed of serial test : Please note that serial test heavily depends on given AVG number. If we set AVG to 120, single test is going to last 49 seconds roughly! Since this is a machine calculations application cannot speed it up
 
 
 
