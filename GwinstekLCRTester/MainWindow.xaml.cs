@@ -107,7 +107,12 @@ namespace GwinstekLCRTester
             {
                 System.Windows.MessageBox.Show("Nie znaleziono aktywnych portów COM");
                 Close();
-            };
+            }
+            catch (FileNotFoundException)
+            {
+                System.Windows.MessageBox.Show("Nie można połączyć się z portem, czy kabel RS jest podłączony?");
+                return;
+            }
         }
 
         private void ChangeSendButtonText(bool finished)
@@ -316,7 +321,6 @@ namespace GwinstekLCRTester
                         }
                     }
                     deviceCounter += 1;
-                    fileHandler.closeWriter();
                 }
                 catch (FormatException)
                 {
@@ -324,7 +328,7 @@ namespace GwinstekLCRTester
                     return;
                 }
             }
-
+            fileHandler.closeWriter();
             System.Windows.MessageBox.Show("Zakończono wszystkie testy");
         }
 

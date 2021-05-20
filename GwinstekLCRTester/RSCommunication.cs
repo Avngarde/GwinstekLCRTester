@@ -48,12 +48,11 @@ namespace GwinstekLCRTester
 
         }
 
-        public decimal[] getMeasurementParams(string msType, string multiplier, bool addD = false, int waitFetchMs = 700)
+        public decimal[] getMeasurementParams(string msType, string multiplier, bool addD = false, int waitFetchMs = 400)
         {
 
             string d_Parameter = null;
             decimal[] responseDecimalArray = new decimal[3];
-
 
             // dodatkowe opcjonalne mierzenie parametru D
             if (addD)
@@ -70,10 +69,9 @@ namespace GwinstekLCRTester
             if (msType == "DCR")
                 waitFetchMs += 3000;
 
-            System.Threading.Thread.Sleep(waitFetchMs);
+           System.Threading.Thread.Sleep(waitFetchMs);
             _serialPort.WriteLine("FETCH?");
 
-            string cos = _serialPort.ReadLine();
 
             try
             {
@@ -94,7 +92,7 @@ namespace GwinstekLCRTester
                     MessageBoxResult result = System.Windows.MessageBox.Show("Błąd pomiaru, czy chcesz ponowić pomiar na tych samych parametrach?", "Błąd", MessageBoxButton.OKCancel);
                     if (result == MessageBoxResult.OK)
                     {
-                        getMeasurementParams(msType, multiplier, addD, waitFetchMs += 700);
+                        responseDecimalArray = getMeasurementParams(msType, multiplier, addD, waitFetchMs += 700);
                     }
                     else
                     {
@@ -177,7 +175,7 @@ namespace GwinstekLCRTester
             _serialPort.Dispose();
             _serialPort.Close();
             _serialPort.Open();
-            System.Threading.Thread.Sleep(3000);
+            System.Threading.Thread.Sleep(1000);
         }
 
 
