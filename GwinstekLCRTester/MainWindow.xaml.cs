@@ -148,6 +148,10 @@ namespace GwinstekLCRTester
 
 
 
+
+
+
+
         private void ExecuteTests()
         {
             // pobieranie parametrów połączenia z urządzeniem
@@ -285,7 +289,7 @@ namespace GwinstekLCRTester
                                 uint freqNumber = RSCommunication.convertHz(freq);
                                 if ((freqNumber < 10 && freqNumber != 0) || freqNumber > 300000)
                                 {
-                                    returnToIdle(rsConnector, false, "Podano niepoprawną waartość częstotliwości, Hz musi byc w zakresie od 10 do 300kHz");
+                                    returnToIdle(rsConnector, false, "Podano niepoprawną wartość częstotliwości, Hz musi byc w zakresie od 10 do 300kHz");
                                     return;
                                 }
 
@@ -300,7 +304,7 @@ namespace GwinstekLCRTester
                                     responseParams = rsConnector.getMeasurementParams(
                                     ModeList.Text,                                                                              // tryb pomiaru
                                     unitList.Text,                                                                              // mnożnik SI
-                                    waitFetchMs: waitMs,                                                                       // odstęp czasowy
+                                    waitFetchMs: waitMs,                                                                        // odstęp czasowy
                                     addD: (DParameter.Visibility == Visibility.Hidden) ? false : DParameter.IsChecked == true   // parametr D
                                     );
                                 }
